@@ -83,6 +83,12 @@ three, they win.
   is four folded parts in 1.2 mm steel: a core (bottom, rear and top), the
   tray, a bracket the supply hangs from, and a plain shell (front and sides)
   that slides on from the front and is held by one thumbscrew underneath.
+- `mechanical/mk1.py --board` builds the same case with Framework's own model
+  of the mainboard in it and reports how it fits. That model is 73 MB, so it
+  and the design it produces are kept outside the repo.
+
+  ![The Mk I open, with the Framework board](docs/images/mk1-board-open.png)
+
 - [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts and
   where each came from, and says which are still placeholders.
 - [sim/airflow.py](sim/airflow.py) is the airflow set-up for the earlier ATX

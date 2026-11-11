@@ -1,2 +1,1 @@
 body,rule,thickness_mm,k_factor,bend,angle_deg,direction,radius_mm,allowance_mm,length_mm,start_x_mm,start_y_mm,end_x_mm,end_y_mm,included_angle_deg
-"tray","CRS 1.2",1.200000000,0.440000000,1,90.000000000,down,1.200000000,2.714336053,209.400000000,0.000000000,1.042831974,209.400000000,1.042831974,90.000000000

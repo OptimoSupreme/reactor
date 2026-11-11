@@ -1,6 +1,8 @@
 """Build the Reactor Mk I in SolidCraft: four folded sheet metal parts and the bought-in parts as blocks.
 
-  python3 mechanical/mk1.py            build, save, check, export flat patterns and renders
+  python3 mechanical/mk1.py            build, save, check and export flat patterns
+  python3 mechanical/mk1.py --board    the same case with Framework's model of the board in it, saved
+                                       outside the repo, and a report of how the board fits
 
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
@@ -20,6 +22,12 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DESIGN = os.path.join(REPO, "mechanical", "reactor-mk-i.sc")
 EXPORT = os.path.join(REPO, "mechanical", "export")
+# Framework's own model of the board (CC BY 4.0), from github.com/FrameworkComputer/Framework-Desktop,
+# Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
+# rebuild, so both stay outside the repo and the committed design draws the board as a block.
+MAINBOARD_STEP = os.path.expanduser("~/.cache/reactor/framework-desktop/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp")
+DESIGN_WITH_BOARD = os.path.expanduser("~/.cache/reactor/reactor-mk-i-with-board.sc")
+WITH_BOARD = "--board" in sys.argv
 IMAGES = os.path.join(REPO, "docs", "images")
 
 T = 1.2            # sheet
@@ -40,7 +48,7 @@ CPU_FAN = 16.0     # NF-A12x15 with its pads
 # slim 120 mm fans, two in the bottom and one in the top
 FAN, FAN_T, FAN_HOLES = 120.0, 15.0, 105.0
 BOARD_Z = FAN_T + 7.0                          # bottom edge of the board
-BOARD_X = 2.0      # rear edge of the board; its ports overhang 1.8
+BOARD_X = 12.27 - 10.16   # rear edge of the board: the rear holes sit 0.483 in from the panel (ATX figure 4)
 BOARD = 170.0
 
 # mesh: hexagons 9.6 across flats. The pitches put a cell on every fan screw, which stretches the
@@ -55,7 +63,7 @@ BOTTOM_FANS = [(LX / 2 - 5.5 * PITCH_X, LY / 2), (LX / 2 + 5.5 * PITCH_X, LY / 2
 TOP_FAN = (89.0, LY / 2)
 
 # SFX supply standing in front of the board: fan toward the board, exhaust and mains inlet up
-PSU_X = BOARD_X + BOARD + 8.0
+PSU_X = BOARD_X + BOARD + 8.0                  # no room for plugs on a board's front edge, by choice
 PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
 PSU_Y = 0.7
 PSU_TOP = LZ - 35.0                            # room above for a right-angle mains plug
@@ -75,9 +83,14 @@ SHELL_XF = LX + 2 * T + GAP
 SHELL_FOOT = 14.0  # bottom flanges, wide enough for the thumbscrew
 SCREW = (LX / 2, 6.0)   # thumbscrew, X and Y, up through the shell's flange into a nut between the bottom fans
 SWITCH = (14.0, LZ - 14.0)   # 12 mm vandal switch, Y and Z on the front panel: top left seen from the front
-INLET = (24.0, 175.0)   # IEC C14 inlet on the rear panel, Y and Z of its centre
+INLET = (26.0, FAN_T + 13.0)   # IEC C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 
-# board holes from Framework's drawing, measured from the port edge and the top edge
+# Rear I/O aperture, ATX specification 2.03 figure 4: 6.25 x 1.75 in, its long side running from 2.44
+# past the board's edge on the port side, its lower side 0.088 in below the underside of the board.
+IO_Z = (BOARD_Z + BOARD - 156.31, BOARD_Z + BOARD + 2.44)
+IO_Y = (TRAY_Y - STANDOFF + 2.24 - 44.45, TRAY_Y - STANDOFF + 2.24)
+
+# Mini-ITX holes (C, F, H, J), measured from the port edge and from the edge the aperture overhangs
 BOARD_HOLES = [(33.02, 6.17), (165.10, 6.17), (10.16, 163.65), (165.10, 163.65)]
 
 
@@ -204,10 +217,10 @@ def core():
              [xf, LY / 2, zt], [xf, LY / 2, -T],
              lip([LX / 2, -T, zt]), lip([LX / 2, LY + T, zt]), lip([LX / 2, -T, -T]), lip([LX / 2, LY + T, -T]),
              [-T, -T, LZ / 2], [-T, LY + T, LZ / 2]]})]
-    # rear panel: port opening (placeholder) and the mains inlet with its two screws
+    # rear panel: the standard I/O aperture and the mains inlet with its two screws
     iy, iz = INLET
-    rear = [(BOARD_Y - 32.7, BOARD_Z + 6, BOARD_Y - 1.2, BOARD_Z + 155), (iy - 10, iz - 14, iy + 10, iz + 14),
-            (iy, iz - 20, 3.4), (iy, iz + 20, 3.4)]
+    rear = [(IO_Y[0], IO_Z[0], IO_Y[1], IO_Z[1]), (iy - 14, iz - 10, iy + 14, iz + 10),
+            (iy - 20, iz, 3.4), (iy + 20, iz, 3.4)]
     s += cut("rear-cuts", REAR, rear, 5, ["core"])
     pad = near(FEET, FOOT_PAD + HEX_AF / 2)
     nut = near([SCREW], 9)
@@ -226,14 +239,14 @@ def top_mesh():
 
 
 def tray():
-    """A flat plate the length of the case against the side wall, with one flange at the rear."""
+    """A flat plate the length of the case against the side wall. No flange at the rear: the I/O
+    aperture's keepout reaches to within 5 mm of it."""
     x0, x1 = GAP, LX - GAP
     s = [("sketch.create", {"plane": plane([x0, 0, 0], [0, 1, 0], [0, 0, 1]), "name": "tray-profile"}),
          ("sketch.line", {"points": [[TRAY_Y, GAP], [TRAY_Y, LZ - GAP]]}),
          ("sketch.finish", {}),
          ("sheet.flange", {"sketch": "tray-profile", "curves": ["l1"], "distance": str(x1 - x0),
-                           "body_name": "tray"}),
-         ("sheet.flange", {"body": "tray", "height": str(FLANGE + 2), "edges": [[x0, TRAY_Y, LZ / 2]]})]
+                           "body_name": "tray"})]
     holes = [(BOARD_X + u, BOARD_Z + BOARD - v, 4.22) for u, v in BOARD_HOLES]
     s += cut("tray-cuts", TRAY, holes, 5, ["tray"])
     return s
@@ -283,11 +296,10 @@ def shell():
 
 
 def rivets():
-    """Holes shared by the tray and the panels it is fastened to: the rear panel and the side lips."""
-    s = cut("rear-rivets", REAR, [(TRAY_Y - 6.5, z, 3.3) for z in (40, 105, 170)], 6.5, ["core", "tray"])
-    s += cut("lip-rivets", SIDE, [(x, z, 3.3) for x in (40, LX / 2, LX - 40) for z in (7, LZ - 8)], 4.6,
-             ["core", "tray"])
-    return s
+    """Holes shared by the tray and what it is fastened to: the rear panel's side flange and the side lips
+    of the top and bottom panels, all of them under the shell."""
+    pts = [(x, z, 3.3) for x in (40, LX / 2, LX - 40) for z in (7, LZ - 8)] + [(5.0, z, 3.3) for z in (40, 105, 170)]
+    return cut("tray-rivets", SIDE, pts, 4.6, ["core", "tray"])
 
 
 def bought_in():
@@ -295,12 +307,18 @@ def bought_in():
     hx, hz = bx + 18.54, bz + BOARD - 136.06     # fan duct square from Framework's drawing
     cx, cz = hx + 63.1, hz + 63.1
     hy = BOARD_Y - HEATSINK
-    s = box("ref-mainboard", "#2f7d4f", bx, bx + BOARD, BOARD_Y, BOARD_Y + PCB, bz, bz + BOARD)
-    s += box("ref-heatsink", "#b8bcc2", hx, hx + 126.2, hy, BOARD_Y, hz, hz + 126.2)
+    if WITH_BOARD:
+        # The file has the board in its XZ plane, parts toward +Y, ports along its low-Z edge, with
+        # the board's top face at y 10.9 and its corners at x -178.6..-8.6, z 1.7..171.7.
+        s = [("file.insert_step", {"path": MAINBOARD_STEP, "name": "framework-mainboard", "matrix": [
+            0, 0, 1, bx - 1.7, 0, -1, 0, BOARD_Y + 10.9, 1, 0, 0, bz + 178.6]})]
+    else:
+        s = box("ref-mainboard", "#2f7d4f", bx, bx + BOARD, BOARD_Y, BOARD_Y + PCB, bz, bz + BOARD)
+        s += box("ref-rear-ports", "#7d8791", 0.2, 20, BOARD_Y - 31.1, BOARD_Y, bz + 11.5, bz + 143.9)
+    s += box("ref-heatsink", "#b8bcc2", hx, hx + 126.2, hy, BOARD_Y - 4, hz, hz + 126.2)
     s += box("ref-cpu-fan", "#c9a27a", cx - 60, cx + 60, hy - CPU_FAN, hy, cz - 60, cz + 60)
-    s += box("ref-rear-ports", "#7d8791", 0.2, 20, BOARD_Y - 31.1, BOARD_Y, bz + 8, bz + 152)
     s += box("ref-psu-sfx", "#2b2e33", PSU_X, PSU_X + PSU[0], PSU_Y, PSU_Y + PSU[1], PSU_TOP - PSU[2], PSU_TOP)
-    s += box("ref-mains-inlet", "#2b2e33", 0, 30, INLET[0] - 10, INLET[0] + 10, INLET[1] - 14, INLET[1] + 14)
+    s += box("ref-mains-inlet", "#2b2e33", 0, 30, INLET[0] - 14, INLET[0] + 14, INLET[1] - 10, INLET[1] + 10)
     for i, (fx, fy) in enumerate(BOTTOM_FANS):
         s += box("ref-fan-bottom-%d" % (i + 1), "#c9a27a", fx - 60, fx + 60, fy - 60, fy + 60, 0, FAN_T)
     fx, fy = TOP_FAN
@@ -340,9 +358,11 @@ def main():
         sc.batch(steps, name)
         print("built", name)
     sc.batch([("appearance.assign", {"bodies": SHEET, "color": OLIVE})], "paint")
-    sc.call("save", {"path": DESIGN})
+    sc.call("save", {"path": DESIGN_WITH_BOARD if WITH_BOARD else DESIGN})
 
     m = sc.call("measure", {"summary": True})
+    if WITH_BOARD:
+        return board_fit(sc, m)
     lo = [min(b["bbox"]["min"][i] for b in m["bodies"] if b["name"] in SHEET) for i in range(3)]
     hi = [max(b["bbox"]["max"][i] for b in m["bodies"] if b["name"] in SHEET) for i in range(3)]
     size = [hi[i] - lo[i] for i in range(3)]
@@ -357,11 +377,13 @@ def main():
     r = sc.call("execute", {"command": "inspect.interference", "params": {}})
     print("interference: %d overlapping pairs, %d not checked" % (len(r.get("interferences", [])),
                                                                   len(r.get("unchecked", []))))
-    for i in r.get("interferences", []):
+    made = lambda i: any(str(i.get(k, "")).split(" ")[0] in SHEET for k in ("a", "b"))
+    for i in filter(made, r.get("interferences", [])):
         print("  overlap %s / %s: %.1f mm3, box %s" % (i.get("a"), i.get("b"), i.get("volume_mm3", 0),
                                                          json.dumps(i.get("bbox"))[:160]))
-    for i in r.get("unchecked", []):
+    for i in filter(made, r.get("unchecked", [])):
         print("  not checked: %s / %s" % (i.get("a"), i.get("b")))
+    print("  (pairs between two bought-in parts are not listed)")
 
     for b in SHEET:
         f = sc.call("execute", {"command": "sheet.flat_pattern", "params": {"body": b}})
@@ -371,6 +393,33 @@ def main():
             "body": b, "path": os.path.join(EXPORT, b + "-bends.csv")}})
         print("%-8s flat %.1f x %.1f mm, %d bends, %d cut-outs" % (
             b, f["flat_size_mm"][0], f["flat_size_mm"][1], len(f.get("bends", [])), len(f.get("cutouts", []))))
+
+
+def board_fit(sc, m):
+    """How Framework's model of the board sits in the case, from its bodies' extents and its holes."""
+    ours = lambda n: n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-"))
+    parts = [b for b in m["bodies"] if not ours(b["name"])]
+    lo = [min(b["bbox"]["min"][i] for b in parts) for i in range(3)]
+    hi = [max(b["bbox"]["max"][i] for b in parts) for i in range(3)]
+    print("board and its parts: x %.2f..%.2f  y %.2f..%.2f  z %.2f..%.2f" % (lo[0], hi[0], lo[1], hi[1], lo[2], hi[2]))
+    holes = sc.call("body_topology", {"body": "LFSP0_MB_PCB", "faces": "cylinders"})
+    holes = [f for v in holes.values() if isinstance(v, list) for f in v if abs(f["radius"] - 1.98) < 0.01]
+    for u, v in BOARD_HOLES:
+        x, z = BOARD_X + u, BOARD_Z + BOARD - v
+        off = min(math.hypot(f["origin"][0] - x, f["origin"][2] - z) for f in holes)
+        print("standoff at x %.2f z %.2f: nearest board hole %.2f away" % (x, z, off))
+    print("rear panel: nearest part %.2f inside it" % lo[0])
+    for b in parts:
+        a, c = b["bbox"]["min"], b["bbox"]["max"]
+        if a[0] < 3 and "PCB" not in b["name"] and "EMN" not in b["name"]:
+            # a connector's legs go through the board, so only its body above the board is compared
+            print("  %-32s to aperture edges: %.1f above, %.1f at the board side, %.1f below, %.1f on top" % (
+                b["name"][:32], a[1] - IO_Y[0], IO_Y[1] - min(c[1], BOARD_Y), a[2] - IO_Z[0], IO_Z[1] - c[2]))
+    print("tray: nearest part %.2f from it" % (TRAY_Y - hi[1]))
+    print("open side: tallest part %.1f above the board, %.1f from the shell" % (BOARD_Y - lo[1], lo[1] + T + GAP))
+    print("bottom fans: lowest part %.1f above them" % (lo[2] - FAN_T))
+    print("top fan: highest part %.1f below it" % (LZ - FAN_T - hi[2]))
+    print("PSU fan face: %.1f from the nearest part" % (PSU_X - hi[0]))
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ ANSI_1252
   9
 $HANDSEED
   5
-56
+4F
   9
 $INSUNITS
  70
@@ -27,7 +27,7 @@ $EXTMIN
  10
 0.0
  20
--9.914336052702
+0.0
  30
 0.0
   9
@@ -87,7 +87,7 @@ AcDbViewportTableRecord
  12
 104.7
  22
-120.742831973649
+125.7
  13
 0.0
  23
@@ -113,7 +113,7 @@ AcDbViewportTableRecord
  37
 0.0
  40
-287.445769657972
+276.54
  41
 1.5
  42
@@ -265,7 +265,7 @@ LAYER
 100
 AcDbSymbolTable
  70
-6
+5
   0
 LAYER
   5
@@ -313,24 +313,6 @@ AcDbSymbolTableRecord
 100
 AcDbLayerTableRecord
   2
-BEND_NOTES
- 70
-0
- 62
-8
-  6
-Continuous
-  0
-LAYER
-  5
-2E
-330
-2A
-100
-AcDbSymbolTableRecord
-100
-AcDbLayerTableRecord
-  2
 BEND_UP
  70
 0
@@ -341,7 +323,7 @@ DASHED
   0
 LAYER
   5
-2F
+2E
 330
 2A
 100
@@ -359,7 +341,7 @@ Continuous
   0
 LAYER
   5
-30
+2F
 330
 2A
 100
@@ -381,7 +363,7 @@ TABLE
   2
 STYLE
   5
-31
+30
 330
 0
 100
@@ -391,9 +373,9 @@ AcDbSymbolTable
   0
 STYLE
   5
-32
-330
 31
+330
+30
 100
 AcDbSymbolTableRecord
 100
@@ -423,7 +405,7 @@ TABLE
   2
 VIEW
   5
-33
+32
 330
 0
 100
@@ -437,7 +419,7 @@ TABLE
   2
 UCS
   5
-34
+33
 330
 0
 100
@@ -451,7 +433,7 @@ TABLE
   2
 APPID
   5
-35
+34
 330
 0
 100
@@ -461,9 +443,9 @@ AcDbSymbolTable
   0
 APPID
   5
-36
-330
 35
+330
+34
 100
 AcDbSymbolTableRecord
 100
@@ -479,7 +461,7 @@ TABLE
   2
 DIMSTYLE
   5
-37
+36
 330
 0
 100
@@ -491,9 +473,9 @@ AcDbDimStyleTable
   0
 DIMSTYLE
 105
-38
-330
 37
+330
+36
 100
 AcDbSymbolTableRecord
 100
@@ -509,7 +491,7 @@ TABLE
   2
 BLOCK_RECORD
   5
-39
+38
 330
 0
 100
@@ -521,7 +503,7 @@ BLOCK_RECORD
   5
 20
 330
-39
+38
 100
 AcDbSymbolTableRecord
 100
@@ -533,7 +515,7 @@ BLOCK_RECORD
   5
 21
 330
-39
+38
 100
 AcDbSymbolTableRecord
 100
@@ -551,7 +533,7 @@ BLOCKS
   0
 BLOCK
   5
-3A
+39
 330
 20
 100
@@ -577,7 +559,7 @@ AcDbBlockBegin
   0
 ENDBLK
   5
-3B
+3A
 330
 20
 100
@@ -589,7 +571,7 @@ AcDbBlockEnd
   0
 BLOCK
   5
-3C
+3B
 330
 21
 100
@@ -617,7 +599,7 @@ AcDbBlockBegin
   0
 ENDBLK
   5
-3D
+3C
 330
 21
 100
@@ -637,6 +619,26 @@ ENTITIES
   0
 CIRCLE
   5
+3D
+330
+20
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+201.7
+ 20
+39.7
+ 30
+0.0
+ 40
+1.65
+  0
+CIRCLE
+  5
 3E
 330
 20
@@ -647,9 +649,9 @@ CUT
 100
 AcDbCircle
  10
-169.7
+201.7
  20
--5.614336052702
+125.7
  30
 0.0
  40
@@ -669,7 +671,7 @@ AcDbCircle
  10
 201.7
  20
-39.7
+211.7
  30
 0.0
  40
@@ -687,9 +689,9 @@ CUT
 100
 AcDbCircle
  10
-201.7
+169.7
  20
-125.7
+4.7
  30
 0.0
  40
@@ -707,9 +709,9 @@ CUT
 100
 AcDbCircle
  10
-201.7
+39.7
  20
-211.7
+4.7
  30
 0.0
  40
@@ -727,9 +729,9 @@ CUT
 100
 AcDbCircle
  10
-39.7
+6.7
  20
--5.614336052702
+39.7
  30
 0.0
  40
@@ -749,7 +751,7 @@ AcDbCircle
  10
 6.7
  20
-39.7
+125.7
  30
 0.0
  40
@@ -769,7 +771,7 @@ AcDbCircle
  10
 6.7
  20
-125.7
+211.7
  30
 0.0
  40
@@ -787,9 +789,9 @@ CUT
 100
 AcDbCircle
  10
-6.7
+104.7
  20
-211.7
+4.7
  30
 0.0
  40
@@ -807,13 +809,13 @@ CUT
 100
 AcDbCircle
  10
-104.7
+185.53
  20
--5.614336052702
+34.83
  30
 0.0
  40
-1.65
+2.11
   0
 CIRCLE
   5
@@ -829,7 +831,7 @@ AcDbCircle
  10
 185.53
  20
-34.72
+166.91
  30
 0.0
  40
@@ -847,9 +849,9 @@ CUT
 100
 AcDbCircle
  10
-185.53
+28.05
  20
-166.8
+11.97
  30
 0.0
  40
@@ -869,13 +871,13 @@ AcDbCircle
  10
 28.05
  20
-11.86
+166.91
  30
 0.0
  40
 2.11
   0
-CIRCLE
+LINE
   5
 4A
 330
@@ -883,17 +885,21 @@ CIRCLE
 100
 AcDbEntity
   8
-CUT
+OUTLINE
 100
-AcDbCircle
+AcDbLine
  10
-28.05
+0.0
  20
-166.8
+0.0
  30
 0.0
- 40
-2.11
+ 11
+209.4
+ 21
+0.0
+ 31
+0.0
   0
 LINE
   5
@@ -907,15 +913,15 @@ OUTLINE
 100
 AcDbLine
  10
-0.0
+209.4
  20
--0.314336052702
+0.0
  30
 0.0
  11
-0.0
+209.4
  21
--9.914336052702
+251.4
  31
 0.0
   0
@@ -931,15 +937,15 @@ OUTLINE
 100
 AcDbLine
  10
-0.0
+209.4
  20
--9.914336052702
+251.4
  30
 0.0
  11
-209.4
+0.0
  21
--9.914336052702
+251.4
  31
 0.0
   0
@@ -955,102 +961,6 @@ OUTLINE
 100
 AcDbLine
  10
-209.4
- 20
--9.914336052702
- 30
-0.0
- 11
-209.4
- 21
--0.314336052702
- 31
-0.0
-  0
-LINE
-  5
-4E
-330
-20
-100
-AcDbEntity
-  8
-OUTLINE
-100
-AcDbLine
- 10
-209.4
- 20
--0.314336052702
- 30
-0.0
- 11
-209.4
- 21
-2.4
- 31
-0.0
-  0
-LINE
-  5
-4F
-330
-20
-100
-AcDbEntity
-  8
-OUTLINE
-100
-AcDbLine
- 10
-209.4
- 20
-2.4
- 30
-0.0
- 11
-209.4
- 21
-251.4
- 31
-0.0
-  0
-LINE
-  5
-50
-330
-20
-100
-AcDbEntity
-  8
-OUTLINE
-100
-AcDbLine
- 10
-209.4
- 20
-251.4
- 30
-0.0
- 11
-0.0
- 21
-251.4
- 31
-0.0
-  0
-LINE
-  5
-51
-330
-20
-100
-AcDbEntity
-  8
-OUTLINE
-100
-AcDbLine
- 10
 0.0
  20
 251.4
@@ -1059,93 +969,9 @@ AcDbLine
  11
 0.0
  21
-2.4
+0.0
  31
 0.0
-  0
-LINE
-  5
-52
-330
-20
-100
-AcDbEntity
-  8
-OUTLINE
-100
-AcDbLine
- 10
-0.0
- 20
-2.4
- 30
-0.0
- 11
-0.0
- 21
--0.314336052702
- 31
-0.0
-  0
-LINE
-  5
-53
-330
-20
-100
-AcDbEntity
-  8
-BEND_DOWN
-100
-AcDbLine
- 10
-0.0
- 20
-1.042831973649
- 30
-0.0
- 11
-209.4
- 21
-1.042831973649
- 31
-0.0
-  0
-TEXT
-  5
-54
-330
-20
-100
-AcDbEntity
-  8
-BEND_NOTES
-100
-AcDbText
- 10
-104.7
- 20
-2.542831973649
- 30
-0.0
- 40
-3.0
-  1
-B1 DOWN 90%%d R1.2
- 50
-0.0
- 72
-1
- 11
-104.7
- 21
-2.542831973649
- 31
-0.0
-100
-AcDbText
- 73
-0
   0
 ENDSEC
   0
@@ -1165,11 +991,11 @@ AcDbDictionary
   3
 ACAD_GROUP
 350
-55
+4E
   0
 DICTIONARY
   5
-55
+4E
 330
 22
 100

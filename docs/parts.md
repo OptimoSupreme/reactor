@@ -27,18 +27,41 @@ ordinates run from 3.00 to 173.00.
 | Heatsink with 120 x 25 fan and duct | 75.88 to the top of the fan, 83.2 maximum | 6 |
 | Fan screws | M3 x 26.5, four | 6 |
 | Fan duct footprint | 126.2 square, from 21.54 and 12.84 on the drawing's axes | 6 |
-| Tallest part on top | 31.1 above the board; the drawing lists the stacked RJ45 and USB as 31 high | STEP, 1 |
+| Tallest part on top | 31.5 above the board; the drawing lists the stacked RJ45 and USB as 31 high | STEP, 1 |
 | Lowest part underneath | 8.4 below the board, the spring plate of the underside M.2 holder | STEP |
 
 The M.2 holder is deeper than a standard 6.35 standoff, so the board tray
-needs a relief or taller standoffs there. The STEP draws the board 2.0 thick
-where the drawing says 1.60; the drawing is taken as right.
+needs a relief or taller standoffs there. The board in the STEP is 1.60 thick,
+as the drawing says, with pads standing 0.4 above its top face.
 
 The heatsink's own footprint and the direction its fins run are not
 dimensioned anywhere published, so they have to be measured from the part.
 The 5.50 on sheet 6 is read as the board plus the bracket under it, which
 puts the heatsink top 48.88 above the board; that reading needs checking
 against the part too.
+
+## Mini-ITX fit
+
+From the ATX specification 2.03, section 3.3.5 and figure 4, which Mini-ITX
+shares for its rear panel:
+
+| What | Value |
+| --- | --- |
+| I/O aperture | 158.75 x 44.45 (6.25 x 1.75 in), +/-0.2; corners up to 0.99 radius |
+| Along the board | from 2.44 past the board's edge on the port side to 13.69 short of the slot side |
+| Across the board | its lower side 2.24 below the underside of the board (3.81 below the top of a 1.57 board) |
+| Keepout round it | 2.5 on both faces of the panel: no features, and no paint if a shield is to ground |
+| Rear panel thickness | 0.94 to 1.32, for the shield to clip in |
+| Rear holes to the panel | 12.27, so the board's rear edge is 2.11 from the panel |
+| Connector faces | 11.30 from the rear holes |
+
+The Framework board's own ports run from 11.5 to 143.9 along that edge and up
+to 31.5 above the board (from its STEP), inside the aperture. Its I/O shield is built on and does not come off, and
+fits the same aperture as a board with a loose shield (from Justin, who has
+the board).
+
+The case uses 10 standoffs where 6.35 is usual. The aperture is placed from
+the board, not the tray, so this does not affect fit.
 
 ## Fans
 

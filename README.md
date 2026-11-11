@@ -80,9 +80,11 @@ three, they win.
   follows the KXRORS M02: the board on a tray against one side wall, an SFX
   supply standing in front of it with its fan toward the board and its
   exhaust upward, two slim 120 mm fans in the bottom and one in the top. It
-  is four folded parts in 1.2 mm steel: a core (bottom, rear and top), the
-  tray, a bracket the supply hangs from, and a plain shell (front and sides)
-  that slides on from the front and is held by one thumbscrew underneath.
+  is five parts in 1.2 mm steel: a core (bottom, rear and top), the tray, a
+  bulkhead across the front that carries the supply's weight to the floor, a
+  shelf on the bulkhead that the supply hangs under, and a plain shell (front
+  and sides) that slides on from the front and is held by one thumbscrew
+  underneath.
 - `mechanical/mk1.py --board` builds the same case with Framework's own model
   of the mainboard in it and reports how it fits. That model is 73 MB, so it
   and the design it produces are kept outside the repo.

@@ -1,4 +1,4 @@
-"""Build the Reactor Mk I in SolidCraft: four folded sheet metal parts and the bought-in parts as blocks.
+"""Build the Reactor Mk I in SolidCraft: five sheet metal parts and the bought-in parts as blocks.
 
   python3 mechanical/mk1.py            build, save, check and export flat patterns
   python3 mechanical/mk1.py --board    the same case with Framework's model of the board in it, saved
@@ -60,7 +60,7 @@ PITCH_Y = FAN_HOLES / 2 / HEX_NY
 HEX_K = PITCH_Y / (PITCH_X * math.sqrt(3) / 2)
 MESH_EDGE = 10.5   # cell centres stay this far inside the cavity
 BOTTOM_FANS = [(LX / 2 - 5.5 * PITCH_X, LY / 2), (LX / 2 + 5.5 * PITCH_X, LY / 2)]
-TOP_FAN = (89.0, LY / 2)
+TOP_FAN = (LX / 2 - 3 * PITCH_X, LY / 2)        # three pitches from the middle, so the mesh mirrors front to back
 
 # SFX supply standing in front of the board: fan toward the board, exhaust and mains inlet up
 PSU_X = BOARD_X + BOARD + 8.0                  # no room for plugs on a board's front edge, by choice
@@ -68,10 +68,18 @@ PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
 PSU_Y = 0.7
 PSU_TOP = LZ - 35.0                            # room above for a right-angle mains plug
 PSU_HOLES = [(6.0, 6.0), (6.0, 119.0), (57.5, 6.0), (57.5, 119.0)]   # along X, Y from the PSU's corner
-BRACKET_X = (PSU_X - 1.0, PSU_X + PSU[0] + 2.5)
-BRACKET_FLANGE = 11.6
-STUDS = [(x, y) for x in (BRACKET_X[0] + 6, BRACKET_X[1] - 6) for y in (30.0, 98.0)]   # flush studs in the top panel
-GROMMET = (20.0, LZ - 17.0, 22.0)              # hole in the rear baffle for a cable grommet: Y, Z, diameter
+# The PSU's weight goes to the floor through a bulkhead just inside the front, not into the top mesh.
+BULKHEAD_X = (LX - 1.5, LX - 0.3)
+LIP_TOP, LIP_BOTTOM = 16.0, 28.0               # front lips of the top and bottom panels, which the bulkhead bolts to
+LIP_STUDS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - 8.0), (98.0, LZ - 8.0)]   # flush studs in those lips, Y and Z
+SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
+SHELF_FLANGE = 17.8   # stops just short of the next cell forward
+SHELF_TAB = 16.5   # a tab this wide is folded from the rear wall at each side, clear of every mesh cell but its screw's
+SHELF_RIVETS = [(y, PSU_TOP + 7.5) for y in (22.0, 63.0, 104.0)]   # shelf to bulkhead
+# two M3 screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
+# in the outermost row on each side, the rows the fan screws are in
+SHELF_SCREWS = [(TOP_FAN[0] + 8.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
+GROMMET = (20.0, LZ - 17.0, 22.0)              # hole in the shelf's rear wall for a cable grommet: Y, Z, diameter
 
 FEET = [(16, 24), (LX - 16, 24), (16, LY - 24), (LX - 16, LY - 24)]
 FOOT_PAD = 13.0    # solid land around each foot
@@ -150,11 +158,14 @@ def plane(origin, x_dir, y_dir):
 
 
 def cut(name, pl, shapes, depth, targets):
-    """Cut rectangles (x0, y0, x1, y1), circles (x, y, d) and hexagons ("hex", x, y) through the targets."""
+    """Cut rectangles (x0, y0, x1, y1), circles (x, y, d), hexagons ("hex", x, y) and outlines
+    ("poly", points) through the targets."""
     steps = [("sketch.create", {"plane": pl, "name": name})]
     r = HEX_AF / math.sqrt(3)
     for s in shapes:
-        if s[0] == "hex":
+        if s[0] == "poly":
+            steps.append(("sketch.line", {"points": s[1], "closed": True, "connect": False, "infer": False}))
+        elif s[0] == "hex":
             pts = [[round(s[1] + r * math.sin(math.radians(60 * k)), 4),
                     round(s[2] + HEX_K * r * math.cos(math.radians(60 * k)), 4)] for k in range(6)]
             steps.append(("sketch.line", {"points": pts, "closed": True, "connect": False, "infer": False}))
@@ -167,18 +178,20 @@ def cut(name, pl, shapes, depth, targets):
     return steps
 
 
-def mesh(fans, keep_out):
-    """Hexagons over the whole panel, with a round hole in place of the cell at each fan screw."""
+def mesh(fans, keep_out, other=()):
+    """Hexagons over the whole panel, with a round hole in place of the cell at each fan screw and at
+    each of the `other` screws (x, y, diameter)."""
     ax, ay = fans[0]
     h = FAN_HOLES / 2
-    screws = [(fx + i * h, fy + j * h) for fx, fy in fans for i in (-1, 1) for j in (-1, 1)]
+    screws = [(fx + i * h, fy + j * h, 4.5) for fx, fy in fans for i in (-1, 1) for j in (-1, 1)] + list(other)
     out = []
     for j in range(-int(LY / PITCH_Y), int(LY / PITCH_Y) + 1):
         for i in range(-int(LX / PITCH_X), int(LX / PITCH_X) + 1):
             x = ax + (i + (0.5 if j % 2 else 0)) * PITCH_X
             y = ay + j * PITCH_Y
-            if any(math.hypot(x - sx, y - sy) < 0.05 for sx, sy in screws):
-                out.append((round(x, 4), round(y, 4), 4.5))
+            at = [d for sx, sy, d in screws if math.hypot(x - sx, y - sy) < 0.05]
+            if at:
+                out.append((round(x, 4), round(y, 4), at[0]))
             elif (MESH_EDGE <= x <= LX - MESH_EDGE and MESH_EDGE <= y <= LY - MESH_EDGE
                   and not keep_out(x, y)):
                 out.append(("hex", x, y))
@@ -204,7 +217,7 @@ def near(points, r):
 
 
 def core():
-    """Bottom, rear and top in one part; the fans, the tray and the PSU bracket hang off it."""
+    """Bottom, rear and top in one part; the fans, the tray and the bulkhead fasten to it."""
     w = LY + 2 * T
     zt, xf = LZ + T, LX + T
     lip = lambda p: {"point": p, "height": str(SIDE_LIP)}
@@ -214,7 +227,7 @@ def core():
          ("sheet.flange", {"sketch": "core-profile", "curves": ["l1", "l2", "l3"], "distance": str(w),
                            "body_name": "core"}),
          ("sheet.flange", {"body": "core", "height": str(FLANGE), "flip": True, "edges": [
-             [xf, LY / 2, zt], [xf, LY / 2, -T],
+             {"point": [xf, LY / 2, zt], "height": str(LIP_TOP)}, {"point": [xf, LY / 2, -T], "height": str(LIP_BOTTOM)},
              lip([LX / 2, -T, zt]), lip([LX / 2, LY + T, zt]), lip([LX / 2, -T, -T]), lip([LX / 2, LY + T, -T]),
              [-T, -T, LZ / 2], [-T, LY + T, LZ / 2]]})]
     # rear panel: the standard I/O aperture and the mains inlet with its two screws
@@ -226,16 +239,16 @@ def core():
     nut = near([SCREW], 9)
     s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, lambda x, y: pad(x, y) or nut(x, y))
              + [(x, y, 4.0) for x, y in FEET] + [SCREW + (5.41,)], 5, ["core"])
-    s += cut("top-mesh", TOP, top_mesh() + [(x, y, 3.0) for x, y in STUDS], 6, ["core"])
-    # the top front lip steps back behind the switch so its nut has room
+    s += cut("top-mesh", TOP, top_mesh(), 6, ["core"])
+    # front lips: studs for the bulkhead, and the top one steps back behind the switch so its nut has room
     sy, sz = SWITCH
-    s += cut("switch-notch", plane([LX - 1.5, 0, 0], [0, 1, 0], [0, 0, 1]), [(sy - 10, sz - 2, sy + 10, sz + 9.5)], 3.5,
-             ["core"])
+    s += cut("front-lips", plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1]),
+             [(sy - 10, sz - 4, sy + 10, sz + 9.5)] + [(y, z, 3.0) for y, z in LIP_STUDS], 2.5, ["core"])
     return s
 
 
 def top_mesh():
-    return mesh([TOP_FAN], near(STUDS, 9))
+    return mesh([TOP_FAN], lambda x, y: False, [(x, y, 3.4) for x, y in SHELF_SCREWS])
 
 
 def tray():
@@ -252,29 +265,55 @@ def tray():
     return s
 
 
-def bracket():
-    """A channel hung from the top panel. The PSU screws up against its underside, exhaust face up, and its
-    two walls shut the space above the PSU off from the rest of the case, so the exhaust can only leave
-    through the top mesh. The shell's side and the tray close the ends."""
-    zt = LZ - 0.1
+def bulkhead():
+    """A flat plate across the front, floor to top panel, bolted to the front lips of both. It closes the
+    open end of the core, holds the top panel's front edge up, and carries the PSU shelf."""
     ya, yb = 0.4, TRAY_Y - GAP
-    xr, xf = BRACKET_X
-    f = BRACKET_FLANGE
-    s = [("sketch.create", {"plane": plane([0, yb, 0], [1, 0, 0], [0, 0, 1]), "name": "bracket-profile"}),
-         ("sketch.line", {"points": [[xf - f, zt], [xf, zt], [xf, PSU_TOP], [xr, PSU_TOP], [xr, zt], [xr + f, zt]]}),
+    x0, x1 = BULKHEAD_X
+    s = [("sketch.create", {"plane": plane([0, yb, 0], [1, 0, 0], [0, 0, 1]), "name": "bulkhead-profile"}),
+         ("sketch.line", {"points": [[x1, LZ - GAP], [x1, GAP]]}),
          ("sketch.finish", {}),
-         ("sheet.flange", {"sketch": "bracket-profile", "curves": ["l1", "l2", "l3", "l4", "l5"],
-                           "distance": str(yb - ya), "body_name": "bracket"})]
+         ("sheet.flange", {"sketch": "bulkhead-profile", "curves": ["l1"], "distance": str(yb - ya),
+                           "body_name": "bulkhead"})]
+    s += cut("bulkhead-cuts", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
+             [SWITCH + (18.0,)] + [(y, z, 3.4) for y, z in LIP_STUDS], T + 0.3, ["bulkhead"])
+    return s
+
+
+def shelf():
+    """The PSU screws up against its underside, exhaust face up. Its front flange is riveted to the bulkhead,
+    two tabs folded from its rear wall take screws down through the top panel, and that wall shuts the space above the PSU off from the rest of the case, so the exhaust can only
+    leave through the top mesh. The bulkhead, the shell's side and the tray close the other sides."""
+    zt = LZ - 0.1
+    zb = zt - 2 * T    # where the tabs' bends start
+    ya, yb = 0.4, TRAY_Y - GAP
+    xr, xf = SHELF_X
+    f = SHELF_FLANGE
+    s = [("sketch.create", {"plane": plane([0, yb, 0], [1, 0, 0], [0, 0, 1]), "name": "shelf-profile"}),
+         ("sketch.line", {"points": [[xf, PSU_TOP + 12], [xf, PSU_TOP], [xr, PSU_TOP], [xr, zb]]}),
+         ("sketch.finish", {}),
+         ("sheet.flange", {"sketch": "shelf-profile", "curves": ["l1", "l2", "l3"],
+                           "distance": str(yb - ya), "body_name": "shelf"})]
+    # The rear wall is straight, with a tab folded over at each side for the screws and a relief slot
+    # beside each. SolidCraft folds only one flange feature on a side of a panel and levels the whole
+    # side to where its bends start, so the straight part stops one bend (2.4) short of the tabs' tops
+    # and of the top panel. It could not be made to model the straight part carried on up.
+    a, b = ya + SHELF_TAB, yb - SHELF_TAB
+    s += cut("shelf-reliefs", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]),
+             [(a, zb - 3, a + 2, zb + 1), (b - 2, zb - 3, b, zb + 1)], 4, ["shelf"])
+    s += [("sheet.flange", {"body": "shelf", "height": str(f), "flip": True, "position": "outside", "edges": [
+        [xr, ya + SHELF_TAB / 2, zb], [xr, yb - SHELF_TAB / 2, zb]]})]
     web = [(PSU_X + 8, PSU_Y + 12, PSU_X + 55.5, PSU_Y + 113)]
     web += [(PSU_X + a, PSU_Y + b, 4.0) for a, b in PSU_HOLES]
-    s += cut("bracket-web", plane([0, 0, PSU_TOP - 2], [1, 0, 0], [0, 1, 0]), web, 5, ["bracket"])
-    # the flanges under the top panel get the panel's own hexagons, so they cover none of the mesh
-    # (a cell that reaches over a wall's bend is left alone: the wall is under it either way)
+    s += cut("shelf-web", plane([0, 0, PSU_TOP - 2], [1, 0, 0], [0, 1, 0]), web, 5, ["shelf"])
+    # Each tab loses the corners that would show in the cells beside its screw's. The cell behind the
+    # screw's is over the tab's root and bend, which have to be there.
     h, clear = HEX_AF / 2, 2 * T + 0.2
-    under = [c for c in top_mesh() if c[0] == "hex" and (xr + clear <= c[1] - h < xr + f or xf - f < c[1] + h <= xf - clear)]
-    s += cut("bracket-top", TOP, under + [(x, y, 3.4) for x, y in STUDS], 2.95, ["bracket"])
-    s += cut("bracket-cables", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]), [GROMMET], 4, ["bracket"])
-    s += cut("bracket-switch", plane([xf - 3, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (15.0,)], 4, ["bracket"])
+    beside = [c for c in top_mesh() if c[0] == "hex" and xr + clear <= c[1] - h < xr + f
+              and not ya + SHELF_TAB + 6 < c[2] < yb - SHELF_TAB - 6]
+    s += cut("shelf-tabs", plane([0, 0, zb + 0.5], [1, 0, 0], [0, 1, 0]),
+             beside + [(x, y, 4.22) for x, y in SHELF_SCREWS], 2 * T, ["shelf"])
+    s += cut("shelf-cables", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]), [GROMMET], 4, ["shelf"])
     return s
 
 
@@ -296,10 +335,13 @@ def shell():
 
 
 def rivets():
-    """Holes shared by the tray and what it is fastened to: the rear panel's side flange and the side lips
-    of the top and bottom panels, all of them under the shell."""
+    """Holes shared by the tray and what it is fastened to (the rear panel's side flange and the side lips
+    of the top and bottom panels, all of them under the shell), and by the shelf and the bulkhead."""
     pts = [(x, z, 3.3) for x in (40, LX / 2, LX - 40) for z in (7, LZ - 8)] + [(5.0, z, 3.3) for z in (40, 105, 170)]
-    return cut("tray-rivets", SIDE, pts, 4.6, ["core", "tray"])
+    s = cut("tray-rivets", SIDE, pts, 4.6, ["core", "tray"])
+    s += cut("shelf-rivets", plane([SHELF_X[1] - T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1]),
+             [(y, z, 3.3) for y, z in SHELF_RIVETS], 2 * T + GAP + 1, ["shelf", "bulkhead"])
+    return s
 
 
 def bought_in():
@@ -343,7 +385,7 @@ def bought_in():
     return s
 
 
-SHEET = ["core", "tray", "bracket", "shell"]
+SHEET = ["core", "tray", "bulkhead", "shelf", "shell"]
 
 
 def main():
@@ -353,7 +395,8 @@ def main():
     sc.call("new_design")
     sc.batch([("sheet.manage_rules", {"name": "CRS 1.2", "thickness": "%g mm" % T, "k_factor": "0.44",
                                       "bend_radius": "Thickness", "active": True})], "rule")
-    for name, steps in (("core", core()), ("tray", tray()), ("bracket", bracket()), ("shell", shell()),
+    for name, steps in (("core", core()), ("tray", tray()), ("bulkhead", bulkhead()), ("shelf", shelf()),
+                        ("shell", shell()),
                         ("rivets", rivets()), ("bought-in", bought_in())):
         sc.batch(steps, name)
         print("built", name)

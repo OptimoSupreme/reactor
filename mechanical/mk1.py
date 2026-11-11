@@ -73,7 +73,9 @@ BULKHEAD_X = (LX - 1.5, LX - 0.3)
 LIP_TOP, LIP_BOTTOM = 16.0, 28.0               # front lips of the top and bottom panels, which the bulkhead bolts to
 LIP_STUDS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - 8.0), (98.0, LZ - 8.0)]   # flush studs in those lips, Y and Z
 SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
-SHELF_FLANGE = 17.8   # stops just short of the next cell forward
+# The tabs end at the corner of the cell diagonally in front of their screw's, so that cell's cut-out
+# takes the tab's corner off at a slant and stops there, with no point left beyond it.
+SHELF_FLANGE = TOP_FAN[0] + 9 * PITCH_X - SHELF_X[0]
 SHELF_TAB = 16.5   # a tab this wide is folded from the rear wall at each side, clear of every mesh cell but its screw's
 SHELF_RIVETS = [(y, PSU_TOP + 7.5) for y in (22.0, 63.0, 104.0)]   # shelf to bulkhead
 # two M3 screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front

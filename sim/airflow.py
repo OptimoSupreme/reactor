@@ -2,8 +2,9 @@
 
 Two steps, each talking to a running desktop app over its MCP bridge:
 
-  python3 sim/airflow.py geometry SPACING            SolidCraft: build the airflow geometry
+  python3 sim/airflow.py geometry SPACING             SolidCraft: build the airflow geometry
   python3 sim/airflow.py run SPACING CASE [END_TIME]  FieldCraft: solve one case
+  python3 sim/airflow.py run SPACING CASE --estimate  the same set-up, memory estimate only
 
 SPACING is the grid in mm (1 for results, 2 only to check a set-up is stable).
 CASE is one of CASES below. SOLIDCRAFT_MCP and FIELDCRAFT_MCP hold the command
@@ -15,13 +16,17 @@ zone carrying its pressure-flow curve, and the solver finds where the curves
 meet the case's resistance. Open inlets and outlets would not stay stable in
 the nova-reactor study, which this set-up follows.
 
-Simplified against mechanical/mk1.py: sheet is two cells thick so the grid
-cannot leak through it, the hex mesh is a pressure loss over each panel's
-meshed area, the PSU is a solid block (its own fan and exhaust are not
-modelled), and the heatsink is a base with coarse horizontal fins.
+Simplified against mechanical/mk1.py:
+- sheet is two cells thick so the grid cannot leak through it, with the tray
+  merged into the side wall behind it and the bulkhead into the front;
+- the hex mesh is a pressure loss over each panel's meshed area;
+- the PSU is an empty box with its fan in the face toward the board, a loss
+  standing in for its insides, and the shelf's opening above it. Its fan and
+  that loss are assumptions, not data for any real unit;
+- the heatsink is a base with coarse horizontal fins;
+- no cables.
 """
 import json
-import math
 import os
 import sys
 
@@ -35,74 +40,40 @@ PA = 1e-6
 M3H = 1e9 / 3600     # mm3/s
 AIR_DENSITY, AIR_VISCOSITY = 1.16e-12, 1.85e-11
 
-# Shut-off pressure (mm H2O) and free flow (m3/h) at full speed, from Noctua's
-# specifications. Noctua publishes no curve between the two, so a straight line is assumed.
-NF_A14 = (2.08, 140.2)       # 1500 rpm
-NF_A12X15 = (1.53, 94.2)     # 1850 rpm
+# Shut-off pressure (mm H2O) and free flow (m3/h) at full speed. Noctua publishes no curve between
+# the two for the NF-A12x15 (1850 rpm), so a straight line is assumed.
+NF_A12X15 = (1.53, 94.2)
+PSU_FAN = (2.0, 60.0)        # assumed: a 92 mm fan of the kind SFX units carry
+PSU_FAN_SIZE = 88.0          # opening in the PSU's face
+PSU_LOSS = 8.0               # assumed loss coefficient for the PSU's insides
 
-# Thin perforated plate at 70 % open (10.4 mm hexagons on a 12.45 x 10.375 pitch), Idelchik.
+# Thin perforated plate at about 70 % open, Idelchik.
 MESH_LOSS = 1.2
 
-# Fan speeds as a fraction of full: bottom, top, CPU. None leaves the fan out (its frame stays).
+# Fan speeds as a fraction of full: bottom pair, top, CPU, PSU. None leaves the fan out (its frame stays).
 CASES = {
-    "all-100": (1.0, 1.0, 1.0),
-    "all-50": (0.5, 0.5, 0.5),
-    "cpu-only-100": (None, None, 1.0),
-    "bottom-only-100": (1.0, None, 1.0),
+    "all-100": (1.0, 1.0, 1.0, 1.0),
+    "all-50": (0.5, 0.5, 0.5, 0.5),
+    "no-case-fans": (None, None, 1.0, 1.0),
+    "bottom-only": (1.0, None, 1.0, 1.0),
 }
 
 X0, X1 = -M.T, M.SHELL_XF
 Y0, Y1 = M.SHELL_Y0, M.SHELL_Y1
 Z0, Z1 = M.SHELL_Z0, M.SHELL_Z1
 FLOOR = -20.0
-BOX_MIN, BOX_MAX = [-32, -34, FLOOR], [208, 238, 300]
-MESH_X, MESH_Y = (10, M.LX - 10), (10, M.LY - 10)
-FX, FY = M.CENTRE
+BOX_MIN, BOX_MAX = [-32, -34, FLOOR], [288, 166, 272]
+MESH_X, MESH_Y = (6, M.LX - 6), (6, M.LY - 6)
 HX, HZ = M.BOARD_X + 18.54, M.BOARD_Z + M.BOARD - 136.06
+HY = M.BOARD_Y - M.HEATSINK
 CX, CZ = HX + 63.1, HZ + 63.1
+PSU_Z = M.PSU_TOP - M.PSU[2]
+PSU_C = (M.PSU_Y + M.PSU[1] / 2, PSU_Z + M.PSU[2] / 2)   # centre of its fan, Y and Z
+PSU_FAN_T = 15.0
 
 
 def geometry_path(spacing):
     return os.path.join(OUT, "airflow-mk1-%gmm.solidcraft" % spacing)
-
-
-def solids(w):
-    """(name, x0, x1, y0, y1, z0, z1) for every obstacle, with sheet w thick."""
-    b = []
-    b.append(("A_side_cpu", X0, X1, Y0, Y0 + w, Z0, Z1))
-    b.append(("A_side_psu", X0, X1, Y1 - w, Y1, Z0, Z1))
-    b.append(("A_front", X1 - w, X1, Y0, Y1, Z0, Z1))
-    b.append(("A_rear", X0, X0 + w, Y0, Y1, Z0, Z1))
-    for n, za, zb in (("bottom", Z0, Z0 + w), ("top", Z1 - w, Z1)):
-        b.append(("A_%s_a" % n, X0, X1, Y0, MESH_Y[0], za, zb))
-        b.append(("A_%s_b" % n, X0, X1, MESH_Y[1], Y1, za, zb))
-        b.append(("A_%s_c" % n, X0, MESH_X[0], MESH_Y[0], MESH_Y[1], za, zb))
-        b.append(("A_%s_d" % n, MESH_X[1], X1, MESH_Y[0], MESH_Y[1], za, zb))
-    for n, za, zb in (("fanb", Z0 + w, M.FAN_T), ("fant", M.LZ - M.FAN_T, Z1 - w)):
-        b += frame("A_%s" % n, "z", FX, FY, 70, w, za, zb)
-    b += frame("A_fanc", "y", CX, CZ, 60, w, M.PLENUM, M.PLENUM + M.CPU_FAN)
-    # tray with its cable opening, shelf, PSU
-    ty = M.PSU_Y - w
-    b.append(("A_tray_a", 0, 142, ty, M.PSU_Y, M.BASE, M.TRAY_TOP))
-    b.append(("A_tray_b", 160, M.LX, ty, M.PSU_Y, M.BASE, M.TRAY_TOP))
-    b.append(("A_tray_c", 142, 160, ty, M.PSU_Y, M.BASE, 60))
-    b.append(("A_tray_d", 142, 160, ty, M.PSU_Y, 130, M.TRAY_TOP))
-    b.append(("A_shelf", 0, M.LX, M.PSU_Y, M.PSU_Y + M.PSU[1], M.SHELF_Z - w, M.SHELF_Z))
-    b.append(("A_psu", 0, M.PSU[0], M.PSU_Y, M.PSU_Y + M.PSU[1], M.SHELF_Z, M.SHELF_Z + M.PSU[2]))
-    # board, ports, heatsink
-    bz = M.BOARD_Z
-    b.append(("A_board", M.BOARD_X, M.BOARD_X + M.BOARD, M.BOARD_Y, M.BOARD_Y + w, bz, bz + M.BOARD))
-    b.append(("A_ports", 0, 20, M.BOARD_Y - 31.1, M.BOARD_Y, bz + 8, bz + 152))
-    hy = M.BOARD_Y - M.HEATSINK
-    b.append(("A_hs_base", HX, HX + 126.2, M.BOARD_Y - 6, M.BOARD_Y, HZ, HZ + 126.2))
-    z, i = HZ, 0
-    while z + w <= HZ + 126.2:
-        b.append(("A_hs_fin%02d" % i, HX, HX + 126.2, hy, M.BOARD_Y - 6, z, z + w))
-        z += 3 * w
-        i += 1
-    for i, (x, y) in enumerate(M.FEET):
-        b.append(("A_foot%d" % i, x - 9, x + 9, y - 9, y + 9, FLOOR, Z0))
-    return b
 
 
 def frame(name, axis, c1, c2, half, w, a, b):
@@ -112,11 +83,61 @@ def frame(name, axis, c1, c2, half, w, a, b):
                                           (c1 - half, c1 + half, c2 + half - w, c2 + half),
                                           (c1 - half, c1 - half + w, c2 - half + w, c2 + half - w),
                                           (c1 + half - w, c1 + half, c2 - half + w, c2 + half - w))):
+        n = "%s_%d" % (name, k)
         if axis == "z":
-            out.append(("%s_%d" % (name, k), p0, p1, q0, q1, a, b))
+            out.append((n, p0, p1, q0, q1, a, b))
+        elif axis == "y":
+            out.append((n, p0, p1, a, b, q0, q1))
         else:
-            out.append(("%s_%d" % (name, k), p0, p1, a, b, q0, q1))
+            out.append((n, a, b, p0, p1, q0, q1))
     return out
+
+
+def ring(name, x0, x1, y0, y1, hx0, hx1, hy0, hy1, za, zb):
+    """A horizontal plate with a rectangular hole in it."""
+    return [(name + "_a", x0, x1, y0, hy0, za, zb), (name + "_b", x0, x1, hy1, y1, za, zb),
+            (name + "_c", x0, hx0, hy0, hy1, za, zb), (name + "_d", hx1, x1, hy0, hy1, za, zb)]
+
+
+def solids(w):
+    """(name, x0, x1, y0, y1, z0, z1) for every obstacle, with sheet w thick."""
+    b = [("A_side_open", X0, X1, Y0, Y0 + w, Z0, Z1),
+         ("A_side_tray", X0, X1, min(M.TRAY_Y, Y1 - w), Y1, Z0, Z1),
+         ("A_front", min(M.BULKHEAD_X[0], X1 - w), X1, Y0, Y1, Z0, Z1),
+         ("A_rear", X0, X0 + w, Y0, Y1, Z0, Z1)]
+    b += ring("A_bottom", X0, X1, Y0, Y1, MESH_X[0], MESH_X[1], MESH_Y[0], MESH_Y[1], Z0, Z0 + w)
+    b += ring("A_top", X0, X1, Y0, Y1, MESH_X[0], MESH_X[1], MESH_Y[0], MESH_Y[1], Z1 - w, Z1)
+    for i, (fx, fy) in enumerate(M.BOTTOM_FANS):
+        b += frame("A_fanb%d" % i, "z", fx, fy, 60, w, Z0 + w, M.FAN_T)
+    b += frame("A_fant", "z", M.TOP_FAN[0], M.TOP_FAN[1], 60, w, M.LZ - M.FAN_T, Z1 - w)
+    b += frame("A_fanc", "y", CX, CZ, 60, w, HY - M.CPU_FAN, HY)
+    # board, ports, mains inlet, heatsink
+    bz = M.BOARD_Z
+    b.append(("A_board", M.BOARD_X, M.BOARD_X + M.BOARD, M.BOARD_Y, M.BOARD_Y + w, bz, bz + M.BOARD))
+    b.append(("A_ports", 0, 20, M.BOARD_Y - 31.5, M.BOARD_Y, bz + 11.5, bz + 143.9))
+    b.append(("A_inlet", 0, 30, M.INLET[0] - 14, M.INLET[0] + 14, M.INLET[1] - 10, M.INLET[1] + 10))
+    b.append(("A_hs_base", HX, HX + 126.2, M.BOARD_Y - 6, M.BOARD_Y, HZ, HZ + 126.2))
+    z, i = HZ, 0
+    while z + w <= HZ + 126.2:
+        b.append(("A_hs_fin%02d" % i, HX, HX + 126.2, HY, M.BOARD_Y - 6, z, z + w))
+        z += 3 * w
+        i += 1
+    # PSU: a box open at the top, its fan in the face toward the board
+    px0, px1 = M.PSU_X, M.PSU_X + M.PSU[0]
+    py0, py1 = M.PSU_Y, M.PSU_Y + M.PSU[1]
+    b.append(("A_psu_floor", px0, px1, py0, py1, PSU_Z, PSU_Z + w))
+    b.append(("A_psu_front", px1 - w, px1, py0, py1, PSU_Z + w, M.PSU_TOP))
+    h = PSU_FAN_SIZE / 2
+    cy, cz = PSU_C
+    b += [("A_psu_face_a", px0, px0 + w, py0, py1, PSU_Z + w, cz - h), ("A_psu_face_b", px0, px0 + w, py0, py1, cz + h, M.PSU_TOP),
+          ("A_psu_face_c", px0, px0 + w, py0, cy - h, cz - h, cz + h), ("A_psu_face_d", px0, px0 + w, cy + h, py1, cz - h, cz + h)]
+    # shelf: its web with the opening over the PSU, and its rear wall, which stops short of the top panel
+    sx0, sx1 = M.SHELF_X
+    b += ring("A_shelf", sx0, sx1, Y0 + w, M.TRAY_Y, px0 + 8, px0 + 55.5, py0 + 12, py0 + 113, M.PSU_TOP, M.PSU_TOP + w)
+    b.append(("A_shelf_wall", sx0, sx0 + w, Y0 + w, M.TRAY_Y, M.PSU_TOP + w, M.LZ - 0.1 - 2 * M.T))
+    for i, (x, y) in enumerate(M.FEET):
+        b.append(("A_foot%d" % i, x - 9, x + 9, y - 9, y + 9, FLOOR, Z0))
+    return b
 
 
 def geometry(spacing):
@@ -144,6 +165,28 @@ def curve(fan, s):
     return [[0, fan[0] * 9.80665 * PA * s * s], [fan[1] * M3H * s, 0]]
 
 
+def fans(case, w):
+    sb, st, sc_, sp = CASES[case]
+    out = []
+    if sb:
+        for i, (fx, fy) in enumerate(M.BOTTOM_FANS):
+            out.append({"name": "bottom%d" % (i + 1), "min": [fx - 60 + w, fy - 60 + w, Z0 + w],
+                        "max": [fx + 60 - w, fy + 60 - w, M.FAN_T], "direction": "+z", "curve": curve(NF_A12X15, sb)})
+    if st:
+        fx, fy = M.TOP_FAN
+        out.append({"name": "top", "min": [fx - 60 + w, fy - 60 + w, M.LZ - M.FAN_T],
+                    "max": [fx + 60 - w, fy + 60 - w, Z1 - w], "direction": "+z", "curve": curve(NF_A12X15, st)})
+    if sc_:
+        out.append({"name": "cpu", "min": [CX - 60 + w, HY - M.CPU_FAN, CZ - 60 + w],
+                    "max": [CX + 60 - w, HY, CZ + 60 - w], "direction": "+y", "curve": curve(NF_A12X15, sc_)})
+    if sp:
+        h = PSU_FAN_SIZE / 2
+        cy, cz = PSU_C
+        out.append({"name": "psu", "min": [M.PSU_X, cy - h, cz - h], "max": [M.PSU_X + PSU_FAN_T, cy + h, cz + h],
+                    "direction": "+x", "curve": curve(PSU_FAN, sp)})
+    return out
+
+
 def run(spacing, case, end_time):
     w = 2 * spacing
     fc = Field()
@@ -155,25 +198,18 @@ def run(spacing, case, end_time):
     except SystemExit as e:
         if "already exists" not in str(e):
             raise
-    sb, st, sc_ = CASES[case]
-    fans = []
-    if sb:
-        fans.append({"name": "bottom", "min": [FX - 70 + w, FY - 70 + w, Z0 + w], "max": [FX + 70 - w, FY + 70 - w, M.FAN_T],
-                     "direction": "+z", "curve": curve(NF_A14, sb)})
-    if st:
-        fans.append({"name": "top", "min": [FX - 70 + w, FY - 70 + w, M.LZ - M.FAN_T], "max": [FX + 70 - w, FY + 70 - w, Z1 - w],
-                     "direction": "+z", "curve": curve(NF_A14, st)})
-    if sc_:
-        fans.append({"name": "cpu", "min": [CX - 60 + w, M.PLENUM, CZ - 60 + w], "max": [CX + 60 - w, M.PLENUM + M.CPU_FAN, CZ + 60 - w],
-                     "direction": "+y", "curve": curve(NF_A12X15, sc_)})
-    loss = {"type": "loss_coefficient", "coefficient": MESH_LOSS}
+    mesh = {"type": "loss_coefficient", "coefficient": MESH_LOSS}
+    px0 = M.PSU_X + PSU_FAN_T + spacing
     name = "%s_%gmm" % (case, spacing)
     domain = {"name": name, "material": "Air", "min": BOX_MIN, "max": BOX_MAX, "spacing": spacing,
-              "obstacles": bodies, "fans": fans,
+              "obstacles": bodies, "fans": fans(case, w),
               "porous": [{"name": "mesh_bottom", "min": [MESH_X[0], MESH_Y[0], Z0], "max": [MESH_X[1], MESH_Y[1], Z0 + w],
-                          "axis": "z", "resistance": loss},
+                          "axis": "z", "resistance": mesh},
                          {"name": "mesh_top", "min": [MESH_X[0], MESH_Y[0], Z1 - w], "max": [MESH_X[1], MESH_Y[1], Z1],
-                          "axis": "z", "resistance": loss}]}
+                          "axis": "z", "resistance": mesh},
+                         {"name": "psu_insides", "min": [px0, M.PSU_Y, PSU_Z + w + 20],
+                          "max": [M.PSU_X + M.PSU[0] - w, M.PSU_Y + M.PSU[1], M.PSU_TOP - 20],
+                          "axis": "z", "resistance": {"type": "loss_coefficient", "coefficient": PSU_LOSS}}]}
     procedure = {"type": "fluid", "domain": name, "end_time": end_time, "time_step": 1e-5 * spacing,
                  "frames": 1,       # the app keeps every solved step's frames in memory
                  "collision": "hrr", "turbulence": {"type": "smagorinsky", "constant": 0.1}}
@@ -209,25 +245,25 @@ def run(spacing, case, end_time):
 
 
 def pictures(fc, name):
-    side = {"yaw": 0, "pitch": 0, "target": [88, 100, 140], "distance": 620}
-    end = {"yaw": 90, "pitch": 0, "target": [88, 102, 140], "distance": 620}
+    side = {"yaw": 0, "pitch": 0, "target": [128, 64, 110], "distance": 620}
+    end = {"yaw": 90, "pitch": 0, "target": [128, 64, 110], "distance": 520}
     fc.execute("results.streamlines", {"step": name, "show": False})
     for field, axis, pos, camera, tag in (
-            ("velocity", "y", 10, side, "cpu-plenum"), ("velocity", "y", 60, side, "heatsink"),
-            ("velocity", "y", 194, side, "psu-plenum"), ("velocity", "x", 88, end, "middle"),
-            ("pressure", "x", 88, end, "middle")):
+            ("velocity", "y", 24, side, "open-side"), ("velocity", "y", 90, side, "heatsink"),
+            ("pressure", "y", 24, side, "open-side"),
+            ("velocity", "x", 90, end, "board"), ("velocity", "x", 212, end, "psu")):
         fc.execute("view.hide", {"items": [{"kind": "body", "name": n} for n in (
-            ("A_side_cpu", "A_side_psu") if axis == "y" else ("A_front", "A_rear"))]})
+            ("A_side_open", "A_side_tray") if axis == "y" else ("A_front", "A_rear"))]})
         fc.execute("results.slice", {"step": name, "field": field, "axis": axis, "position": pos})
-        fc.call("screenshot", {"source": "model", "width": 1100, "height": 1300, "camera": camera,
+        fc.call("screenshot", {"source": "model", "width": 1300, "height": 1100, "camera": camera,
                                "path": os.path.join(OUT, "%s_%s_%s.png" % (name, field, tag))})
 
 
 if __name__ == "__main__":
-    a = sys.argv[1:]
+    a = [x for x in sys.argv[1:] if not x.startswith("--")]
     if a[:1] == ["geometry"] and len(a) == 2:
         geometry(float(a[1]))
     elif a[:1] == ["run"] and len(a) >= 3 and a[2] in CASES:
-        run(float(a[1]), a[2], float(a[3]) if len(a) > 3 and not a[3].startswith("-") else 0.6)
+        run(float(a[1]), a[2], float(a[3]) if len(a) > 3 else 0.6)
     else:
         raise SystemExit(__doc__)

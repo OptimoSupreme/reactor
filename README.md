@@ -93,8 +93,10 @@ three, they win.
 
 - [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts and
   where each came from, and says which are still placeholders.
-- [sim/airflow.py](sim/airflow.py) is the airflow set-up for the earlier ATX
-  layout and has not been brought over to this one yet.
+- [sim/airflow.py](sim/airflow.py) sets up the airflow study in FieldCraft.
+  FieldCraft accepts the set-up, but no case has been solved yet, so there
+  are no results. The power supply's fan and internal resistance in it are
+  assumptions.
 - [mechanical/layout-study.sc](mechanical/layout-study.sc) is the box study
   the layout was chosen from.
 

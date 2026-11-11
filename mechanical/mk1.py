@@ -79,7 +79,9 @@ SHELF_RIVETS = [(y, PSU_TOP + 7.5) for y in (22.0, 63.0, 104.0)]   # shelf to bu
 # two M3 screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
 # in the outermost row on each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 8.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
-GROMMET = (20.0, LZ - 17.0, 22.0)              # hole in the shelf's rear wall for a cable grommet: Y, Z, diameter
+# Hole in the shelf's rear wall for a cable grommet: Y, Z, diameter. Midway between the bend into the
+# shelf below it and the relief slot beside the tab above it.
+GROMMET = (20.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
 
 FEET = [(16, 24), (LX - 16, 24), (16, LY - 24), (LX - 16, LY - 24)]
 FOOT_PAD = 13.0    # solid land around each foot

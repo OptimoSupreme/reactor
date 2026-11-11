@@ -1,0 +1,5 @@
+.~*.lock
+..~*.tmp
+*.sc.bak
+sim/out/
+__pycache__/

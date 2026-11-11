@@ -64,13 +64,19 @@ corner: (6, 16), (6, 80), (144, 80), (120, 6). The 138, 114, 64, 16 and 6
 figures are in Intel's ATX12V design guide; which corner they start from comes
 from a secondary source, so the rear panel carries the pattern both ways up.
 
+SFX mounting holes, 6-32, on the 125 x 63.5 face: a 113 x 51.5 rectangle 6 in
+from each edge. The spacings are in Intel's SFX12V design guide, which calls
+out three holes; the bracket has all four corners.
+
 ## Fasteners and hardware
 
 | Part | Hole | Notes |
 | --- | --- | --- |
 | PEM BSO-M3-10 standoff | 4.22 +0.08 | sheet 1.0 or more, hole centre 6.0 or more from an edge |
 | PEM S-M4-1 nut | 5.41 +0.08 | sheet 0.97 or more, hole centre 6.9 or more from an edge |
-| 140 fan | four on 124.5 x 124.5 | 140 x 140 x 25 |
+| 120 fan | four on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
+| PEM FH-M3 and FH-M4 flush studs | 3.0 and 4.0 | for the PSU bracket and the feet; sizes not yet checked against PEM |
+| IEC C14 inlet, screw mount | 20 x 28 cut-out, screws 40 apart | placeholder, not from a datasheet |
 
 From PEM's product pages. Feet, rivets and the thumbscrew are placeholders.
 

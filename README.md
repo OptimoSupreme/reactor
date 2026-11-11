@@ -66,7 +66,8 @@ three, they win.
 
 ## Not decided
 
-- ATX or SFX for the power supply. The Mk I is drawn around ATX.
+- ATX or SFX for the power supply. The Mk I is drawn around SFX, after a
+  first attempt around ATX.
 - How it is made in the long run. The Mk I is folded sheet metal, leaning into
   a rugged look like military field equipment. Milled aluminium, like the COOJ
   MQ4, is still on the table for a later mark.
@@ -75,15 +76,17 @@ three, they win.
 
 - [mechanical/mk1.py](mechanical/mk1.py) builds the Mk I in SolidCraft:
   [mechanical/reactor-mk-i.sc](mechanical/reactor-mk-i.sc), with flat patterns
-  and bend tables in [mechanical/export/](mechanical/export/). It is three
-  folded parts in 1.2 mm steel: a core (bottom, rear and top) that carries
-  both 140 mm fans, the board tray and the power supply, a tray, and a plain
-  shell (front and sides) that slides on from the front and is held by one
-  thumbscrew underneath.
+  and bend tables in [mechanical/export/](mechanical/export/). The layout
+  follows the KXRORS M02: the board on a tray against one side wall, an SFX
+  supply standing in front of it with its fan toward the board and its
+  exhaust upward, two slim 120 mm fans in the bottom and one in the top. It
+  is four folded parts in 1.2 mm steel: a core (bottom, rear and top), the
+  tray, a bracket the supply hangs from, and a plain shell (front and sides)
+  that slides on from the front and is held by one thumbscrew underneath.
 - [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts and
   where each came from, and says which are still placeholders.
-- [sim/airflow.py](sim/airflow.py) sets up the airflow study in FieldCraft. It
-  has only had a coarse run to check it is stable; there are no results yet.
+- [sim/airflow.py](sim/airflow.py) is the airflow set-up for the earlier ATX
+  layout and has not been brought over to this one yet.
 - [mechanical/layout-study.sc](mechanical/layout-study.sc) is the box study
   the layout was chosen from.
 

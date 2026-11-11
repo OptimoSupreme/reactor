@@ -64,14 +64,6 @@ three, they win.
   top chip in the range, so the cooling is sized for more than the 385 needs.
 - No ports on the case itself, only a power button.
 
-## Not decided
-
-- ATX or SFX for the power supply. The Mk I is drawn around SFX, after a
-  first attempt around ATX.
-- How it is made in the long run. The Mk I is folded sheet metal, leaning into
-  a rugged look like military field equipment. Milled aluminium, like the COOJ
-  MQ4, is still on the table for a later mark.
-
 ## Where things are
 
 - [mechanical/mk1.py](mechanical/mk1.py) builds the Mk I in SolidCraft:

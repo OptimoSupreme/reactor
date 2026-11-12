@@ -10,6 +10,8 @@ import csv
 import datetime
 import math
 import os
+import shutil
+import time
 
 import matplotlib
 matplotlib.use("pdf")
@@ -350,7 +352,10 @@ def foot_sheet(pdf, n, total):
 def main():
     sc = mk1.Bridge()
     os.makedirs(VIEWS, exist_ok=True)
-    sc.call("open", {"path": DESIGN})
+    # a copy under a new name: opening DESIGN itself can land on a tab still showing an earlier build
+    fresh = os.path.join(VIEWS, "sheet-%d.sc" % time.time())
+    shutil.copy(DESIGN, fresh)
+    sc.call("open", {"path": fresh})
     m = sc.call("measure", {"summary": True})
     sizes = {}
     for b in m["bodies"]:
@@ -444,7 +449,7 @@ def main():
         for i, b in enumerate(SHEET):
             part_sheet(pdf, sc, b, sizes, 3 + i, total)
         foot_sheet(pdf, 3 + len(SHEET), total)
-    sc.call("save")
+    os.remove(fresh)
     print("wrote", PDF)
 
 

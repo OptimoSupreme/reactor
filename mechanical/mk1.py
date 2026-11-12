@@ -99,11 +99,12 @@ PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
 PSU_X = LX - T - 1.39 - PSU[0]
 PSU_Y = 0.7
 PSU_TOP = LZ - 35.0                            # room above for a right-angle mains plug
-# The three mounting holes of Intel's SFX12V guide, along X, Y from the PSU's corner: a pair at the open
-# side and one at the tray's. The shelf has the same three mirrored as well, so that it takes a unit
-# with all four corners threaded, or one whose pair turns out to be at the other end.
-PSU_HOLES = [(6.0, 6.0), (57.5, 6.0), (31.7, 119.0)]
-PSU_HOLES_SPARE = [(6.0, 119.0), (57.5, 119.0), (31.7, 6.0)]
+# The three mounting holes of Intel's SFX12V guide, along X, Y from the PSU's corner: a pair at the tray's
+# side and one at the open side, the end the guide draws the mains inlet at. With its fan toward the
+# board, the SF450 and the Focus SGX-550 both have the inlet at the open side. The shelf has the same
+# three mirrored as well, so that it takes a unit with all four corners threaded.
+PSU_HOLES = [(6.0, 119.0), (57.5, 119.0), (31.7, 6.0)]
+PSU_HOLES_SPARE = [(6.0, 6.0), (57.5, 6.0), (31.7, 119.0)]
 # The PSU's weight goes to the floor through a bulkhead just inside the front, not into the top mesh.
 BULKHEAD_X = (LX - T, LX)
 LIP_TOP, LIP_BOTTOM = 18.5, 28.0               # front lips of the top and bottom panels, which the bulkhead is fixed to
@@ -119,9 +120,9 @@ STUD_LENGTH = 6.35   # FH-632-4
 # two screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
 # in the outermost row on each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 9.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
-# Hole in the shelf's rear wall for a cable grommet: Y, Z, diameter. Midway between the bend into the
+# Hole in the shelf's rear wall for a cable grommet, behind the supply's inlet: Y, Z, diameter. Midway between the bend into the
 # shelf below it and the relief slot beside the tab above it.
-GROMMET = (95.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
+GROMMET = (33.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
 
 FEET = [(17, 25), (LX - 17, 25), (17, LY - 25), (LX - 17, LY - 25)]   # clear of the fan screws' heads
 FOOT_PAD = 12.0    # solid land around each foot: the nearest cell is 1.3 outside the foot's 20 mm flange
@@ -552,7 +553,7 @@ def fan(name, at, n):
 
 def psu():
     """SFX supply: fan and guard on the face toward the board; vents, inlet and switch on top, the inlet at
-    the end with one mounting hole as the SFX12V guide draws it."""
+    the open side and turned as on the SF450 and the Focus SGX-550 (2021)."""
     n = "ref-psu-sfx"
     yc, zc = PSU_Y + PSU[1] / 2, PSU_TOP - PSU[2] / 2
     s = box(n, "#2b2e33", PSU_X, PSU_X + PSU[0], PSU_Y, PSU_Y + PSU[1], PSU_TOP - PSU[2], PSU_TOP)
@@ -561,9 +562,14 @@ def psu():
         "corner": [round(x0, 3), round(y0, 3), round(z0, 3)], "operation": "cut", "targets": [n]})
     s += [("solid.cylinder", {"diameter": 90, "height": 16, "base": [PSU_X, yc, zc], "axis": [1, 0, 0],
                               "operation": "cut", "targets": [n]})]
-    s += [cutbox(PSU_X + 12 + 5 * i, PSU_X + 15 + 5 * i, PSU_Y + 13, PSU_Y + 77, PSU_TOP - 2, PSU_TOP) for i in range(9)]
-    s += [cutbox(PSU_X + 20, PSU_X + 44, PSU_Y + 95, PSU_Y + 113, PSU_TOP - 12, PSU_TOP)]
-    s += box("ref-psu-switch", "#111111", PSU_X + 25, PSU_X + 39, PSU_Y + 82, PSU_Y + 91, PSU_TOP, PSU_TOP + 1.5)
+    s += [cutbox(PSU_X + 12 + 5 * i, PSU_X + 15 + 5 * i, PSU_Y + 50, PSU_Y + 112, PSU_TOP - 2, PSU_TOP) for i in range(9)]
+    # C14 inlet: its pins in a row along the supply's width, the earth pin nearest the fan, switch beside it
+    ix, iy = PSU_X + 25, PSU_Y + 29
+    s += [cutbox(ix - 10, ix + 10, iy - 14, iy + 14, PSU_TOP - 16, PSU_TOP)]
+    s += box("ref-psu-pins", ZINC, ix - 4, ix, iy - 1, iy + 1, PSU_TOP - 16, PSU_TOP - 3)
+    s += [("solid.box", {"length": 4, "width": 2, "height": 13, "corner": [round(ix, 3), round(iy + d - 1, 3), PSU_TOP - 16],
+                         "operation": "join", "targets": ["ref-psu-pins"]}) for d in (-7, 7)]
+    s += box("ref-psu-switch", "#111111", PSU_X + 40, PSU_X + 53, PSU_Y + 20, PSU_Y + 39, PSU_TOP, PSU_TOP + 1.5)
     s += rotor("ref-psu-rotor", [PSU_X + 3, yc, zc], [1, 0, 0], 16, 43, 11, "#111111")
     g = "ref-psu-guard"
     s += [("sketch.create", {"plane": plane([PSU_X, yc, zc], [0, 1, 0], [0, 0, 1]), "name": "sk-" + g})]

@@ -23,7 +23,7 @@ ordinates run from 3.00 to 173.00.
 | Mounting holes | standard Mini-ITX pattern, 154.94 x 157.48 with the fourth hole 22.86 in from the corner; ø3.96 | 2 |
 | Heatsink holes | 78.00 x 87.00 rectangle | 2, 6 |
 | Component height limit, underside | 3.0 over most of the board | 3 |
-| Heatsink, no fan | 54.58 deep overall, 5.50 of it the bracket under the board | 6 |
+| Heatsink, no fan | 54.58 deep overall, 5.50 of it the bracket under the board; 123.75 x 123.15 across, six heat pipes (Framework's specification page) | 6 |
 | Heatsink with 120 x 25 fan and duct | 75.88 to the top of the fan, 83.2 maximum | 6 |
 | Fan screws | M3 x 26.5, four | 6 |
 | Fan duct footprint | 126.2 square, from 21.54 and 12.84 on the drawing's axes | 6 |
@@ -87,9 +87,20 @@ corner: (6, 16), (6, 80), (144, 80), (120, 6). The 138, 114, 64, 16 and 6
 figures are in Intel's ATX12V design guide; which corner they start from comes
 from a secondary source, so the rear panel carries the pattern both ways up.
 
-SFX mounting holes, 6-32, on the 125 x 63.5 face: a 113 x 51.5 rectangle 6 in
-from each edge. The spacings are in Intel's SFX12V design guide, which calls
-out three holes; the bracket has all four corners.
+SFX mounting holes, from Intel's SFX12V Power Supply Design Guide 3.1, figures
+17 and 18, read 2026-11-11: three 6-32 holes on the 125 x 63.5 face. Seen from
+outside with the fan side up and the origin at the lower left they are at
+(6.0, 6.0), (6.0, 57.5) and (119.0, 31.8). The shelf has those three and their mirror
+image, six holes, so it takes a unit with all four corners threaded or one
+whose pair is at the other end. The guide leaves the mains inlet's place on that face to
+the maker and draws it at the single-hole end, which here is the tray's side;
+the supply in the model follows the drawing, not a real unit. The envelope,
+125 x 63.5 x 100, is the guide's too, good to +/-1 on the whole numbers.
+
+The supply the cooling and noise figures assume is Corsair's SF750 (2024),
+whose fan Cybenetics measured stopped up to 300 W. Its inlet position, any
+extra mounting holes and its fan's place on the large face have not been
+checked against the part or a drawing.
 
 ## Fasteners and hardware
 
@@ -101,38 +112,51 @@ two and the four M2 screws that hold the shell.
 | --- | --- | --- | --- |
 | Fans, twelve | ordinary self-tapping fan screw, about 5 x 10 | the fan's own frame | 5.0 clearance |
 | Board, four | 6-32 | PEM BSO-632-12 standoff, 9.53 long, in the tray | 5.41 +0.08, 6.9 or more from an edge |
-| Supply, four | 6-32 | the supply's own threads | 4.0 clearance in the shelf |
-| Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge |
-| Bulkhead to front lips, four | none: a 6-32 nut on a stud | PEM FH-632-6 flush stud, 9.53 long, in the lips | 3.5 +0.08, 6.4 or more from an edge; 4.0 clearance in the bulkhead |
-| Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.4 clearance |
-| Shell, four | M2 socket head cap | a thread tapped in the top and bottom panels | 1.6 tap drill; 2.4 clearance in the shell's flange for the one that holds it |
+| Supply, three | 6-32 | the supply's own threads | 4.0 clearance in the shelf, six holes |
+| Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top panel |
+| Shelf to bulkhead, three | none: a 6-32 nut on a stud | PEM FH-632-4 flush-head stud, 6.35 long, in the bulkhead | 3.5 +0.08, 6.4 or more from an edge; 4.5 clearance in the shelf's flange |
+| Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
+| Shell, four | M2 socket head cap | a thread tapped in the top and bottom panels | 1.6 tap drill; 2.8 clearance in the shell's flange for the one that holds it |
 
-The PEM figures are from PEM's catalogue pages and its CL and FH datasheets,
-read 2026-11-11; all three take sheet from 1.02 up. The standoffs are 9.53
-where 6.35 is usual, to clear the M.2 holder. The 6-32 screw's head is drawn 8.0
-across its washer and the fan screw's 8.5 across, neither measured from a
-screw; at 8.5 a fan screw's head passes 0.2 from the shell's flange as the
-shell slides.
+The PEM figures are from PennEngineering's FH, CL and SO bulletins, read
+2026-11-11; all three take sheet from 1.02 up. The standoffs are 9.53 where
+6.35 is usual, to clear the M.2 holder. A 6-32 hex washer head is 2.0 to 2.4
+tall and 7.7 to 8.3 across its washer (ASME B18.6.3, from a reproduction of its
+table); it is drawn 2.8 and 8.0. The fan screw's head is drawn 8.5 across, not
+measured from a screw.
+
+The shelf has to come out with the supply on it, so nothing that holds it is
+permanent. A screw from the front would not do: its head is taller than the
+1.5 between the bulkhead and the shell. Flush-head studs in the bulkhead leave
+nothing in front of it, and the nuts go on behind the shelf's flange, reached
+with a spanner from the open side. No PEM 6-32 nut sits flush on both faces of
+1.2 sheet, which rules out a screw from behind into the bulkhead.
 
 Three of the M2 screws are nubs for the shell's slots to run onto, their
 heads (3.8 across, 2 tall) standing proud of the panel. The fourth goes up
 through the shell's flange and is tightened. Pressed-in pilot pins were ruled
 out for the nubs: PEM's TPS-3mm comes only 8 long and wants 6.4 from hole
-centre to edge, and not every shop stocks pins.
+centre to edge, and not every shop stocks pins. The slots are 0.5 clear of the
+nubs each side, since both parts are bent and a bend is good to about 0.4.
 
-The tray is riveted to the core under the shell, which sits 0.3 off it, so
-those nine rivets have to be flush on the outside, or be spot welds. The
-shelf is riveted to the bulkhead with three ordinary 3.2 rivets.
+The tray is spot welded to the core's side lips at nine places and the
+bulkhead to its front lips at four, with nothing standing proud under the
+shell. The lips that are welded are 17 tall (18.5 and 28 at the front), which
+leaves 14.6 or more of flat against the plate; a schedule for two 1.2 sheets
+asks for 14.3 of overlap, a nugget of about 6 and 22 between spots (Unitrol's
+reproduction of the RWMA table). Each weld is 9.5 from the panel its lip is
+folded from.
 
 | Part | Fit | Notes |
 | --- | --- | --- |
 | 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
-| Power button | 12.0 hole in the bulkhead, nut behind it; 13.0 hole in the shell for its head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn |
-| IEC C14 inlet, screw mount | 20 x 28 cut-out, screws 40 apart | placeholder, not from a datasheet |
-| Feet | 4.0 hole for a pressed-in M4 stud | placeholder |
+| Power button | 12.0 hole in the bulkhead, nut behind it; 13.0 hole in the shell for its head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. A common part of the kind (Multicomp Pro MP004450) has a 14 bezel, which the 13.0 hole would not pass: measure the head before ordering |
+| IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | Schurter 6100-3 (6100.3200 with 4.8 tabs), mounted from outside: flange 48 x 23, countersunk for M3, 23.5 behind the panel. From its datasheet, read 2026-11-11. The same cut-out takes Bulgin's PX0580 and Schurter's 6061. Ready-made C14 to angled C13 leads for small cases look the same but none publishes its hole spacing |
+| Feet | 4.0 hole | placeholder: no foot chosen. Stick-on bumpers such as 3M's SJ5514 (20.6 x 13.1) would need no hole |
 
 ## Still to collect
 
 - Heatsink footprint, height and fin direction, measured from the part.
-- Power supply envelopes and mounting holes from the form factor guides.
+- The chosen supply's inlet position and fan position, from the part.
+- The power button's head diameter, and a foot.
 - Any case fans, once the layout says whether it needs them.

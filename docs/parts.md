@@ -60,7 +60,7 @@ to 31.5 above the board (from its STEP), inside the aperture. Its I/O shield is 
 fits the same aperture as a board with a loose shield (from Justin, who has
 the board).
 
-The case uses 10 standoffs where 6.35 is usual. The aperture is placed from
+The case uses 9.53 standoffs where 6.35 is usual. The aperture is placed from
 the board, not the tray, so this does not affect fit.
 
 ## Fans
@@ -93,24 +93,46 @@ out three holes; the bracket has all four corners.
 
 ## Fasteners and hardware
 
-| Part | Hole | Notes |
+Every screw on the case is the 6-32 hex washer head screw used for PC cases
+and 3.5 in drives, 1/4 in long, apart from the fan screws, the mains inlet's
+two and the four M2 screws that hold the shell.
+
+| Where | Screw | Into | Hole in the sheet |
+| --- | --- | --- | --- |
+| Fans, twelve | ordinary self-tapping fan screw, about 5 x 10 | the fan's own frame | 5.0 clearance |
+| Board, four | 6-32 | PEM BSO-632-12 standoff, 9.53 long, in the tray | 5.41 +0.08, 6.9 or more from an edge |
+| Supply, four | 6-32 | the supply's own threads | 4.0 clearance in the shelf |
+| Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge |
+| Bulkhead to front lips, four | none: a 6-32 nut on a stud | PEM FH-632-6 flush stud, 9.53 long, in the lips | 3.5 +0.08, 6.4 or more from an edge; 4.0 clearance in the bulkhead |
+| Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.4 clearance |
+| Shell, four | M2 socket head cap | a thread tapped in the top and bottom panels | 1.6 tap drill; 2.4 clearance in the shell's flange for the one that holds it |
+
+The PEM figures are from PEM's catalogue pages and its CL and FH datasheets,
+read 2026-11-11; all three take sheet from 1.02 up. The standoffs are 9.53
+where 6.35 is usual, to clear the M.2 holder. The 6-32 screw's head is drawn 8.0
+across its washer and the fan screw's 8.5 across, neither measured from a
+screw; at 8.5 a fan screw's head passes 0.2 from the shell's flange as the
+shell slides.
+
+Three of the M2 screws are nubs for the shell's slots to run onto, their
+heads (3.8 across, 2 tall) standing proud of the panel. The fourth goes up
+through the shell's flange and is tightened. Pressed-in pilot pins were ruled
+out for the nubs: PEM's TPS-3mm comes only 8 long and wants 6.4 from hole
+centre to edge, and not every shop stocks pins.
+
+The tray is riveted to the core under the shell, which sits 0.3 off it, so
+those nine rivets have to be flush on the outside, or be spot welds. The
+shelf is riveted to the bulkhead with three ordinary 3.2 rivets.
+
+| Part | Fit | Notes |
 | --- | --- | --- |
-| PEM BSO-M3-10 standoff | 4.22 +0.08 | sheet 1.0 or more, hole centre 6.0 or more from an edge |
-| PEM S-M4-1 nut | 5.41 +0.08 | sheet 0.97 or more, hole centre 6.9 or more from an edge |
-| 120 fan | four on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
-| PEM FH-M3 and FH-M4 flush studs | 3.0 and 4.0 | for the PSU bracket and the feet; sizes not yet checked against PEM |
+| 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
+| Power button | 12.0 hole in the bulkhead, nut behind it; 13.0 hole in the shell for its head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn |
 | IEC C14 inlet, screw mount | 20 x 28 cut-out, screws 40 apart | placeholder, not from a datasheet |
-
-From PEM's product pages. Feet, rivets, and the M3 thumbscrew are placeholders.
-
-The three nubs the shell's slots run onto are M2 socket head cap screws in
-tapped holes, their heads (3.8 across, 2 tall) standing proud of the panel.
-Pressed-in pilot pins were ruled out: PEM's TPS-3mm comes only 8 long and
-wants 6.4 from hole centre to edge, and not every shop stocks pins.
+| Feet | 4.0 hole for a pressed-in M4 stud | placeholder |
 
 ## Still to collect
 
 - Heatsink footprint, height and fin direction, measured from the part.
 - Power supply envelopes and mounting holes from the form factor guides.
-- Power button.
 - Any case fans, once the layout says whether it needs them.

@@ -66,20 +66,25 @@ three, they win.
 
 ## Where things are
 
-- [mechanical/mk1.py](mechanical/mk1.py) builds the Mk I in SolidCraft:
-  [mechanical/reactor-mk-i.sc](mechanical/reactor-mk-i.sc), with flat patterns
-  and bend tables in [mechanical/export/](mechanical/export/). The layout
-  follows the KXRORS M02: the board on a tray against one side wall, an SFX
-  supply standing in front of it with its fan toward the board and its
-  exhaust upward, two slim 120 mm fans in the bottom and one in the top. It
-  is five parts in 1.2 mm steel: a core (bottom, rear and top), the tray, a
-  bulkhead across the front that carries the supply's weight to the floor, a
-  shelf on the bulkhead that the supply hangs under, and a plain shell (front
-  and sides) that slides on from the front. Slots in the shell's flanges run
-  onto pins at three of the rear corners, which stops the sides being pulled
-  open, and a thumbscrew at the fourth, underneath, keeps it from sliding
-  back off.
-- `mechanical/mk1.py --board` builds the same case with Framework's own model
+- [mechanical/mk1.py](mechanical/mk1.py) builds the Mk I in SolidCraft, as
+  two designs. [mechanical/reactor-mk-i.sc](mechanical/reactor-mk-i.sc) is
+  the sheet metal alone, which is what a shop would make, with flat patterns
+  and bend tables in [mechanical/export/](mechanical/export/).
+  [mechanical/reactor-mk-i-assembly.sc](mechanical/reactor-mk-i-assembly.sc)
+  is the same parts with the bought-in parts, screws, nuts and rivets in
+  place, for looking at and for checking that nothing clashes.
+
+  The layout follows the KXRORS M02: the board on a tray against one side
+  wall, an SFX supply standing in front of it with its fan toward the board
+  and its exhaust upward, two slim 120 mm fans in the bottom and one in the
+  top. It is five parts in 1.2 mm steel: a core (bottom, rear and top), the
+  tray, a bulkhead across the front that carries the supply's weight to the
+  floor, a shelf on the bulkhead that the supply hangs under, and a plain
+  shell (front and sides). The shell slides on from the front, slots in its
+  flanges running onto screw heads at three rear corners, and one small
+  screw underneath at the fourth holds it there. Apart from the fan screws and the
+  mains inlet's, every other screw is the 6-32 kind used all over PC cases.
+- `mechanical/mk1.py --board` builds the assembly with Framework's own model
   of the mainboard in it and reports how it fits. That model is 73 MB, so it
   and the design it produces are kept outside the repo.
 

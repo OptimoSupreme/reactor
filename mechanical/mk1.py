@@ -1,8 +1,11 @@
-"""Build the Reactor Mk I in SolidCraft: five sheet metal parts and the bought-in parts as blocks.
+"""Build the Reactor Mk I in SolidCraft, as two designs.
 
-  python3 mechanical/mk1.py            build, save, check and export flat patterns
-  python3 mechanical/mk1.py --board    the same case with Framework's model of the board in it, saved
-                                       outside the repo, and a report of how the board fits
+  python3 mechanical/mk1.py            reactor-mk-i.sc: the five sheet metal parts alone, which is what a
+                                       shop makes, with their flat patterns and bend tables; then
+                                       reactor-mk-i-assembly.sc: the same parts with the bought-in parts,
+                                       screws, nuts and rivets, to look at and to check for clashes
+  python3 mechanical/mk1.py --board    the assembly with Framework's model of the board in place of a
+                                       block, saved outside the repo, and a report of how the board fits
 
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
@@ -21,6 +24,7 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DESIGN = os.path.join(REPO, "mechanical", "reactor-mk-i.sc")
+ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-assembly.sc")
 EXPORT = os.path.join(REPO, "mechanical", "export")
 # Framework's own model of the board (CC BY 4.0), from github.com/FrameworkComputer/Framework-Desktop,
 # Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
@@ -36,10 +40,23 @@ LX, LY, LZ = 252.0, 128.0, 210.0   # cavity: rear to front, between the side lip
 FLANGE = 10.0
 SIDE_LIP = 14.0    # top and bottom panels' side lips, tall enough to fasten the tray to
 OLIVE = "#5a6332"
+BLACK = "#1b1b1b"
+ZINC = "#c8c8c8"
+
+# Every screw is the 6-32 hex washer head screw of PC cases and 3.5 in drives, apart from the M2 cap
+# screws that hold the shell, ordinary self-tapping fan screws, and the mains inlet's countersunk M3s. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
+CLEAR_632 = 4.0    # clearance hole
+NUT_632 = 4.76     # hole for an S-632 nut, 5.6 or more from an edge
+STUD_632 = 3.5     # hole for an FH-632 flush stud, 6.4 or more from an edge
+STANDOFF_632 = 5.41   # hole for a BSO-632 standoff, 6.9 or more from an edge
+SCREW_632 = 6.35   # the usual 1/4 in long
+FAN_CLEAR = 5.0    # for a self-tapping fan screw, which cuts its own thread in the fan's frame
+FAN_SCREW = 10.0
+M3_CLEAR = 3.4
 
 # Y stack: the tray stands against the far side wall and the board faces the other
 TRAY_Y = LY - GAP - 0.2 - T                    # tray face the standoffs sit in
-STANDOFF = 10.0    # clears the M.2 holder, 8.4 under the board
+STANDOFF = 9.53    # BSO-632-12, 3/8 in: clears the M.2 holder, 8.4 under the board
 PCB = 1.6
 BOARD_Y = TRAY_Y - STANDOFF - PCB              # component face of the board
 HEATSINK = 49.0    # placeholder, see docs/parts.md
@@ -76,9 +93,9 @@ SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
 # The tabs end at the corner of the cell diagonally in front of their screw's, so that cell's cut-out
 # takes the tab's corner off at a slant and stops there, with no point left beyond it.
 SHELF_FLANGE = TOP_FAN[0] + 9 * PITCH_X - SHELF_X[0]
-SHELF_TAB = 16.5   # a tab this wide is folded from the rear wall at each side, clear of every mesh cell but its screw's
+SHELF_TAB = 16.7   # a tab this wide is folded from the rear wall at each side: 5.6 from its nut to its edge
 SHELF_RIVETS = [(y, PSU_TOP + 7.5) for y in (22.0, 63.0, 104.0)]   # shelf to bulkhead
-# two M3 screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
+# two screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
 # in the outermost row on each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 8.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
 # Hole in the shelf's rear wall for a cable grommet: Y, Z, diameter. Midway between the bend into the
@@ -97,14 +114,18 @@ SHELL_RETURN = 9.5  # flanges over the top and under the bottom: narrow enough t
 # runs onto it as the shell slides home, so the sides cannot be pulled outward: X and Y. Each nub is the
 # head of an M2 socket cap screw (3.8 across, 2 tall) in a tapped hole, which any shop can make; pressed-in
 # pins come too long and want more edge distance than the flange leaves.
-PINS = [(6.0, 3.15), (6.0, LY - 3.15)]
+PINS = [(6.0, 3.0), (6.0, LY - 3.0)]
 PIN = 3.8
 PIN_TAP = 1.6      # tap drill for M2
-# The bottom corner on the open side has an M3 thumbscrew instead of a pin, up through a hole in the
-# flange into a thread in the bottom panel, which also keeps the shell from sliding back off. It sits
-# closer to the edge than the pins so that it clears the corner of the fan above it.
+# The bottom corner on the open side has the same M2 screw the other way up instead of a nub: up through
+# a hole in the flange into a thread in the bottom panel and tightened, which holds the shell on. It
+# sits closer to the edge than the nubs so that its end clears the corner of the fan above it.
 SCREW = (6.0, 2.5)
-SWITCH = (14.0, LZ - 14.0)   # 12 mm vandal switch, Y and Z on the front panel: top left seen from the front
+M2_CLEAR = 2.4
+# 12 mm vandal switch, Y and Z: top left seen from the front. It is fixed in the bulkhead with its nut
+# behind, and its head comes out through a larger hole in the shell, so the shell slides off over it.
+SWITCH = (14.0, LZ - 14.0)
+SWITCH_HOLE, SWITCH_SHELL, SWITCH_NUT = 12.0, 13.0, 16.0
 INLET = (26.0, FAN_T + 13.0)   # IEC C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 
 # Rear I/O aperture, ATX specification 2.03 figure 4: 6.25 x 1.75 in, its long side running from 2.44
@@ -173,12 +194,15 @@ def plane(origin, x_dir, y_dir):
 
 def cut(name, pl, shapes, depth, targets):
     """Cut rectangles (x0, y0, x1, y1), circles (x, y, d), hexagons ("hex", x, y) and outlines
-    ("poly", points) through the targets."""
+    ("poly", points) and rounded rectangles ("round", x0, y0, x1, y1, radius) through the targets."""
     steps = [("sketch.create", {"plane": pl, "name": name})]
     r = HEX_AF / math.sqrt(3)
     for s in shapes:
         if s[0] == "poly":
             steps.append(("sketch.line", {"points": s[1], "closed": True, "connect": False, "infer": False}))
+        elif s[0] == "round":
+            steps.append(("sketch.rectangle.rounded", {"p0": [s[1], s[2]], "p1": [s[3], s[4]], "radius": str(s[5]),
+                                                       "connect": False}))
         elif s[0] == "hex":
             pts = [[round(s[1] + r * math.sin(math.radians(60 * k)), 4),
                     round(s[2] + HEX_K * r * math.cos(math.radians(60 * k)), 4)] for k in range(6)]
@@ -197,7 +221,7 @@ def mesh(fans, keep_out, other=()):
     each of the `other` screws (x, y, diameter)."""
     ax, ay = fans[0]
     h = FAN_HOLES / 2
-    screws = [(fx + i * h, fy + j * h, 4.5) for fx, fy in fans for i in (-1, 1) for j in (-1, 1)] + list(other)
+    screws = [(fx + i * h, fy + j * h, FAN_CLEAR) for fx, fy in fans for i in (-1, 1) for j in (-1, 1)] + list(other)
     out = []
     for j in range(-int(LY / PITCH_Y), int(LY / PITCH_Y) + 1):
         for i in range(-int(LX / PITCH_X), int(LX / PITCH_X) + 1):
@@ -247,21 +271,21 @@ def core():
     # rear panel: the standard I/O aperture and the mains inlet with its two screws
     iy, iz = INLET
     rear = [(IO_Y[0], IO_Z[0], IO_Y[1], IO_Z[1]), (iy - 14, iz - 10, iy + 14, iz + 10),
-            (iy - 20, iz, 3.4), (iy + 20, iz, 3.4)]
+            (iy - 20, iz, M3_CLEAR), (iy + 20, iz, M3_CLEAR)]
     s += cut("rear-cuts", REAR, rear, 5, ["core"])
     pad = near(FEET, FOOT_PAD + HEX_AF / 2)
     s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, pad)
-             + [(x, y, 4.0) for x, y in FEET] + [SCREW + (2.5,), PINS[1] + (PIN_TAP,)], 5, ["core"])
+             + [(x, y, 4.0) for x, y in FEET] + [SCREW + (PIN_TAP,), PINS[1] + (PIN_TAP,)], 5, ["core"])
     s += cut("top-mesh", TOP, top_mesh() + [(x, y, PIN_TAP) for x, y in PINS], 6, ["core"])
-    # front lips: studs for the bulkhead, and the top one steps back behind the switch so its nut has room
+    # front lips: studs for the bulkhead, and the top one steps back round the switch's head
     sy, sz = SWITCH
     s += cut("front-lips", plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [(sy - 10, sz - 4, sy + 10, sz + 9.5)] + [(y, z, 3.0) for y, z in LIP_STUDS], 2.5, ["core"])
+             [(sy - 10, sz - 4, sy + 10, sz + 9.5)] + [(y, z, STUD_632) for y, z in LIP_STUDS], 2.5, ["core"])
     return s
 
 
 def top_mesh():
-    return mesh([TOP_FAN], lambda x, y: False, [(x, y, 3.4) for x, y in SHELF_SCREWS])
+    return mesh([TOP_FAN], lambda x, y: False, [(x, y, CLEAR_632) for x, y in SHELF_SCREWS])
 
 
 def tray():
@@ -273,7 +297,12 @@ def tray():
          ("sketch.finish", {}),
          ("sheet.flange", {"sketch": "tray-profile", "curves": ["l1"], "distance": str(x1 - x0),
                            "body_name": "tray"})]
-    holes = [(BOARD_X + u, BOARD_Z + BOARD - v, 4.22) for u, v in BOARD_HOLES]
+    holes = [(BOARD_X + u, BOARD_Z + BOARD - v, STANDOFF_632) for u, v in BOARD_HOLES]
+    # an opening to reach the back of the board: 10 inside the rear standoffs, 8 inside the upper and
+    # lower ones, and out to 4 short of the board's front edge
+    us, vs = [u for u, v in BOARD_HOLES], [v for u, v in BOARD_HOLES]
+    holes.append(("round", BOARD_X + min(us) + 10, BOARD_Z + BOARD - max(vs) + 8,
+                  BOARD_X + BOARD - 4, BOARD_Z + BOARD - min(vs) - 8, 8))
     s += cut("tray-cuts", TRAY, holes, 5, ["tray"])
     return s
 
@@ -289,7 +318,7 @@ def bulkhead():
          ("sheet.flange", {"sketch": "bulkhead-profile", "curves": ["l1"], "distance": str(yb - ya),
                            "body_name": "bulkhead"})]
     s += cut("bulkhead-cuts", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [SWITCH + (18.0,)] + [(y, z, 3.4) for y, z in LIP_STUDS], T + 0.3, ["bulkhead"])
+             [SWITCH + (SWITCH_HOLE,)] + [(y, z, CLEAR_632) for y, z in LIP_STUDS], T + 0.3, ["bulkhead"])
     return s
 
 
@@ -317,22 +346,43 @@ def shelf():
     s += [("sheet.flange", {"body": "shelf", "height": str(f), "flip": True, "position": "outside", "edges": [
         [xr, ya + SHELF_TAB / 2, zb], [xr, yb - SHELF_TAB / 2, zb]]})]
     web = [(PSU_X + 8, PSU_Y + 12, PSU_X + 55.5, PSU_Y + 113)]
-    web += [(PSU_X + a, PSU_Y + b, 4.0) for a, b in PSU_HOLES]
+    web += [(PSU_X + a, PSU_Y + b, CLEAR_632) for a, b in PSU_HOLES]
     s += cut("shelf-web", plane([0, 0, PSU_TOP - 2], [1, 0, 0], [0, 1, 0]), web, 5, ["shelf"])
     # Each tab loses the corners that would show in the cells beside its screw's. The cell behind the
     # screw's is over the tab's root and bend, which have to be there.
     h, clear = HEX_AF / 2, 2 * T + 0.2
     beside = [c for c in top_mesh() if c[0] == "hex" and xr + clear <= c[1] - h < xr + f
               and not ya + SHELF_TAB + 6 < c[2] < yb - SHELF_TAB - 6]
+    # The cells of the next row inward that start over the bend still catch the tab's edge with their
+    # points. A cut may not reach the bend, so only the point comes off the tab, and only forward of
+    # the bend; what is left in those cells is the bend itself.
+    rows = [y for x, y in SHELF_SCREWS]
+    v = HEX_K * HEX_AF / math.sqrt(3)
+    for c in top_mesh():
+        if (c[0] == "hex" and xr <= c[1] - h < xr + clear and min(abs(c[2] - y) for y in rows) > 1
+                and not ya + SHELF_TAB + 6 < c[2] < yb - SHELF_TAB - 6):
+            side = 1 if c[2] < LY / 2 else -1                      # which way the cell lies from its tab
+            edge = (ya + SHELF_TAB if side > 0 else yb - SHELF_TAB) + side * 0.3
+            tip = c[2] - side * v
+            dx = h * abs(edge - tip) / (v / 2)
+            x0 = xr + clear
+            pts = [[c[1] + dx, edge], [c[1], tip], [c[1] - dx, edge]]
+            if c[1] - dx < x0:   # clip at the bend
+                on = lambda p, q: [x0, p[1] + (q[1] - p[1]) * (x0 - p[0]) / (q[0] - p[0])]
+                pts = [pts[0]] + ([pts[1], on(pts[1], pts[2])] if c[1] > x0 else [on(pts[0], pts[1])]) + [[x0, edge]]
+            beside.append(("poly", [[round(x, 3), round(y, 3)] for x, y in pts]))
     s += cut("shelf-tabs", plane([0, 0, zb + 0.5], [1, 0, 0], [0, 1, 0]),
-             beside + [(x, y, 4.22) for x, y in SHELF_SCREWS], 2 * T, ["shelf"])
+             beside + [(x, y, NUT_632) for x, y in SHELF_SCREWS], 2 * T, ["shelf"])
     s += cut("shelf-cables", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]), [GROMMET], 4, ["shelf"])
+    # the front flange is scalloped under the switch, so a socket fits over its nut
+    s += cut("shelf-switch", plane([xf - T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (SWITCH_NUT + 5,)], T + 1,
+             ["shelf"])
     return s
 
 
 def shell():
-    """Front and both sides, plain. Slides on from the front, three of its flanges running onto pins at the
-    rear corners; a thumbscrew at the fourth corner, underneath, keeps it there."""
+    """Front and both sides, plain. Slides on from the front, three of its flanges running onto screw heads
+    at the rear corners; a screw at the fourth corner, underneath, keeps it there."""
     y0, y1, z0, z1 = SHELL_Y0, SHELL_Y1, SHELL_Z0, SHELL_Z1
     s = [("sketch.create", {"plane": plane([0, 0, z0], [1, 0, 0], [0, 1, 0]), "name": "shell-profile"}),
          ("sketch.line", {"points": [[-T, y1], [SHELL_XF, y1], [SHELL_XF, y0], [-T, y0]]}),
@@ -343,11 +393,11 @@ def shell():
              [LX / 2, y0, z1], [LX / 2, y1, z1]]}),
          ("sheet.flange", {"body": "shell", "height": str(SHELL_RETURN), "flip": True, "edges": [
              [LX / 2, y0, z0], [LX / 2, y1, z0]]})]
-    # slots open at the rear for the core's pins, and a hole for the thumbscrew
+    # slots open at the rear for the core's nubs, and a hole for the screw that holds it
     s += cut("shell-slots-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*p) for p in PINS], T + 1, ["shell"])
-    s += cut("shell-slots-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*PINS[1]), SCREW + (3.4,)], T + 1,
+    s += cut("shell-slots-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*PINS[1]), SCREW + (M2_CLEAR,)], T + 1,
              ["shell"])
-    s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (12.2,)], 5, ["shell"])
+    s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (SWITCH_SHELL,)], 5, ["shell"])
     return s
 
 
@@ -369,11 +419,13 @@ def slot(px, py):
     return ("poly", pts)
 
 
+TRAY_RIVETS = [(x, z, 3.3) for x in (40, LX / 2, LX - 40) for z in (7, LZ - 8)] + [(5.0, z, 3.3) for z in (40, 105, 170)]
+
+
 def rivets():
     """Holes shared by the tray and what it is fastened to (the rear panel's side flange and the side lips
     of the top and bottom panels, all of them under the shell), and by the shelf and the bulkhead."""
-    pts = [(x, z, 3.3) for x in (40, LX / 2, LX - 40) for z in (7, LZ - 8)] + [(5.0, z, 3.3) for z in (40, 105, 170)]
-    s = cut("tray-rivets", SIDE, pts, 4.6, ["core", "tray"])
+    s = cut("tray-rivets", SIDE, TRAY_RIVETS, 4.6, ["core", "tray"])
     s += cut("shelf-rivets", plane([SHELF_X[1] - T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1]),
              [(y, z, 3.3) for y, z in SHELF_RIVETS], 2 * T + GAP + 1, ["shelf", "bulkhead"])
     return s
@@ -393,41 +445,205 @@ def bought_in():
         s = box("ref-mainboard", "#2f7d4f", bx, bx + BOARD, BOARD_Y, BOARD_Y + PCB, bz, bz + BOARD)
         s += box("ref-rear-ports", "#7d8791", 0.2, 20, BOARD_Y - 31.1, BOARD_Y, bz + 11.5, bz + 143.9)
     s += box("ref-heatsink", "#b8bcc2", hx, hx + 126.2, hy, BOARD_Y - 4, hz, hz + 126.2)
-    s += box("ref-cpu-fan", "#c9a27a", cx - 60, cx + 60, hy - CPU_FAN, hy, cz - 60, cz + 60)
-    s += box("ref-psu-sfx", "#2b2e33", PSU_X, PSU_X + PSU[0], PSU_Y, PSU_Y + PSU[1], PSU_TOP - PSU[2], PSU_TOP)
-    s += box("ref-mains-inlet", "#2b2e33", 0, 30, INLET[0] - 14, INLET[0] + 14, INLET[1] - 10, INLET[1] + 10)
+    s += fan("ref-cpu-fan", [cx, hy - FAN_T, cz], [0, 1, 0])
+    s += psu()
+    # mains inlet: a body through the panel with a flange outside, held by two countersunk M3 screws
+    iy, iz = INLET
+    s += box("ref-mains-inlet", "#2b2e33", -T - 2.5, 30, iy - 13.8, iy + 13.8, iz - 9.8, iz + 9.8)
+    s += [("solid.box", {"length": 2.5, "width": 50, "height": 22, "corner": [-T - 2.5, iy - 25, iz - 11],
+                         "operation": "join", "targets": ["ref-mains-inlet"]}),
+          ("solid.box", {"length": 14, "width": 23, "height": 15, "corner": [-T - 2.5, iy - 11.5, iz - 7.5],
+                         "operation": "cut", "targets": ["ref-mains-inlet"]})]
     for i, (fx, fy) in enumerate(BOTTOM_FANS):
-        s += box("ref-fan-bottom-%d" % (i + 1), "#c9a27a", fx - 60, fx + 60, fy - 60, fy + 60, 0, FAN_T)
-    fx, fy = TOP_FAN
-    s += box("ref-fan-top", "#c9a27a", fx - 60, fx + 60, fy - 60, fy + 60, LZ - FAN_T, LZ)
+        s += fan("ref-fan-bottom-%d" % (i + 1), [fx, fy, 0], [0, 0, 1])
+    s += fan("ref-fan-top", [TOP_FAN[0], TOP_FAN[1], LZ], [0, 0, -1])
+    return s
+
+
+def rotor(name, at, n, hub, tip, h, color):
+    """Hub and nine swept blades, as a body of its own."""
+    xd, yd = frame(n)
+    s = cyl(name, along(at, n, -1), n, 2 * hub, h + 2, "new")
+    s += [("sketch.create", {"plane": plane(at, xd, yd), "name": "sk-" + name})]
+    for k in range(9):
+        edge = lambda w: [(r, k * 2 * math.pi / 9 + 0.9 * (r - hub) / (tip - hub) + w * (0.56 - 0.1 * (r - hub) / (tip - hub)))
+                          for r in [hub - 2 + (tip - hub + 2) * j / 6 for j in range(7)]]
+        pts = edge(0) + edge(1)[::-1]
+        s.append(("sketch.line", {"points": [[round(r * math.cos(a), 3), round(r * math.sin(a), 3)] for r, a in pts],
+                                  "closed": True, "connect": False, "infer": False}))
+    s += [("sketch.finish", {}),
+          ("solid.extrude", {"sketch": "sk-" + name, "distance": str(h), "operation": "join", "targets": [name]})]
+    return s + paint([name], color)
+
+
+def fan(name, at, n):
+    """A 120 x 15 fan with its mounting face centred on `at` and its depth along n."""
+    xd, yd = frame(n)
+    h = FAN_HOLES / 2
+    s = [("sketch.create", {"plane": plane(at, xd, yd), "name": "sk-" + name}),
+         ("sketch.rectangle.rounded", {"p0": [-FAN / 2, -FAN / 2], "p1": [FAN / 2, FAN / 2], "radius": "6",
+                                       "connect": False}),
+         ("sketch.circle.center", {"center": [0, 0], "diameter": 116, "connect": False})]
+    s += [("sketch.circle.center", {"center": [a * h, b * h], "diameter": 4.3, "connect": False})
+          for a in (-1, 1) for b in (-1, 1)]
+    s += [("sketch.finish", {}),
+          ("solid.extrude", {"sketch": "sk-" + name, "distance": str(FAN_T), "operation": "new", "body_name": name})]
+    return s + paint([name], "#d9c7a8") + rotor(name + "-rotor", along(at, n, 2), n, 21, 56.5, FAN_T - 4, "#6f4631")
+
+
+def psu():
+    """SFX supply: fan and guard on the face toward the board, vents, inlet and switch on top."""
+    n = "ref-psu-sfx"
+    yc, zc = PSU_Y + PSU[1] / 2, PSU_TOP - PSU[2] / 2
+    s = box(n, "#2b2e33", PSU_X, PSU_X + PSU[0], PSU_Y, PSU_Y + PSU[1], PSU_TOP - PSU[2], PSU_TOP)
+    cutbox = lambda x0, x1, y0, y1, z0, z1: ("solid.box", {
+        "length": round(x1 - x0, 3), "width": round(y1 - y0, 3), "height": round(z1 - z0, 3),
+        "corner": [round(x0, 3), round(y0, 3), round(z0, 3)], "operation": "cut", "targets": [n]})
+    s += [("solid.cylinder", {"diameter": 90, "height": 16, "base": [PSU_X, yc, zc], "axis": [1, 0, 0],
+                              "operation": "cut", "targets": [n]})]
+    s += [cutbox(PSU_X + 12 + 5 * i, PSU_X + 15 + 5 * i, PSU_Y + 48, PSU_Y + 112, PSU_TOP - 2, PSU_TOP) for i in range(9)]
+    s += [cutbox(PSU_X + 20, PSU_X + 44, PSU_Y + 12, PSU_Y + 30, PSU_TOP - 12, PSU_TOP)]
+    s += box("ref-psu-switch", "#111111", PSU_X + 25, PSU_X + 39, PSU_Y + 34, PSU_Y + 43, PSU_TOP - 1, PSU_TOP + 1.5)
+    s += rotor("ref-psu-rotor", [PSU_X + 3, yc, zc], [1, 0, 0], 16, 43, 11, "#111111")
+    g = "ref-psu-guard"
+    s += [("sketch.create", {"plane": plane([PSU_X, yc, zc], [0, 1, 0], [0, 0, 1]), "name": "sk-" + g})]
+    s += [("sketch.circle.center", {"center": [0, 0], "radius": r, "connect": False})
+          for r in (45, 43.6, 34, 32.6, 23, 21.6, 12)]
+    s += [("sketch.finish", {}),
+          ("solid.extrude", {"sketch": "sk-" + g, "distance": "1.4", "operation": "new", "body_name": g}),
+          ("solid.box", {"length": 1.4, "width": 89, "height": 1.6, "corner": [PSU_X, yc - 44.5, zc - 0.8],
+                         "operation": "join", "targets": [g]}),
+          ("solid.box", {"length": 1.4, "width": 1.6, "height": 89, "corner": [PSU_X, yc - 0.8, zc - 44.5],
+                         "operation": "join", "targets": [g]})]
+    return s + paint([g], ZINC)
+
+
+def frame(n):
+    """Sketch axes for a plane whose normal is the axis direction n."""
+    k = [abs(c) for c in n].index(1)
+    e = lambda i: [1 if j == i else 0 for j in range(3)]
+    a, b = e((k + 1) % 3), e((k + 2) % 3)
+    return (a, b) if n[k] > 0 else (b, a)
+
+
+def along(p, n, d):
+    return [round(p[i] + n[i] * d, 3) for i in range(3)]
+
+
+def neg(n):
+    return [-c for c in n]
+
+
+def hexagon(name, at, n, af, h):
+    """A new body: a hexagon af across flats standing h tall on the point `at`, along n."""
+    xd, yd = frame(n)
+    return [("sketch.create", {"plane": plane(at, xd, yd), "name": "sk-" + name}),
+            ("sketch.polygon.circumscribed", {"center": [0, 0], "radius": af / 2, "sides": 6, "connect": False}),
+            ("sketch.finish", {}),
+            ("solid.extrude", {"sketch": "sk-" + name, "distance": str(h), "operation": "new", "body_name": name})]
+
+
+def cyl(name, at, n, d, h, op="join"):
+    c = {"diameter": d, "height": round(h, 3), "base": [round(v, 3) for v in at], "axis": n, "operation": op}
+    c.update({"body_name": name} if op == "new" else {"targets": [name]})
+    return [("solid.cylinder", c)]
+
+
+def paint(names, color):
+    return [("appearance.assign", {"bodies": names, "color": color})]
+
+
+def pc_screw(name, at, n, length=SCREW_632):
+    """6-32 hex washer head screw with its head on the point `at`, which faces along n."""
+    return (hexagon(name, along(at, n, 0.8), n, 6.35, 2.0) + cyl(name, at, n, 8.0, 0.8)
+            + cyl(name, at, neg(n), 3.5, length) + paint([name], BLACK))
+
+
+def cap_screw(name, at, n, length):
+    """M2 socket head cap screw. The thread is drawn at its root, so it does not read as a clash with
+    the tapped hole it is in."""
+    top = along(at, n, 2.0)
+    xd, yd = frame(neg(n))
+    return (cyl(name, at, n, PIN, 2.0, "new") + cyl(name, at, neg(n), 1.55, length)
+            + [("sketch.create", {"plane": plane(top, xd, yd), "name": "sk-" + name}),
+               ("sketch.polygon.circumscribed", {"center": [0, 0], "radius": 0.75, "sides": 6, "connect": False}),
+               ("sketch.finish", {}),
+               ("solid.extrude", {"sketch": "sk-" + name, "distance": "1.2", "operation": "cut", "targets": [name]}),
+               ("solid.chamfer", {"body": name, "edges": [along(top, xd, PIN / 2)], "distance": "0.2"})]
+            + paint([name], BLACK))
+
+
+def fan_screw(name, at, n):
+    """Self-tapping fan screw with a cross-recessed pan head, for a panel that faces along Z."""
+    s = cyl(name, at, n, 8.5, 1.8, "new") + cyl(name, at, neg(n), 5.0, FAN_SCREW)
+    z = at[2] + (0.9 if n[2] > 0 else -1.8)
+    for l, w in ((5.0, 1.0), (1.0, 5.0)):
+        s.append(("solid.box", {"length": l, "width": w, "height": 0.9, "corner": [at[0] - l / 2, at[1] - w / 2, z],
+                                "operation": "cut", "targets": [name]}))
+    return s + paint([name], BLACK)
+
+
+def nut(name, at, n):
+    return hexagon(name, at, n, 7.94, 2.78) + paint([name], ZINC)
+
+
+def hardware():
+    """Screws, nuts, standoffs and rivets, for the assembly only."""
+    up, down, back, fore, left = [0, 0, 1], [0, 0, -1], [-1, 0, 0], [1, 0, 0], [0, -1, 0]
+    h = FAN_HOLES / 2
+    s = []
+    for f, fans in (("bottom", BOTTOM_FANS), ("top", [TOP_FAN])):
+        out = down if f == "bottom" else up
+        for i, (x, y) in enumerate((fx + a * h, fy + b * h) for fx, fy in fans for a in (-1, 1) for b in (-1, 1)):
+            s += fan_screw("screw-fan-%s-%d" % (f, i + 1), [x, y, -T if f == "bottom" else LZ + T], out)
+    for i, (x, y) in enumerate(SHELF_SCREWS):
+        s += pc_screw("screw-shelf-%d" % (i + 1), [x, y, LZ + T], up)
+        s += cyl("nut-shelf-%d" % (i + 1), [x, y, LZ - 0.1 - T], down, 7.11, 1.78, "new")
+        s += paint(["nut-shelf-%d" % (i + 1)], ZINC)
+    for i, (a, b) in enumerate(PSU_HOLES):
+        s += pc_screw("screw-psu-%d" % (i + 1), [PSU_X + a, PSU_Y + b, PSU_TOP + T], up)
     for i, (u, v) in enumerate(BOARD_HOLES):
-        x, z = bx + u, bz + BOARD - v
-        s += box("ref-standoff-%d" % (i + 1), "#d0d0d0", x - 2.7, x + 2.7, BOARD_Y + PCB, TRAY_Y, z - 2.7, z + 2.7)
-    s += [("solid.cylinder", {"diameter": 12, "height": 24, "base": [SHELL_XF - 24, SWITCH[0], SWITCH[1]], "axis": "X",
-                              "body_name": "ref-switch", "operation": "new"}),
-          ("solid.cylinder", {"diameter": 15, "height": 2, "base": [SHELL_XF, SWITCH[0], SWITCH[1]], "axis": "X",
-                              "operation": "join", "targets": ["ref-switch"]}),
-          ("solid.cylinder", {"diameter": 16, "height": 3, "base": [LX + T + GAP - 3, SWITCH[0], SWITCH[1]], "axis": "X",
-                              "operation": "join", "targets": ["ref-switch"]}),
-          ("appearance.assign", {"bodies": ["ref-switch"], "color": "#c8c8c8"})]
-    pins = [("ref-pin-top-%d" % (i + 1), x, y, LZ + T) for i, (x, y) in enumerate(PINS)]
-    pins.append(("ref-pin-bottom", PINS[1][0], PINS[1][1], -T - 2.0))
-    for n, x, y, z in pins:
-        s += [("solid.cylinder", {"diameter": PIN, "height": 2.0, "base": [x, y, z], "body_name": n,
-                                  "operation": "new"}),
-              ("appearance.assign", {"bodies": [n], "color": "#c8c8c8"})]
-    s += [("solid.cylinder", {"diameter": 2.5, "height": 2 * T + GAP, "base": [SCREW[0], SCREW[1], SHELL_Z0],
-                              "body_name": "ref-thumbscrew", "operation": "new"}),
-          ("solid.cylinder", {"diameter": 9, "height": 6, "base": [SCREW[0], SCREW[1], SHELL_Z0 - 6],
-                              "operation": "join", "targets": ["ref-thumbscrew"]}),
-          ("appearance.assign", {"bodies": ["ref-thumbscrew"], "color": "#c8c8c8"})]
+        x, z = BOARD_X + u, BOARD_Z + BOARD - v
+        s += hexagon("standoff-%d" % (i + 1), [x, TRAY_Y, z], left, 6.35, STANDOFF)
+        s += paint(["standoff-%d" % (i + 1)], ZINC)
+        s += pc_screw("screw-board-%d" % (i + 1), [x, BOARD_Y, z], left)
+    for i, (y, z) in enumerate(LIP_STUDS):
+        s += cyl("stud-%d" % (i + 1), [LX, y, z], back, 3.5, 9.53, "new") + paint(["stud-%d" % (i + 1)], ZINC)
+        s += nut("nut-stud-%d" % (i + 1), [BULKHEAD_X[0], y, z], back)
+    for i, d in enumerate((-20, 20)):
+        n = "screw-inlet-%d" % (i + 1)   # countersunk M3, flush in the inlet's flange
+        s += cyl(n, [-T - 2.6, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
+        s += cyl(n, [-T - 2.2, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
+        s += hexagon("nut-inlet-%d" % (i + 1), [0, INLET[0] + d, INLET[1]], fore, 5.5, 2.4)
+        s += paint(["nut-inlet-%d" % (i + 1)], ZINC)
+    # shell: a nub at three corners and the screw that holds it at the fourth
+    for i, (x, y) in enumerate(PINS):
+        s += cap_screw("nub-top-%d" % (i + 1), [x, y, LZ + T], up, 3.0)
+    s += cap_screw("nub-bottom", [PINS[1][0], PINS[1][1], -T], down, 3.0)
+    s += cap_screw("screw-shell", [SCREW[0], SCREW[1], SHELL_Z0], down, 4.0)
+    for i, (x, z, d) in enumerate(TRAY_RIVETS):
+        n = "rivet-tray-%d" % (i + 1)
+        s += cyl(n, [x, TRAY_Y, z], [0, 1, 0], 3.2, LY + T - TRAY_Y, "new") + cyl(n, [x, TRAY_Y, z], left, 5.0, 1.0)
+        s += paint([n], ZINC)
+    for i, (y, z) in enumerate(SHELF_RIVETS):
+        n = "rivet-shelf-%d" % (i + 1)
+        x0 = SHELF_X[1] - T
+        s += cyl(n, [x0, y, z], fore, 3.2, BULKHEAD_X[1] - x0, "new") + cyl(n, [BULKHEAD_X[1], y, z], fore, 6.0, 1.0)
+        s += cyl(n, [x0, y, z], back, 5.0, 1.5) + paint([n], ZINC)
+    # switch: plain 12 mm body, nut behind the bulkhead, head out through the shell
+    y, z = SWITCH
+    s += cyl("switch", [BULKHEAD_X[1] - 22, y, z], fore, 11.9, 22, "new")
+    s += cyl("switch", [BULKHEAD_X[1], y, z], fore, SWITCH_SHELL - 0.2, SHELL_XF + 0.6 - BULKHEAD_X[1])
+    s += hexagon("switch-nut", [BULKHEAD_X[0], y, z], back, 13.5, 3.0)
+    s += [("solid.cylinder", {"diameter": 12.0, "height": 3.0, "base": [BULKHEAD_X[0], y, z], "axis": back,
+                              "operation": "cut", "targets": ["switch-nut"]})]
+    s += paint(["switch", "switch-nut"], BLACK)
     for i, (x, y) in enumerate(FEET):
         n = "foot-%d" % (i + 1)
         s += [("solid.cylinder", {"diameter": 20, "height": 2, "base": [x, y, -T - 2], "body_name": n,
                                   "operation": "new"}),
               ("solid.cone", {"diameter": 17, "top_diameter": 12, "height": -16, "base": [x, y, -T - 2],
-                              "operation": "join", "targets": [n]}),
-              ("appearance.assign", {"bodies": [n], "color": OLIVE})]
+                              "operation": "join", "targets": [n]})] + paint([n], BLACK)
     return s
 
 
@@ -442,26 +658,19 @@ def main():
     sc.batch([("sheet.manage_rules", {"name": "CRS 1.2", "thickness": "%g mm" % T, "k_factor": "0.44",
                                       "bend_radius": "Thickness", "active": True})], "rule")
     for name, steps in (("core", core()), ("tray", tray()), ("bulkhead", bulkhead()), ("shelf", shelf()),
-                        ("shell", shell()),
-                        ("rivets", rivets()), ("bought-in", bought_in())):
+                        ("shell", shell()), ("rivets", rivets())):
         sc.batch(steps, name)
         print("built", name)
     sc.batch([("appearance.assign", {"bodies": SHEET, "color": OLIVE})], "paint")
-    sc.call("save", {"path": DESIGN_WITH_BOARD if WITH_BOARD else DESIGN})
-
-    m = sc.call("measure", {"summary": True})
+    if not WITH_BOARD:
+        sc.call("save", {"path": DESIGN})
+        report(sc)
+    for name, steps in (("bought-in", bought_in()), ("hardware", hardware())):
+        sc.batch(steps, name)
+        print("built", name)
+    sc.call("save", {"path": DESIGN_WITH_BOARD if WITH_BOARD else ASSEMBLY})
     if WITH_BOARD:
-        return board_fit(sc, m)
-    lo = [min(b["bbox"]["min"][i] for b in m["bodies"] if b["name"] in SHEET) for i in range(3)]
-    hi = [max(b["bbox"]["max"][i] for b in m["bodies"] if b["name"] in SHEET) for i in range(3)]
-    size = [hi[i] - lo[i] for i in range(3)]
-    for b in m["bodies"]:
-        if b["name"] in SHEET:
-            print("%-8s x %.1f..%.1f  y %.1f..%.1f  z %.1f..%.1f  %.0f g in steel" % (
-                b["name"], b["bbox"]["min"][0], b["bbox"]["max"][0], b["bbox"]["min"][1], b["bbox"]["max"][1],
-                b["bbox"]["min"][2], b["bbox"]["max"][2], b["volume_mm3"] * 7.85e-3))
-    print("case without feet: %.1f x %.1f x %.1f mm, %.2f L" % (size[0], size[1], size[2],
-                                                                 size[0] * size[1] * size[2] / 1e6))
+        return board_fit(sc, sc.call("measure", {"summary": True}))
 
     r = sc.call("execute", {"command": "inspect.interference", "params": {}})
     print("interference: %d overlapping pairs, %d not checked" % (len(r.get("interferences", [])),
@@ -474,6 +683,20 @@ def main():
         print("  not checked: %s / %s" % (i.get("a"), i.get("b")))
     print("  (pairs between two bought-in parts are not listed)")
 
+
+def report(sc):
+    """Sizes of the sheet parts, and their flat patterns and bend tables."""
+    m = sc.call("measure", {"summary": True})
+    lo = [min(b["bbox"]["min"][i] for b in m["bodies"] if b["name"] in SHEET) for i in range(3)]
+    hi = [max(b["bbox"]["max"][i] for b in m["bodies"] if b["name"] in SHEET) for i in range(3)]
+    size = [hi[i] - lo[i] for i in range(3)]
+    for b in m["bodies"]:
+        if b["name"] in SHEET:
+            print("%-8s x %.1f..%.1f  y %.1f..%.1f  z %.1f..%.1f  %.0f g in steel" % (
+                b["name"], b["bbox"]["min"][0], b["bbox"]["max"][0], b["bbox"]["min"][1], b["bbox"]["max"][1],
+                b["bbox"]["min"][2], b["bbox"]["max"][2], b["volume_mm3"] * 7.85e-3))
+    print("case without feet: %.1f x %.1f x %.1f mm, %.2f L" % (size[0], size[1], size[2],
+                                                                 size[0] * size[1] * size[2] / 1e6))
     for b in SHEET:
         f = sc.call("execute", {"command": "sheet.flat_pattern", "params": {"body": b}})
         sc.call("execute", {"command": "sheet.export_dxf", "params": {
@@ -486,7 +709,7 @@ def main():
 
 def board_fit(sc, m):
     """How Framework's model of the board sits in the case, from its bodies' extents and its holes."""
-    ours = lambda n: n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-"))
+    ours = lambda n: n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "nub-", "rivet-", "switch"))
     parts = [b for b in m["bodies"] if not ours(b["name"])]
     lo = [min(b["bbox"]["min"][i] for b in parts) for i in range(3)]
     hi = [max(b["bbox"]["max"][i] for b in parts) for i in range(3)]

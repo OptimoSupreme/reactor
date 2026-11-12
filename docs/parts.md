@@ -105,9 +105,10 @@ face, away from the board. The inlet's pins run along the supply's 125
 width with the earth pin nearest the fan, and the switch is beside it on
 the far side from the fan. That is from the makers' pictures and from
 Justin; the model's
-supply, the grommet hole in the shelf behind the inlet and the mains lead's
-run all follow that. A unit with its inlet at the other end still fits, but
-its lead would cross the top of the supply to reach the grommet. SFX-L
+supply follows that. The mains lead's plug points its cable across the top
+of the supply to a grommet hole at the tray's side of the shelf, since a
+plug angled at the shelf's rear wall, 25 from the inlet, would land on the
+shelf. SFX-L
 units, 130 long, have not been checked.
 
 Seasonic's fan is stopped up to about 30 % load, 165 W; Corsair says the

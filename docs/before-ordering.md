@@ -48,24 +48,39 @@ them if it offers that. The shelf and shell come loose.
   needed), in 14.6 or more of flat overlap, with room for a 12.7 tool on both
   sides; it ends flush, which the 0.3 to 0.5 outside the lips and the 2.8
   between the tray and the fans both need.
+- The 13.1 between the board and the supply stays. It comes from spacing
+  the bottom fans so one mesh pattern suits both, and the 8.3 it leaves
+  between those fans is where their cables come up.
 - Fits that depend on two bent parts are loose: the shell is 0.5 clear of
   the lips all round, the nub slots 0.5 a side, and the clearance holes for
   the shelf's screws 4.5.
 
 ## Open: needs the part in hand
 
-- The shelf's three front screws. NBK's SETS-#6-32 x 1/4, or any 6-32 with a
-  head under 1.2 tall. An ordinary case screw does not fit there.
-- Mains lead. It is made up, not bought whole; no ready-made lead has the
-  right two ends. The case end is Schurter's 6100.3200 inlet, straight, with
-  4.8 tabs. The supply end is an up-angle C13: with the earth pin at the top,
-  the cable leaves upward, which here is toward the fan side of the supply
-  and the shelf's grommet hole. About 550 of 18 AWG three-core cord between
-  them, with TE 2-520275-2 insulated receptacles on the inlet's tabs. Either
-  cut down a moulded up-angle C13 cord or have one made to length with a
-  bare end; World Cord Sets and Quail both list the connector. The plug has
-  34 above the supply, and no maker found publishes its height, so measure
-  it. The wires pass over the rear bottom fan and need tying clear of it.
+- The shelf's three front screws. NBK's SETS-#6-32-1/4, sold in packs of ten
+  from NBK America's own shop, with their SKX-6 key or a T6 driver; or any
+  6-32 with a head under 1.2 tall. An ordinary case screw does not fit
+  there.
+- Mains lead: a ready-made one, a straight screw-mount C14 to a side-angle
+  C13, 0.6 long. Its plug points the cable across the top of the supply to
+  the grommet hole at the tray's side of the shelf, and the lead then runs
+  down the gap between the board and the supply, past the tie slots, along
+  the bottom and across between the two bottom fans to the inlet: about 450
+  of cable, 500 with slack, which is what a 0.6 lead has between its
+  connectors. A plug angled straight at the rear wall would land on the
+  shelf, 25 from the inlet.
+  - The candidate is Toptekits' "C14 w/screw hole to Right C13", 2 ft /
+    0.6 m, 18 AWG. Its seller's drawing gives the C14 a 27.2 x 19.2 cut-out
+    and screws 40 apart, which the 28 x 20 cut-out and 40 spacing here
+    take.
+  - Which hand: holding the plug with its holes toward you and the earth
+    hole uppermost, the cable must leave to the left. The "Right" one's
+    photograph shows that, but sellers' names and pictures are not to be
+    relied on: check it on the supply, and the "Left" one is the same price.
+  - Still to measure: how far the plug stands above the supply, which has
+    34, and the lead's real length.
+  - It crosses the supply's exhaust grille on its way to the grommet, and
+    it has no safety listing.
 
 ## Open: to settle with the shop
 
@@ -87,12 +102,6 @@ them if it offers that. The shelf and shell come loose.
 - Paint, if the shop offers it, and then masking: threads, studs, standoff bores, and both
   faces of the rear panel within 2.5 of the I/O aperture.
 - The shell's outside faces want to arrive unmarked. Say so on the order.
-
-## Open: decisions
-
-- Whether to keep the 13.1 between the board and the supply. It is there so
-  one mesh pattern suits both bottom fans; a seam in the bottom mesh would
-  take 5.5 off the length.
 
 ## Known limits of what has been checked
 

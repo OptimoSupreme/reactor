@@ -75,8 +75,10 @@ three, they win.
   is five parts in 1.2 mm steel: a core (bottom, rear and top), the tray, a
   bulkhead across the front that carries the supply's weight to the floor, a
   shelf on the bulkhead that the supply hangs under, and a plain shell (front
-  and sides) that slides on from the front and is held by one thumbscrew
-  underneath.
+  and sides) that slides on from the front. Slots in the shell's flanges run
+  onto pins at three of the rear corners, which stops the sides being pulled
+  open, and a thumbscrew at the fourth, underneath, keeps it from sliding
+  back off.
 - `mechanical/mk1.py --board` builds the same case with Framework's own model
   of the mainboard in it and reports how it fits. That model is 73 MB, so it
   and the design it produces are kept outside the repo.

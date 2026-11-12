@@ -92,8 +92,18 @@ FOOT_PAD = 13.0    # solid land around each foot
 SHELL_Y0, SHELL_Y1 = -2 * T - GAP, LY + 2 * T + GAP
 SHELL_Z0, SHELL_Z1 = -2 * T - GAP, LZ + 2 * T + GAP
 SHELL_XF = LX + 2 * T + GAP
-SHELL_FOOT = 14.0  # bottom flanges, wide enough for the thumbscrew
-SCREW = (LX / 2, 6.0)   # thumbscrew, X and Y, up through the shell's flange into a nut between the bottom fans
+SHELL_RETURN = 9.5  # flanges over the top and under the bottom: narrow enough to pass the fan screws' heads
+# A nub at each rear corner of the top and bottom panels, and a slot in each of the shell's flanges that
+# runs onto it as the shell slides home, so the sides cannot be pulled outward: X and Y. Each nub is the
+# head of an M2 socket cap screw (3.8 across, 2 tall) in a tapped hole, which any shop can make; pressed-in
+# pins come too long and want more edge distance than the flange leaves.
+PINS = [(6.0, 3.15), (6.0, LY - 3.15)]
+PIN = 3.8
+PIN_TAP = 1.6      # tap drill for M2
+# The bottom corner on the open side has an M3 thumbscrew instead of a pin, up through a hole in the
+# flange into a thread in the bottom panel, which also keeps the shell from sliding back off. It sits
+# closer to the edge than the pins so that it clears the corner of the fan above it.
+SCREW = (6.0, 2.5)
 SWITCH = (14.0, LZ - 14.0)   # 12 mm vandal switch, Y and Z on the front panel: top left seen from the front
 INLET = (26.0, FAN_T + 13.0)   # IEC C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 
@@ -240,10 +250,9 @@ def core():
             (iy - 20, iz, 3.4), (iy + 20, iz, 3.4)]
     s += cut("rear-cuts", REAR, rear, 5, ["core"])
     pad = near(FEET, FOOT_PAD + HEX_AF / 2)
-    nut = near([SCREW], 9)
-    s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, lambda x, y: pad(x, y) or nut(x, y))
-             + [(x, y, 4.0) for x, y in FEET] + [SCREW + (5.41,)], 5, ["core"])
-    s += cut("top-mesh", TOP, top_mesh(), 6, ["core"])
+    s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, pad)
+             + [(x, y, 4.0) for x, y in FEET] + [SCREW + (2.5,), PINS[1] + (PIN_TAP,)], 5, ["core"])
+    s += cut("top-mesh", TOP, top_mesh() + [(x, y, PIN_TAP) for x, y in PINS], 6, ["core"])
     # front lips: studs for the bulkhead, and the top one steps back behind the switch so its nut has room
     sy, sz = SWITCH
     s += cut("front-lips", plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1]),
@@ -322,20 +331,42 @@ def shelf():
 
 
 def shell():
-    """Front and both sides, plain. Slides on from the front; one thumbscrew up through its bottom flange."""
+    """Front and both sides, plain. Slides on from the front, three of its flanges running onto pins at the
+    rear corners; a thumbscrew at the fourth corner, underneath, keeps it there."""
     y0, y1, z0, z1 = SHELL_Y0, SHELL_Y1, SHELL_Z0, SHELL_Z1
     s = [("sketch.create", {"plane": plane([0, 0, z0], [1, 0, 0], [0, 1, 0]), "name": "shell-profile"}),
          ("sketch.line", {"points": [[-T, y1], [SHELL_XF, y1], [SHELL_XF, y0], [-T, y0]]}),
          ("sketch.finish", {}),
          ("sheet.flange", {"sketch": "shell-profile", "curves": ["l1", "l2", "l3"],
                            "distance": str(z1 - z0), "body_name": "shell"}),
-         ("sheet.flange", {"body": "shell", "height": str(FLANGE), "flip": True, "edges": [
+         ("sheet.flange", {"body": "shell", "height": str(SHELL_RETURN), "flip": True, "edges": [
              [LX / 2, y0, z1], [LX / 2, y1, z1]]}),
-         ("sheet.flange", {"body": "shell", "height": str(SHELL_FOOT), "flip": True, "edges": [
+         ("sheet.flange", {"body": "shell", "height": str(SHELL_RETURN), "flip": True, "edges": [
              [LX / 2, y0, z0], [LX / 2, y1, z0]]})]
+    # slots open at the rear for the core's pins, and a hole for the thumbscrew
+    s += cut("shell-slots-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*p) for p in PINS], T + 1, ["shell"])
+    s += cut("shell-slots-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*PINS[1]), SCREW + (3.4,)], T + 1,
+             ["shell"])
     s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (12.2,)], 5, ["shell"])
-    s += cut("shell-screw", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [SCREW + (4.5,)], T + 0.7, ["shell"])
     return s
+
+
+def slot(px, py):
+    """Outline to cut from a shell flange for the pin at (px, py): a slot open at the rear with a round
+    end on the pin, and the narrow finger left between the slot and the flange's tip cut back to just
+    past the pin and rounded."""
+    side = 1 if py < LY / 2 else -1                 # which way the flange's tip lies from the pin
+    r = PIN / 2 + 0.15
+    tip = (SHELL_Y0 + SHELL_RETURN) if side > 0 else (SHELL_Y1 - SHELL_RETURN)
+    a, b = py - side * r, py + side * r             # the slot's edges: toward the bend, toward the tip
+    fr = abs(tip - b) / 2                           # half the finger's width
+    fx = px - PIN / 2 - 1.0 + fr                    # centre of the finger's round end
+    arc = lambda cx, cy, rad, a0, a1: [[round(cx + rad * math.cos(math.radians(a0 + (a1 - a0) * k / 8)), 3),
+                                        round(cy + side * rad * math.sin(math.radians(a0 + (a1 - a0) * k / 8)), 3)]
+                                       for k in range(9)]
+    pts = [[-T - 1, a]] + arc(px, py, r, -90, 90) + arc(fx, b + side * fr, fr, -90, -270)
+    pts += [[fx, tip + side * 0.3], [-T - 1, tip + side * 0.3]]
+    return ("poly", pts)
 
 
 def rivets():
@@ -379,6 +410,17 @@ def bought_in():
           ("solid.cylinder", {"diameter": 16, "height": 3, "base": [LX + T + GAP - 3, SWITCH[0], SWITCH[1]], "axis": "X",
                               "operation": "join", "targets": ["ref-switch"]}),
           ("appearance.assign", {"bodies": ["ref-switch"], "color": "#c8c8c8"})]
+    pins = [("ref-pin-top-%d" % (i + 1), x, y, LZ + T) for i, (x, y) in enumerate(PINS)]
+    pins.append(("ref-pin-bottom", PINS[1][0], PINS[1][1], -T - 2.0))
+    for n, x, y, z in pins:
+        s += [("solid.cylinder", {"diameter": PIN, "height": 2.0, "base": [x, y, z], "body_name": n,
+                                  "operation": "new"}),
+              ("appearance.assign", {"bodies": [n], "color": "#c8c8c8"})]
+    s += [("solid.cylinder", {"diameter": 2.5, "height": 2 * T + GAP, "base": [SCREW[0], SCREW[1], SHELL_Z0],
+                              "body_name": "ref-thumbscrew", "operation": "new"}),
+          ("solid.cylinder", {"diameter": 9, "height": 6, "base": [SCREW[0], SCREW[1], SHELL_Z0 - 6],
+                              "operation": "join", "targets": ["ref-thumbscrew"]}),
+          ("appearance.assign", {"bodies": ["ref-thumbscrew"], "color": "#c8c8c8"})]
     for i, (x, y) in enumerate(FEET):
         n = "foot-%d" % (i + 1)
         s += [("solid.cylinder", {"diameter": 20, "height": 2, "base": [x, y, -T - 2], "body_name": n,

@@ -101,7 +101,12 @@ out three holes; the bracket has all four corners.
 | PEM FH-M3 and FH-M4 flush studs | 3.0 and 4.0 | for the PSU bracket and the feet; sizes not yet checked against PEM |
 | IEC C14 inlet, screw mount | 20 x 28 cut-out, screws 40 apart | placeholder, not from a datasheet |
 
-From PEM's product pages. Feet, rivets and the thumbscrew are placeholders.
+From PEM's product pages. Feet, rivets, and the M3 thumbscrew are placeholders.
+
+The three nubs the shell's slots run onto are M2 socket head cap screws in
+tapped holes, their heads (3.8 across, 2 tall) standing proud of the panel.
+Pressed-in pilot pins were ruled out: PEM's TPS-3mm comes only 8 long and
+wants 6.4 from hole centre to edge, and not every shop stocks pins.
 
 ## Still to collect
 

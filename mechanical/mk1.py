@@ -124,9 +124,11 @@ LOW_HEAD = (7.5, 0.86)
 # two screws down through the top panel into nuts in the shelf's tabs: a cell in the outermost row on
 # each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 7.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
-# Hole in the shelf's rear wall for a cable grommet, behind the supply's inlet: Y, Z, diameter. Midway between the bend into the
+# Hole in the shelf's rear wall for a cable grommet: Y, Z, diameter. It is at the tray's side, over the gap
+# between the board and the supply: the mains lead's plug points its cable across the top of the
+# supply to it, and the lead then runs down that gap past the tie slots. Midway between the bend into the
 # shelf below it and the relief slot beside the tab above it.
-GROMMET = (33.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
+GROMMET = (95.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
 
 # Cable ties: four pairs of slots in the tray, in the gap between the board's edge and the PSU. A tie
 # goes in at one slot, behind the tray and out at the other, round a cable running up the gap. There

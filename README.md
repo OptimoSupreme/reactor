@@ -85,7 +85,9 @@ three, they win.
   The layout follows the KXRORS M02: the board on a tray against one side
   wall, an SFX supply standing in front of it with its fan toward the board
   and its exhaust upward, two slim 120 mm fans in the bottom and one in the
-  top. It is five parts in 1.2 mm steel: a core (bottom, rear and top), the
+  top. The supply's place follows Intel's SFX12V guide, so any SFX unit that
+  keeps to it should fit; the two it was laid out around are Corsair's SF450
+  and Seasonic's Focus SGX-550 (2021). It is five parts in 1.2 mm steel: a core (bottom, rear and top), the
   tray, a bulkhead across the front that carries the supply's weight to the
   floor, a shelf that the supply hangs under, and a plain shell (front and
   sides). The tray and the bulkhead are fixed to the core with pressed-in

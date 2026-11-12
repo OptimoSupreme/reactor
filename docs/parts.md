@@ -92,21 +92,28 @@ SFX mounting holes, from Intel's SFX12V Power Supply Design Guide 3.1, figures
 outside with the fan side up and the origin at the lower left they are at
 (6.0, 6.0), (6.0, 57.5) and (119.0, 31.8). The shelf has those three and their mirror
 image, six holes, so it takes a unit with all four corners threaded or one
-whose pair is at the other end. The guide leaves the mains inlet's place on that face to
-the maker and draws it at the single-hole end, which here is the tray's side;
-the supply in the model follows the drawing, not a real unit. The envelope,
+whose pair is at the other end. The guide leaves the mains inlet's place on
+that face to the maker and draws it at the single-hole end. The envelope,
 125 x 63.5 x 100, is the guide's too, good to +/-1 on the whole numbers.
 
-The supply will be Corsair's SF450 or Seasonic's Focus SGX-550 (2021). Both
-are 125 x 100 x 63.5 with a 92 fan (Corsair gives 63), from the makers'
-pages, and both have the mains inlet lying along the long edge beside the
-switch, read from photographs. Seasonic's fan is stopped up to about 30 %
-load, 165 W; Corsair says the SF450 has a zero-rpm mode without giving its
-threshold. The cooling study's supply is a plain SFX box; its noise
-paragraph was written around the SF750 (2024), whose fan Cybenetics measured
-stopped up to 300 W. Neither unit's mounting threads have been checked on
-the part.
+The case is drawn to that guide, so any SFX supply that follows it should
+fit. The two it was laid out around are Corsair's SF450 and Seasonic's Focus
+SGX-550 (2021). Both are 125 x 100 x 63.5 with a 92 fan (Corsair gives 63),
+from the makers' pages. On both, with the fan toward the board as it stands
+here, the mains inlet and switch are at the open side's end of the top
+face, away from the board. The inlet's pins run along the supply's 125
+width with the earth pin nearest the fan, and the switch is beside it on
+the far side from the fan. That is from the makers' pictures and from
+Justin; the model's
+supply, the grommet hole in the shelf behind the inlet and the mains lead's
+run all follow that. A unit with its inlet at the other end still fits, but
+its lead would cross the top of the supply to reach the grommet. SFX-L
+units, 130 long, have not been checked.
 
+Seasonic's fan is stopped up to about 30 % load, 165 W; Corsair says the
+SF450 has a zero-rpm mode without giving its threshold. The cooling study's
+supply is a plain SFX box; its noise paragraph was written around the SF750
+(2024), whose fan Cybenetics measured stopped up to 300 W. 
 ## Fasteners and hardware
 
 Every screw on the case is the 6-32 hex washer head screw used for PC cases
@@ -161,10 +168,9 @@ shop would rather weld.
 | --- | --- | --- |
 | 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
 | Power button | 12.0 hole in the bulkhead, nut behind it; 14.5 hole in the shell for its 14 head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
-| IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | Schurter 6100-3 (6100.3200 with 4.8 tabs), mounted from outside: flange 48 x 23, countersunk for M3, 23.5 behind the panel. From its datasheet, read 2026-11-11. The same cut-out takes Bulgin's PX0580 and Schurter's 6061. Ready-made C14 to angled C13 leads for small cases look the same but none publishes its hole spacing |
+| IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | Schurter 6100-3 (6100.3200 with 4.8 tabs), mounted from outside: flange 48 x 23, countersunk for M3, 23.5 behind the panel. From its datasheet, read 2026-11-11. The same cut-out takes Bulgin's PX0580 and Schurter's 6061. The lead to the supply is made up: see before-ordering.md |
 | Feet | a 6-32 stud standing 9.5 out of the bottom panel | Our own part, [foot.step](../mechanical/export/foot.step) and the last sheet of the drawings: a 20 flange 2 thick over a cone from 17 to 12, 18 tall, printed in 316L stainless steel and tapped 6-32, with a 9.0 x 1.5 recess underneath for a 3M Bumpon SJ5076 pad (8.0 x 2.8). A screw from inside is no good, since each foot is under the corner of a fan's frame, so the thread is a flush stud in the panel |
 
 ## Still to collect
 
-- The chosen supply's mounting threads and fan position, from the part.
 - Any case fans, once the layout says whether it needs them.

@@ -32,6 +32,8 @@ them if it offers that. The shelf and shell come loose.
   guide. The shelf carries the pattern both ways round.
 - Mains inlet: the cut-out is Schurter's for the 6100-3, read from its
   datasheet.
+- Power supply: the shelf has the three 6-32 holes of Intel's SFX12V guide
+  and their mirror image, so any unit that threads the guide's holes mounts.
 - Fasteners: every pressed-in part's hole size, sheet thickness and edge
   distance against PEM's bulletins. The closest is the shelf's two nuts, at
   PEM's minimum of 5.6 from the tab's edge.
@@ -51,22 +53,16 @@ them if it offers that. The shelf and shell come loose.
 
 ## Open: needs the part in hand
 
-- Power supply: Corsair's SF450 or Seasonic's Focus SGX-550 (2021). Both are
-  standard 100 long SFX units with the inlet along the long edge. Check on
-  the part: which mounting holes it threads, and that the angled plug fits
-  under the top panel, which is 34 above it. Their fans start at lower loads
-  than the SF750's that the noise estimate was written around; see
-  [thermal.md](thermal.md).
-- Mains lead. First choice is NCASE's Power Supply Inlet Cable, a 54 cm
-  ready-made lead from a screw-mount C14 to a right-angle C13
-  (NC-CORD-C13C14-R-V60-DG1-72HR, or -L- for the other hand). NCASE does not
-  publish its C14's cut-out or screw spacing, so buy it and measure it
-  against the 28 x 20 cut-out and 40 spacing before ordering the metal, and
-  pick the hand from the supply's inlet. The fallback is all published parts:
-  Schurter's 6100.3200 inlet, International Configurations' 57070-A
-  rewireable angled C13 (20 proud of the supply), 18 AWG three-core cord and
-  TE 2-520275-2 receptacles for the inlet's 4.8 tabs. Either way the wires
-  pass over the rear bottom fan and need tying clear of it.
+- Mains lead. It is made up, not bought whole; no ready-made lead has the
+  right two ends. The case end is Schurter's 6100.3200 inlet, straight, with
+  4.8 tabs. The supply end is an up-angle C13: with the earth pin at the top,
+  the cable leaves upward, which here is toward the fan side of the supply
+  and the shelf's grommet hole. About 550 of 18 AWG three-core cord between
+  them, with TE 2-520275-2 insulated receptacles on the inlet's tabs. Either
+  cut down a moulded up-angle C13 cord or have one made to length with a
+  bare end; World Cord Sets and Quail both list the connector. The plug has
+  34 above the supply, and no maker found publishes its height, so measure
+  it. The wires pass over the rear bottom fan and need tying clear of it.
 
 ## Open: to settle with the shop
 

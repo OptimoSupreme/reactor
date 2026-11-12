@@ -3,8 +3,9 @@
 A small, quiet mini-ITX case for boards that have all their graphics on the
 CPU.
 
-This project is at an early stage: a sheet metal design that is close to
-orderable, and a first airflow and heat study. None has been built yet.
+The first design, the Mk I, is drawn and checked and close to orderable:
+255 x 134 x 216 mm without its feet, 7.4 litres, for an SFX power supply.
+None has been built yet, so everything here is a model and a simulation.
 
 ![The Mk I from the front](docs/images/mk1-front.png)
 
@@ -72,7 +73,8 @@ three, they win.
   [mechanical/export/](mechanical/export/) has what a shop quotes from: a
   STEP model, a flat pattern and a bend table for each part, and
   [the drawings](mechanical/export/reactor-mk-i-drawings.pdf), which
-  [mechanical/drawings.py](mechanical/drawings.py) draws. The second design
+  [mechanical/drawings.py](mechanical/drawings.py) draws, with the foot on
+  their last sheet. The second design
   is the whole machine: the same parts with Framework's own model of the
   mainboard, the fans, the supply and every screw, nut and stud in place,
   for looking at and for checking that nothing clashes. Framework's model is
@@ -86,20 +88,25 @@ three, they win.
   top. It is five parts in 1.2 mm steel: a core (bottom, rear and top), the
   tray, a bulkhead across the front that carries the supply's weight to the
   floor, a shelf that the supply hangs under, and a plain shell (front and
-  sides). The tray and the bulkhead are spot welded to the core. The shelf
-  comes out with the supply on it: it hangs on three studs in the bulkhead
-  and two screws through the top panel. The shell slides on from the front,
-  slots in its flanges running onto screw heads at three rear corners, and
-  one small screw underneath at the fourth holds it there. Apart from the
-  fan screws, the mains inlet's and the shell's, every screw is the 6-32
-  kind used all over PC cases.
+  sides). The tray and the bulkhead are fixed to the core with pressed-in
+  fasteners that end flush on both faces. The shelf comes out with the
+  supply on it: it hangs on three studs in the bulkhead and two screws
+  through the top panel. The shell slides on from the front, slots in its
+  flanges running onto screw heads at three rear corners, and one small
+  screw underneath at the fourth holds it there. Four steel feet, printed
+  and tapped, turn onto studs under the bottom panel. Apart from the fan
+  screws, the mains inlet's and the shell's, every screw is the 6-32 kind
+  used all over PC cases.
 - [docs/before-ordering.md](docs/before-ordering.md) lists what has been
   checked and what is still open before one can be ordered.
-- [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts and
-  where each came from, and says which are still placeholders.
+- [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts,
+  the fasteners and where each figure came from.
 - [sim/airflow.py](sim/airflow.py) runs the airflow and heat study in
-  FieldCraft, and [docs/thermal.md](docs/thermal.md) has what it found and
-  what that means for temperatures and noise.
+  FieldCraft, and [docs/thermal.md](docs/thermal.md) has what it found. In
+  short: the CPU cooler breathes room air, the present board flat out
+  should sit at about 75 to 85 °C with the fans turned well down, and the
+  supply, which breathes the heatsink's exhaust, is the part most likely to
+  be heard.
 - [mechanical/layout-study.sc](mechanical/layout-study.sc) is the box study
   the layout was chosen from.
 

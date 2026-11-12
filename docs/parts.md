@@ -97,10 +97,15 @@ the maker and draws it at the single-hole end, which here is the tray's side;
 the supply in the model follows the drawing, not a real unit. The envelope,
 125 x 63.5 x 100, is the guide's too, good to +/-1 on the whole numbers.
 
-The supply the cooling and noise figures assume is Corsair's SF750 (2024),
-whose fan Cybenetics measured stopped up to 300 W. Its inlet position, any
-extra mounting holes and its fan's place on the large face have not been
-checked against the part or a drawing.
+The supply will be Corsair's SF450 or Seasonic's Focus SGX-550 (2021). Both
+are 125 x 100 x 63.5 with a 92 fan (Corsair gives 63), from the makers'
+pages, and both have the mains inlet lying along the long edge beside the
+switch, read from photographs. Seasonic's fan is stopped up to about 30 %
+load, 165 W; Corsair says the SF450 has a zero-rpm mode without giving its
+threshold. The cooling study's supply is a plain SFX box; its noise
+paragraph was written around the SF750 (2024), whose fan Cybenetics measured
+stopped up to 300 W. Neither unit's mounting threads have been checked on
+the part.
 
 ## Fasteners and hardware
 
@@ -115,6 +120,7 @@ two and the four M2 screws that hold the shell.
 | Supply, three | 6-32 | the supply's own threads | 4.0 clearance in the shelf, six holes |
 | Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top panel |
 | Shelf to bulkhead, three | none: a 6-32 nut on a stud | PEM FH-632-4 flush-head stud, 6.35 long, in the bulkhead | 3.5 +0.08, 6.4 or more from an edge; 4.5 clearance in the shelf's flange |
+| Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
 | Shell, four | M2 socket head cap | a thread tapped in the top and bottom panels | 1.6 tap drill; 2.8 clearance in the shell's flange for the one that holds it |
 
@@ -139,24 +145,26 @@ out for the nubs: PEM's TPS-3mm comes only 8 long and wants 6.4 from hole
 centre to edge, and not every shop stocks pins. The slots are 0.5 clear of the
 nubs each side, since both parts are bent and a bend is good to about 0.4.
 
-The tray is spot welded to the core's side lips at nine places and the
-bulkhead to its front lips at four, with nothing standing proud under the
-shell. The lips that are welded are 17 tall (18.5 and 28 at the front), which
-leaves 14.6 or more of flat against the plate; a schedule for two 1.2 sheets
-asks for 14.3 of overlap, a nugget of about 6 and 22 between spots (Unitrol's
-reproduction of the RWMA table). Each weld is 9.5 from the panel its lip is
-folded from.
+The tray is fixed to the core's side lips at nine places and the bulkhead to
+its front lips at four with PEM's SF-3-1.2 SpotFast, a pressed-in fastener
+that joins two sheets and ends flush on both faces: a 3.0 +0.08 hole in the
+lip, 2.5 in the plate behind it, 2.54 or more from an edge, for two sheets
+of 1.2 (PEM's bulletin SF, read 2026-11-12). Flush matters on both sides:
+the shell passes 0.5 from the side lips and 0.3 from the front ones, and the
+fans' frames stand 2.8 inside the tray, less than a blind rivet's tail. The
+lips are 17 tall (18.5 and 28 at the front) and each fastener is 9.5 from
+the panel its lip is
+folded from, which also leaves room for spot welds at the same places if a
+shop would rather weld.
 
 | Part | Fit | Notes |
 | --- | --- | --- |
 | 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
-| Power button | 12.0 hole in the bulkhead, nut behind it; 13.0 hole in the shell for its head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. A common part of the kind (Multicomp Pro MP004450) has a 14 bezel, which the 13.0 hole would not pass: measure the head before ordering |
+| Power button | 12.0 hole in the bulkhead, nut behind it; 14.5 hole in the shell for its 14 head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
 | IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | Schurter 6100-3 (6100.3200 with 4.8 tabs), mounted from outside: flange 48 x 23, countersunk for M3, 23.5 behind the panel. From its datasheet, read 2026-11-11. The same cut-out takes Bulgin's PX0580 and Schurter's 6061. Ready-made C14 to angled C13 leads for small cases look the same but none publishes its hole spacing |
-| Feet | 4.0 hole | placeholder: no foot chosen. Stick-on bumpers such as 3M's SJ5514 (20.6 x 13.1) would need no hole |
+| Feet | a 6-32 stud standing 9.5 out of the bottom panel | Our own part, [foot.step](../mechanical/export/foot.step) and the last sheet of the drawings: a 20 flange 2 thick over a cone from 17 to 12, 18 tall, printed in 316L stainless steel and tapped 6-32, with a 9.0 x 1.5 recess underneath for a 3M Bumpon SJ5076 pad (8.0 x 2.8). A screw from inside is no good, since each foot is under the corner of a fan's frame, so the thread is a flush stud in the panel |
 
 ## Still to collect
 
-- Heatsink footprint, height and fin direction, measured from the part.
-- The chosen supply's inlet position and fan position, from the part.
-- The power button's head diameter, and a foot.
+- The chosen supply's mounting threads and fan position, from the part.
 - Any case fans, once the layout says whether it needs them.

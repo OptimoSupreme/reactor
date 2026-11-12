@@ -157,6 +157,12 @@ turn, it is a 92 mm fan at its lowest speed rather than a 40 mm one working
 hard, which is the comparison that matters, but it is not certain to be
 silent under a long load.
 
+The supply now chosen is smaller: an SF450 or a Focus SGX-550 (2021).
+Seasonic's fan starts at about 30 % load, 165 W, which is where this machine
+sits flat out, so under a long gaming load it should be expected to turn.
+Corsair does not publish the SF450's threshold. Both have the same 92 mm
+fan size as the SF750.
+
 ## What the model leaves out
 
 - The fan curves are straight lines between Noctua's stall pressure and free

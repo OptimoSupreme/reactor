@@ -7,14 +7,16 @@ What has been checked, what is still open, and what goes to a shop. Updated
 
 Everything is in [mechanical/export/](../mechanical/export/):
 
-- `reactor-mk-i-drawings.pdf`: general arrangement, the welded assembly with
-  its thirteen spot welds, and a sheet for each part with its flat pattern,
+- `reactor-mk-i-drawings.pdf`: general arrangement, the joined assembly with
+  its thirteen fasteners, and a sheet for each part with its flat pattern,
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.
+- `foot.step` and the drawings' last sheet, for whoever prints the four feet.
 
 The shop cuts and bends five parts in 1.2 mm cold rolled steel, presses in
-nine PEM fasteners, taps four M2 holes, spot welds the tray and bulkhead to
-the core, and finishes them. The shelf and shell come loose.
+thirteen PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
+and bulkhead to the core with thirteen PEM SpotFast fasteners, and paints
+them if it offers that. The shelf and shell come loose.
 
 ## Checked
 
@@ -39,37 +41,41 @@ the core, and finishes them. The shelf and shell come loose.
   Komaspec's published limits: flanges are 9.5 or more (7.6 needed), mesh webs
   2.07 (0.6 needed, 1.2 to 1.8 preferred), every part fits a 762 x 1118 bed,
   and cut-outs are about 6 or more from a bend line except those listed below.
-- Spot welds: 14.6 or more of flat overlap, 9.5 from the panel, 7 from the
-  lip's edge, 30 or more between spots, and room for a 12.7 electrode on both
-  sides of each.
+- Joints: each SpotFast is 7 from its lip's edge and from the bend (2.54
+  needed), in 14.6 or more of flat overlap, with room for a 12.7 tool on both
+  sides; it ends flush, which the 0.3 to 0.5 outside the lips and the 2.8
+  between the tray and the fans both need.
 - Fits that depend on two bent parts are loose: the shell is 0.5 clear of
   the lips all round, the nub slots 0.5 a side, and the shelf's stud and
   screw holes 4.5.
 
 ## Open: needs the part in hand
 
-- Power supply. The shelf, the cooling and the noise figures assume Corsair's
-  SF750 (2024). Check on the part: where its mains inlet is on the exhaust
-  face, which mounting holes it threads, and that a right-angle C13 plug
-  (about 17 proud of the face) fits under the top panel, which is 34 above it.
-- Power button. The shell's hole is 13.0. A common 12 mm vandal switch has a
-  14 bezel and would not pass through it. Measure the head; the hole wants to
-  be about 0.5 over.
-- Heatsink. Its fin direction and exact height are still Framework's drawing,
-  not a measurement. The model allows 49 above the board, and the slim fan on
-  it then has 52 to the shell.
-- Mains lead. Either a Schurter 6100.3200 inlet with a made-up lead, or a
-  ready-made C14 to angled C13 lead for small cases; the second kind needs its
-  screw spacing measured, since no maker publishes it. Its wires pass over the
-  rear bottom fan and need tying clear of it.
-- Feet. None is chosen. The four 4.0 holes suit a screw-on foot; stick-on
-  bumpers would not need them.
+- Power supply: Corsair's SF450 or Seasonic's Focus SGX-550 (2021). Both are
+  standard 100 long SFX units with the inlet along the long edge. Check on
+  the part: which mounting holes it threads, and that the angled plug fits
+  under the top panel, which is 34 above it. Their fans start at lower loads
+  than the SF750's that the noise estimate was written around; see
+  [thermal.md](thermal.md).
+- Mains lead. First choice is NCASE's Power Supply Inlet Cable, a 54 cm
+  ready-made lead from a screw-mount C14 to a right-angle C13
+  (NC-CORD-C13C14-R-V60-DG1-72HR, or -L- for the other hand). NCASE does not
+  publish its C14's cut-out or screw spacing, so buy it and measure it
+  against the 28 x 20 cut-out and 40 spacing before ordering the metal, and
+  pick the hand from the supply's inlet. The fallback is all published parts:
+  Schurter's 6100.3200 inlet, International Configurations' 57070-A
+  rewireable angled C13 (20 proud of the supply), 18 AWG three-core cord and
+  TE 2-520275-2 receptacles for the inlet's 4.8 tabs. Either way the wires
+  pass over the rear bottom fan and need tying clear of it.
 
 ## Open: to settle with the shop
 
-- Spot welding. None of the online shops read lists it as a standard option,
-  so it will be a quoted extra or a local shop's job. If a shop will not weld,
-  the same thirteen places take 3.2 countersunk rivets, flush outside.
+- SpotFast. Any shop that presses PEM hardware can fit it, but ask: it wants
+  the two holes lined up across two parts. A shop that would rather spot weld
+  the same thirteen places may, leaving the holes out.
+- The feet. They are printed in 316L stainless steel by a 3D printing service, not made by
+  the sheet metal shop, and tapped 6-32 after printing: ask whether the
+  service taps, or do the four by hand.
 - M2 threads. A 1.2 sheet holds three threads of M2 x 0.4, and at least one
   shop does not tap below 1.5. The four holes are also 1.9 from a bend, so
   they should be drilled and tapped after bending. Doing these four by hand
@@ -79,20 +85,19 @@ the core, and finishes them. The shelf and shell come loose.
   shell's slots and screw hole (about 3). All are clearance features.
 - Bend allowance. The flat patterns are drawn for an inside radius of 1.2 and
   K 0.44. A shop will redo them for its own tooling from the STEP models.
-- Finish and colour, and masking: threads, studs, standoff bores, and both
+- Paint, if the shop offers it, and then masking: threads, studs, standoff bores, and both
   faces of the rear panel within 2.5 of the I/O aperture.
 - The shell's outside faces want to arrive unmarked. Say so on the order.
 
 ## Open: decisions
 
-- The supply itself, if not the SF750.
 - Whether to keep the 13.1 between the board and the supply. It is there so
   one mesh pattern suits both bottom fans; a seam in the bottom mesh would
   take 5.5 off the length.
 
 ## Known limits of what has been checked
 
-- Nothing has been built. Bend accuracy, weld distortion and the shell's
+- Nothing has been built. Bend accuracy, how flat the joints pull and the shell's
   slide fit are only known once a first one exists; expect to adjust.
 - The airflow and heat study uses a simplified case and assumed fan curves;
   see [thermal.md](thermal.md).
@@ -101,7 +106,7 @@ the core, and finishes them. The shelf and shell come loose.
 
 ## Putting one together
 
-1. Supply onto the shelf with three 6-32 screws, exhaust face up.
+1. Feet onto their studs. Supply onto the shelf with three 6-32 screws, exhaust face up.
 2. Fans into the core, board onto its standoffs, heatsink fan, mains inlet.
 3. Shelf in through the open side, low, then up and forward onto the
    bulkhead's three studs. Nuts on behind its flange, two screws down through

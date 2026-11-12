@@ -36,7 +36,7 @@ IMAGES = os.path.join(REPO, "docs", "images")
 
 T = 1.2            # sheet
 GAP = 0.3          # between sliding or nested sheet faces
-LX, LY, LZ = 252.0, 128.0, 210.0   # cavity: rear to front, between the side lips, bottom to top panel
+LX, LY, LZ = 251.6, 128.0, 210.0   # cavity: rear to front, between the side lips, bottom to top panel
 FLANGE = 10.0
 SIDE_LIP = 14.0    # top and bottom panels' side lips, tall enough to fasten the tray to
 OLIVE = "#5a6332"
@@ -76,12 +76,16 @@ PITCH_X = FAN_HOLES / 2 / HEX_NX
 PITCH_Y = FAN_HOLES / 2 / HEX_NY
 HEX_K = PITCH_Y / (PITCH_X * math.sqrt(3) / 2)
 MESH_EDGE = 10.5   # cell centres stay this far inside the cavity
-BOTTOM_FANS = [(LX / 2 - 5.5 * PITCH_X, LY / 2), (LX / 2 + 5.5 * PITCH_X, LY / 2)]
-TOP_FAN = (LX / 2 - 3 * PITCH_X, LY / 2)        # three pitches from the middle, so the mesh mirrors front to back
+# The bottom fans set the length of the case: 1.3 from the rear panel to clear the bend at its foot,
+# 11 pitches apart so one mesh puts a cell on the screws of both, and 0.5 from the bulkhead.
+BOTTOM_FANS = [(FAN / 2 + 1.3, LY / 2), (FAN / 2 + 1.3 + 11 * PITCH_X, LY / 2)]
+TOP_FAN = (LX / 2 - 3.5 * PITCH_X, LY / 2)      # half pitches from the middle, so the mesh mirrors front to back
 
 # SFX supply standing in front of the board: fan toward the board, exhaust and mains inlet up
-PSU_X = BOARD_X + BOARD + 8.0                  # no room for plugs on a board's front edge, by choice
 PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
+# As far forward as it goes, 1.4 from the bulkhead: the heads of its front two screws still sit flat on
+# the shelf, 0.7 short of the bend into the shelf's front flange. That leaves 13.1 to the board's edge.
+PSU_X = LX - 1.5 - 1.39 - PSU[0]
 PSU_Y = 0.7
 PSU_TOP = LZ - 35.0                            # room above for a right-angle mains plug
 PSU_HOLES = [(6.0, 6.0), (6.0, 119.0), (57.5, 6.0), (57.5, 119.0)]   # along X, Y from the PSU's corner
@@ -92,17 +96,17 @@ LIP_STUDS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - 8.0), (98.0, LZ - 8.0)]   #
 SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
 # The tabs end at the corner of the cell diagonally in front of their screw's, so that cell's cut-out
 # takes the tab's corner off at a slant and stops there, with no point left beyond it.
-SHELF_FLANGE = TOP_FAN[0] + 9 * PITCH_X - SHELF_X[0]
+SHELF_FLANGE = round(TOP_FAN[0] + 10 * PITCH_X, 4) - SHELF_X[0]   # rounded as the cells' corners are
 SHELF_TAB = 16.7   # a tab this wide is folded from the rear wall at each side: 5.6 from its nut to its edge
 SHELF_RIVETS = [(y, PSU_TOP + 7.5) for y in (22.0, 63.0, 104.0)]   # shelf to bulkhead
 # two screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
 # in the outermost row on each side, the rows the fan screws are in
-SHELF_SCREWS = [(TOP_FAN[0] + 8.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
+SHELF_SCREWS = [(TOP_FAN[0] + 9.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
 # Hole in the shelf's rear wall for a cable grommet: Y, Z, diameter. Midway between the bend into the
 # shelf below it and the relief slot beside the tab above it.
 GROMMET = (20.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
 
-FEET = [(16, 24), (LX - 16, 24), (16, LY - 24), (LX - 16, LY - 24)]
+FEET = [(17, 25), (LX - 17, 25), (17, LY - 25), (LX - 17, LY - 25)]   # clear of the fan screws' heads
 FOOT_PAD = 13.0    # solid land around each foot
 
 # shell
@@ -353,13 +357,13 @@ def shelf():
     h, clear = HEX_AF / 2, 2 * T + 0.2
     beside = [c for c in top_mesh() if c[0] == "hex" and xr + clear <= c[1] - h < xr + f
               and not ya + SHELF_TAB + 6 < c[2] < yb - SHELF_TAB - 6]
-    # The cells of the next row inward that start over the bend still catch the tab's edge with their
+    # The cells of the next row inward that lie over the bend still catch the tab's edge with their
     # points. A cut may not reach the bend, so only the point comes off the tab, and only forward of
     # the bend; what is left in those cells is the bend itself.
     rows = [y for x, y in SHELF_SCREWS]
     v = HEX_K * HEX_AF / math.sqrt(3)
     for c in top_mesh():
-        if (c[0] == "hex" and xr <= c[1] - h < xr + clear and min(abs(c[2] - y) for y in rows) > 1
+        if (c[0] == "hex" and c[1] - h < xr + clear < c[1] + h and min(abs(c[2] - y) for y in rows) > 1
                 and not ya + SHELF_TAB + 6 < c[2] < yb - SHELF_TAB - 6):
             side = 1 if c[2] < LY / 2 else -1                      # which way the cell lies from its tab
             edge = (ya + SHELF_TAB if side > 0 else yb - SHELF_TAB) + side * 0.3
@@ -710,7 +714,7 @@ def report(sc):
 def board_fit(sc, m):
     """How Framework's model of the board sits in the case, from its bodies' extents and its holes."""
     ours = lambda n: n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "nub-", "rivet-", "switch"))
-    parts = [b for b in m["bodies"] if not ours(b["name"])]
+    parts = [b for b in m["bodies"] if not ours(b["name"]) and "bbox" in b]   # the outline body has no volume to measure
     lo = [min(b["bbox"]["min"][i] for b in parts) for i in range(3)]
     hi = [max(b["bbox"]["max"][i] for b in parts) for i in range(3)]
     print("board and its parts: x %.2f..%.2f  y %.2f..%.2f  z %.2f..%.2f" % (lo[0], hi[0], lo[1], hi[1], lo[2], hi[2]))

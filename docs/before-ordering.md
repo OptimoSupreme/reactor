@@ -37,8 +37,9 @@ them if it offers that. The shelf and shell come loose.
 - Fasteners: every pressed-in part's hole size, sheet thickness and edge
   distance against PEM's bulletins. The closest is the shelf's two nuts, at
   PEM's minimum of 5.6 from the tab's edge.
-- Screw heads against the shell: nothing stands proud of the bulkhead or the
-  lips. The shelf's fixings at the front are flush studs for that reason.
+- Screw heads against the shell: the shelf's three front screws have heads
+  0.86 tall in the 1.5 between the bulkhead and the shell. Nothing else
+  stands proud of the bulkhead or the lips.
 - Sheet metal rules for 1.2 mm steel, against SendCutSend's, Protolabs' and
   Komaspec's published limits: flanges are 9.5 or more (7.6 needed), mesh webs
   2.07 (0.6 needed, 1.2 to 1.8 preferred), every part fits a 762 x 1118 bed,
@@ -48,11 +49,13 @@ them if it offers that. The shelf and shell come loose.
   sides; it ends flush, which the 0.3 to 0.5 outside the lips and the 2.8
   between the tray and the fans both need.
 - Fits that depend on two bent parts are loose: the shell is 0.5 clear of
-  the lips all round, the nub slots 0.5 a side, and the shelf's stud and
-  screw holes 4.5.
+  the lips all round, the nub slots 0.5 a side, and the clearance holes for
+  the shelf's screws 4.5.
 
 ## Open: needs the part in hand
 
+- The shelf's three front screws. NBK's SETS-#6-32 x 1/4, or any 6-32 with a
+  head under 1.2 tall. An ordinary case screw does not fit there.
 - Mains lead. It is made up, not bought whole; no ready-made lead has the
   right two ends. The case end is Schurter's 6100.3200 inlet, straight, with
   4.8 tabs. The supply end is an up-angle C13: with the earth pin at the top,
@@ -69,9 +72,9 @@ them if it offers that. The shelf and shell come loose.
 - SpotFast. Any shop that presses PEM hardware can fit it, but ask: it wants
   the two holes lined up across two parts. A shop that would rather spot weld
   the same thirteen places may, leaving the holes out.
-- The feet. They are printed in 316L stainless steel by a 3D printing service, not made by
-  the sheet metal shop, and tapped 6-32 after printing: ask whether the
-  service taps, or do the four by hand.
+- The feet are printed in 316L stainless steel and tapped 6-32 by a 3D
+  printing service, not made by the sheet metal shop. Craftcloud will do
+  both.
 - M2 threads. A 1.2 sheet holds three threads of M2 x 0.4, and at least one
   shop does not tap below 1.5. The four holes are also 1.9 from a bend, so
   they should be drilled and tapped after bending. Doing these four by hand
@@ -104,8 +107,8 @@ them if it offers that. The shelf and shell come loose.
 
 1. Feet onto their studs. Supply onto the shelf with three 6-32 screws, exhaust face up.
 2. Fans into the core, board onto its standoffs, heatsink fan, mains inlet.
-3. Shelf in through the open side, low, then up and forward onto the
-   bulkhead's three studs. Nuts on behind its flange, two screws down through
-   the top panel.
+   Cables tied to the tray's slots between the board and the supply.
+3. Shelf in through the open side and up against the top panel. Two screws
+   down through the top panel, three low-head screws in from the front.
 4. Switch through the bulkhead, wiring, then the shell on from the front and
    its one screw underneath.

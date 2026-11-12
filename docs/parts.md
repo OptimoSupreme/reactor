@@ -126,7 +126,7 @@ two and the four M2 screws that hold the shell.
 | Board, four | 6-32 | PEM BSO-632-12 standoff, 9.53 long, in the tray | 5.41 +0.08, 6.9 or more from an edge |
 | Supply, three | 6-32 | the supply's own threads | 4.0 clearance in the shelf, six holes |
 | Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top panel |
-| Shelf to bulkhead, three | none: a 6-32 nut on a stud | PEM FH-632-4 flush-head stud, 6.35 long, in the bulkhead | 3.5 +0.08, 6.4 or more from an edge; 4.5 clearance in the shelf's flange |
+| Shelf to bulkhead, three | 6-32 x 1/4 with a head no taller than 1.2: NBK SETS-#6-32, head 7.5 across and 0.86 tall, Torx T6 | PEM S-632-1 nut in the shelf's front flange | 4.76 +0.08, 7 from the flange's edge; 4.5 clearance in the bulkhead |
 | Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
 | Shell, four | M2 socket head cap | a thread tapped in the top and bottom panels | 1.6 tap drill; 2.8 clearance in the shell's flange for the one that holds it |
@@ -139,11 +139,23 @@ table); it is drawn 2.8 and 8.0. The fan screw's head is drawn 8.5 across, not
 measured from a screw.
 
 The shelf has to come out with the supply on it, so nothing that holds it is
-permanent. A screw from the front would not do: its head is taller than the
-1.5 between the bulkhead and the shell. Flush-head studs in the bulkhead leave
-nothing in front of it, and the nuts go on behind the shelf's flange, reached
-with a spanner from the open side. No PEM 6-32 nut sits flush on both faces of
-1.2 sheet, which rules out a screw from behind into the bulkhead.
+permanent. Its front flange is held by three screws through the bulkhead from
+the front, where a driver reaches them with the shell off. An ordinary 6-32
+head is 2.0 to 2.4 tall and there is 1.5 between the bulkhead and the shell,
+so these three are NBK's SETS-#6-32, a stock low-head screw: head 7.5 across
+and 0.86 tall (0.295 and 0.034 in, from NBK's table, read 2026-11-12). Flush
+studs in the bulkhead with nuts behind the flange were tried first, and the
+nuts could not be reached with a tool. The shelf's two tabs for the top
+panel's screws fold toward the rear, away from the supply: folded forward
+they stood over the supply's rear corner screws, which then could not be
+reached with the shelf out of the case.
+
+Cable ties: the tray has four pairs of slots, 2.0 x 5.0 and 8 apart, up the
+13 between the board's front edge and the supply. A tie goes in one slot,
+behind the tray and out of the other. There is 1.7 between the tray and the
+shell for its strap, which suits ties 2.5 or 3.6 wide (1.0 to 1.3 thick).
+A lanced bridge would hold a tie without going behind the tray, but it is
+a formed feature that laser-and-brake shops do not make.
 
 Three of the M2 screws are nubs for the shell's slots to run onto, their
 heads (3.8 across, 2 tall) standing proud of the panel. The fourth goes up

@@ -110,19 +110,30 @@ BULKHEAD_X = (LX - T, LX)
 LIP_TOP, LIP_BOTTOM = 18.5, 28.0               # front lips of the top and bottom panels, which the bulkhead is fixed to
 BULKHEAD_JOINS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - JOIN_IN), (98.0, LZ - JOIN_IN)]   # its fasteners to those lips, Y and Z
 SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
-# The tabs end at the corner of the cell diagonally in front of their screw's, so that cell's cut-out
-# takes the tab's corner off at a slant and stops there, with no point left beyond it.
-SHELF_FLANGE = round(TOP_FAN[0] + 10 * PITCH_X, 4) - SHELF_X[0]   # rounded as the cells' corners are
-# The shelf comes out with the PSU on it, so it hangs on three flush studs in the bulkhead with nuts
-# behind its front flange. A screw's head in front of the bulkhead would foul the shell, 1.5 away.
-SHELF_STUDS = [(y, PSU_TOP + 7.5) for y in (22.0, 63.0, 104.0)]
-STUD_LENGTH = 6.35   # FH-632-4
-# two screws down through the top panel into nuts in the shelf's tabs: the fifth cell from the front
-# in the outermost row on each side, the rows the fan screws are in
-SHELF_SCREWS = [(TOP_FAN[0] + 9.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
+# The shelf's two tabs fold toward the rear, away from the PSU, so that nothing stands over the PSU's
+# screws when the shelf is out of the case. Each ends at the corner of the cell diagonally behind its
+# screw's, so that cell's cut-out takes the tab's corner off at a slant and stops there.
+SHELF_FLANGE = SHELF_X[0] + T - round(TOP_FAN[0] + 7 * PITCH_X, 4)   # rounded as the cells' corners are
+# The shelf comes out with the PSU on it, so three screws through the bulkhead from the front hold its
+# front flange, in nuts pressed into the flange. An ordinary head would foul the shell, 1.5 away, so
+# these are NBK's SETS-#6-32, whose head is 7.5 across and 0.86 tall. They stay 5.6 clear of the
+# flange's scallop round the switch.
+SHELF_FRONT = [(y, PSU_TOP + 9.0) for y in (26.0, 63.0, 100.0)]
+SHELF_LIP = 16.0     # the front flange: its nuts are 7 from its edge
+LOW_HEAD = (7.5, 0.86)
+# two screws down through the top panel into nuts in the shelf's tabs: a cell in the outermost row on
+# each side, the rows the fan screws are in
+SHELF_SCREWS = [(TOP_FAN[0] + 7.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
 # Hole in the shelf's rear wall for a cable grommet, behind the supply's inlet: Y, Z, diameter. Midway between the bend into the
 # shelf below it and the relief slot beside the tab above it.
 GROMMET = (33.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
+
+# Cable ties: four pairs of slots in the tray, in the gap between the board's edge and the PSU. A tie
+# goes in at one slot, behind the tray and out at the other, round a cable running up the gap. There
+# is 1.7 between the tray and the shell for it, which a 2.5 or 3.6 wide tie's strap fits.
+TIE_X = (BOARD_X + BOARD + PSU_X) / 2
+TIE_Z = [35.0, 80.0, 125.0, 170.0]
+TIE_SLOT, TIE_APART = (2.0, 5.0), 8.0
 
 FEET = [(17, 25), (LX - 17, 25), (17, LY - 25), (LX - 17, LY - 25)]   # clear of the fan screws' heads
 FOOT_PAD = 12.0    # solid land around each foot: the nearest cell is 1.3 outside the foot's 20 mm flange
@@ -351,6 +362,8 @@ def tray():
     holes.append(("round", BOARD_X + min(us) + 10, BOARD_Z + BOARD - max(vs) + 8,
                   BOARD_X + BOARD - 4, BOARD_Z + BOARD - min(vs) - 8, 8))
     holes += [(x, z, SF_TAIL) for x, z in TRAY_JOINS]
+    holes += [("round", TIE_X + d - TIE_SLOT[0] / 2, z - TIE_SLOT[1] / 2, TIE_X + d + TIE_SLOT[0] / 2,
+               z + TIE_SLOT[1] / 2, 0.9) for z in TIE_Z for d in (-TIE_APART / 2, TIE_APART / 2)]
     s += cut("tray-cuts", TRAY, holes, 5, ["tray"])
     s += rounds("tray-corners", TRAY, [(x0, EDGE, 1, 1), (x1, EDGE, -1, 1), (x0, LZ - EDGE, 1, -1),
                                        (x1, LZ - EDGE, -1, -1)], 5, ["tray"])
@@ -368,7 +381,7 @@ def bulkhead():
          ("sheet.flange", {"sketch": "bulkhead-profile", "curves": ["l1"], "distance": str(yb - ya),
                            "body_name": "bulkhead"})]
     s += cut("bulkhead-cuts", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [SWITCH + (SWITCH_HOLE,)] + [(y, z, STUD_632) for y, z in SHELF_STUDS]
+             [SWITCH + (SWITCH_HOLE,)] + [(y, z, LOOSE_632) for y, z in SHELF_FRONT]
              + [(y, z, SF_TAIL) for y, z in BULKHEAD_JOINS], T + 0.3, ["bulkhead"])
     s += rounds("bulkhead-corners", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
                 [(ya, EDGE, 1, 1), (yb, EDGE, -1, 1), (ya, LZ - EDGE, 1, -1), (yb, LZ - EDGE, -1, -1)], T + 0.3, ["bulkhead"])
@@ -376,7 +389,7 @@ def bulkhead():
 
 
 def shelf():
-    """The PSU screws up against its underside, exhaust face up. Its front flange hangs on studs in the bulkhead,
+    """The PSU screws up against its underside, exhaust face up. Its front flange is screwed to the bulkhead from the front,
     two tabs folded from its rear wall take screws down through the top panel, and that wall shuts the space above the PSU off from the rest of the case, so the exhaust can only
     leave through the top mesh. The bulkhead, the shell's side and the tray close the other sides."""
     zt = LZ - 0.1
@@ -385,7 +398,7 @@ def shelf():
     xr, xf = SHELF_X
     f = SHELF_FLANGE
     s = [("sketch.create", {"plane": plane([0, yb, 0], [1, 0, 0], [0, 0, 1]), "name": "shelf-profile"}),
-         ("sketch.line", {"points": [[xf, PSU_TOP + 12], [xf, PSU_TOP], [xr, PSU_TOP], [xr, zb]]}),
+         ("sketch.line", {"points": [[xf, PSU_TOP + SHELF_LIP], [xf, PSU_TOP], [xr, PSU_TOP], [xr, zb]]}),
          ("sketch.finish", {}),
          ("sheet.flange", {"sketch": "shelf-profile", "curves": ["l1", "l2", "l3"],
                            "distance": str(yb - ya), "body_name": "shelf"})]
@@ -399,23 +412,25 @@ def shelf():
     y0 = EDGE
     s += cut("shelf-reliefs", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]),
              [(a, zb - 3, a + 2, zb + 1), (b - 2, zb - 3, b, zb + 1), (ya - 1, zb - 3, y0, zb + 1)], 4, ["shelf"])
-    s += [("sheet.flange", {"body": "shelf", "height": str(f), "flip": True, "position": "outside", "edges": [
+    s += [("sheet.flange", {"body": "shelf", "height": str(f), "flip": TAB_FLIP, "position": TAB_POSITION, "edges": [
         [xr, (y0 + a) / 2, zb], [xr, (b + yb) / 2, zb]]})]
     web = [("round", PSU_X + 8, PSU_Y + 12, PSU_X + 55.5, PSU_Y + 113, 3)]
     web += [(PSU_X + u, PSU_Y + v, CLEAR_632) for u, v in PSU_HOLES + PSU_HOLES_SPARE]
     s += cut("shelf-web", plane([0, 0, PSU_TOP - 2], [1, 0, 0], [0, 1, 0]), web, 5, ["shelf"])
-    # Each tab loses the corners that would show in the cells beside its screw's. The cell behind the
-    # screw's is over the tab's root and bend, which have to be there.
+    # Each tab loses the corners that would show in the cells beside its screw's. The cell on the wall's
+    # side of the screw's is over the tab's root and bend, which have to be there. The tabs fold toward
+    # the rear, and this is worked out mirrored in the wall, as if they folded forward.
+    mx = lambda x: 2 * xr + T - x
+    cells = [("hex", mx(c[1]), c[2]) for c in top_mesh() if c[0] == "hex"]
     h, clear = HEX_AF / 2, 2 * T + 0.2
-    beside = [c for c in top_mesh() if c[0] == "hex" and xr + clear <= c[1] - h < xr + f
-              and not a + 6 < c[2] < b - 6]
+    beside = [c for c in cells if xr + clear <= c[1] - h < xr + f and not a + 6 < c[2] < b - 6]
     # The cells of the next row inward that lie over the bend still catch the tab's edge with their
-    # points. A cut may not reach the bend, so only the point comes off the tab, and only forward of
+    # points. A cut may not reach the bend, so only the point comes off the tab, and only clear of
     # the bend; what is left in those cells is the bend itself.
     rows = [y for x, y in SHELF_SCREWS]
     v = HEX_K * HEX_AF / math.sqrt(3)
-    for c in top_mesh():
-        if (c[0] == "hex" and c[1] - h < xr + clear < c[1] + h and min(abs(c[2] - y) for y in rows) > 1
+    for c in cells:
+        if (c[1] - h < xr + clear < c[1] + h and min(abs(c[2] - y) for y in rows) > 1
                 and not a + 6 < c[2] < b - 6):
             side = 1 if c[2] < LY / 2 else -1                      # which way the cell lies from its tab
             edge = (a if side > 0 else b) + side * 0.3
@@ -426,18 +441,20 @@ def shelf():
             if c[1] - dx < x0:   # clip at the bend
                 on = lambda p, q: [x0, p[1] + (q[1] - p[1]) * (x0 - p[0]) / (q[0] - p[0])]
                 pts = [pts[0]] + ([pts[1], on(pts[1], pts[2])] if c[1] > x0 else [on(pts[0], pts[1])]) + [[x0, edge]]
-            beside.append(("poly", [[round(x, 3), round(y, 3)] for x, y in pts]))
+            beside.append(("poly", pts))
+    beside = [("hex", mx(c[1]), c[2]) if c[0] == "hex" else ("poly", [[round(mx(x), 3), round(y, 3)] for x, y in c[1]])
+              for c in beside]
     s += cut("shelf-tabs", plane([0, 0, zb + 0.5], [1, 0, 0], [0, 1, 0]),
              beside + [(x, y, NUT_632) for x, y in SHELF_SCREWS], 2 * T, ["shelf"])
     s += rounds("shelf-tab-corners", plane([0, 0, zb + 0.5], [1, 0, 0], [0, 1, 0]),
-                [(round(xr + f, 4), y0, -1, 1), (round(xr + f, 4), yb, -1, -1)], 2 * T, ["shelf"])
+                [(round(xr + T - f, 4), y0, 1, 1), (round(xr + T - f, 4), yb, 1, -1)], 2 * T, ["shelf"])
     s += cut("shelf-cables", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]), [GROMMET], 4, ["shelf"])
     # the front flange is scalloped under the switch, so a socket fits over its nut, and has the holes
-    # for the bulkhead's studs
+    # for the nuts its screws go into
     front = plane([xf - T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1])
-    s += cut("shelf-switch", front, [SWITCH + (SWITCH_NUT + 5,)] + [(y, z, LOOSE_632) for y, z in SHELF_STUDS],
+    s += cut("shelf-switch", front, [SWITCH + (SWITCH_NUT + 5,)] + [(y, z, NUT_632) for y, z in SHELF_FRONT],
              T + 1, ["shelf"])
-    s += rounds("shelf-corners", front, [(ya, PSU_TOP + 12, 1, -1), (yb, PSU_TOP + 12, -1, -1)], T + 1, ["shelf"])
+    s += rounds("shelf-corners", front, [(ya, PSU_TOP + SHELF_LIP, 1, -1), (yb, PSU_TOP + SHELF_LIP, -1, -1)], T + 1, ["shelf"])
     return s
 
 
@@ -673,10 +690,13 @@ def hardware():
         s += hexagon("standoff-%d" % (i + 1), [x, TRAY_Y, z], left, 6.35, STANDOFF)
         s += paint(["standoff-%d" % (i + 1)], ZINC)
         s += pc_screw("screw-board-%d" % (i + 1), [x, BOARD_Y, z], left)
-    # shelf: flush studs in the bulkhead, nuts behind the shelf's front flange
-    for i, (y, z) in enumerate(SHELF_STUDS):
-        s += cyl("stud-%d" % (i + 1), [LX, y, z], back, 3.5, T + STUD_LENGTH, "new") + paint(["stud-%d" % (i + 1)], ZINC)
-        s += nut("nut-stud-%d" % (i + 1), [SHELF_X[1] - T, y, z], back)
+    # shelf: low-head screws through the bulkhead from the front, nuts behind the shelf's front flange
+    for i, (y, z) in enumerate(SHELF_FRONT):
+        n = "screw-front-%d" % (i + 1)
+        s += cyl(n, [LX, y, z], fore, LOW_HEAD[0], LOW_HEAD[1], "new") + cyl(n, [LX, y, z], back, 3.5, SCREW_632)
+        s += paint([n], BLACK)
+        s += cyl("nut-front-%d" % (i + 1), [SHELF_X[1] - T, y, z], back, 7.11, 1.78, "new")
+        s += paint(["nut-front-%d" % (i + 1)], ZINC)
     for i, d in enumerate((-20, 20)):
         n = "screw-inlet-%d" % (i + 1)   # countersunk M3, flush in the inlet's flange
         s += cyl(n, [-T - 2.6, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
@@ -716,6 +736,7 @@ def hardware():
     return s
 
 
+TAB_FLIP, TAB_POSITION = False, "outside"
 SHEET = ["core", "tray", "bulkhead", "shelf", "shell"]
 
 
@@ -757,7 +778,7 @@ def ours(n):
 
 # a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
 THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-shelf-", "nut-shelf-"),
-            ("screw-board-", "standoff-"), ("stud-", "nut-stud-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
+            ("screw-board-", "standoff-"), ("screw-front-", "nut-front-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
             ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces
 

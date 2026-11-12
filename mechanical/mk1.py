@@ -107,7 +107,7 @@ SHELF_SCREWS = [(TOP_FAN[0] + 9.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HE
 GROMMET = (20.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
 
 FEET = [(17, 25), (LX - 17, 25), (17, LY - 25), (LX - 17, LY - 25)]   # clear of the fan screws' heads
-FOOT_PAD = 13.0    # solid land around each foot
+FOOT_PAD = 12.0    # solid land around each foot: the nearest cell is 1.3 outside the foot's 20 mm flange
 
 # shell
 SHELL_Y0, SHELL_Y1 = -2 * T - GAP, LY + 2 * T + GAP
@@ -665,7 +665,9 @@ def main():
                         ("shell", shell()), ("rivets", rivets())):
         sc.batch(steps, name)
         print("built", name)
-    sc.batch([("appearance.assign", {"bodies": SHEET, "color": OLIVE})], "paint")
+    # a body hidden for a render stays hidden by name through a rebuild
+    sc.batch([("appearance.assign", {"bodies": SHEET, "color": OLIVE}),
+              ("browser.visibility", {"visible": True, "items": SHEET})], "paint")
     if not WITH_BOARD:
         sc.call("save", {"path": DESIGN})
         report(sc)

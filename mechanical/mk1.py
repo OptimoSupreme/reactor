@@ -42,9 +42,9 @@ SHELL_GAP = 0.5    # between the shell and the lips it slides over: two bent par
 LX, LY, LZ = 251.3, 128.0, 210.0   # cavity: rear to front, between the side lips, bottom to top panel
 FLANGE = 10.0
 SIDE_LIP = 14.0    # side lips of the top, bottom and rear panels on the open side
-WELD_LIP = 17.0    # and on the tray's side: 14.6 of flat lip against the tray, which a spot weld in 1.2 sheet wants
-WELD_IN = 9.5      # a spot weld's centre from the panel its lip is folded from: 7 from the bend and from the lip's edge
-EDGE = T + GAP     # a welded plate stops this far from the panel it meets, clear of the bend at that panel's edge
+JOIN_LIP = 17.0    # and on the tray's side: 14.6 of flat lip against the tray, room for a press tool or a spot weld
+JOIN_IN = 9.5      # a joining fastener's centre from the panel its lip is folded from: 7 from the bend and from the lip's edge
+EDGE = T + GAP     # a joined plate stops this far from the panel it meets, clear of the bend at that panel's edge
 ROUND = 1.5        # radius on outside corners
 OLIVE = "#5a6332"
 BLACK = "#1b1b1b"
@@ -52,6 +52,9 @@ ZINC = "#c8c8c8"
 
 # Every screw is the 6-32 hex washer head screw of PC cases and 3.5 in drives, apart from the M2 cap
 # screws that hold the shell, ordinary self-tapping fan screws, and the mains inlet's countersunk M3s. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
+# The tray and the bulkhead are fixed to the core's lips with PEM SF-3-1.2 SpotFast fasteners, which end
+# flush on both faces: the shell passes 0.3 to 0.5 outside the lips and the fans stand 2.8 inside the tray.
+SF_HEAD, SF_TAIL = 3.0, 2.5   # holes in the lip and in the plate behind it
 CLEAR_632 = 4.0    # clearance hole
 LOOSE_632 = 4.5    # and where the two holes are on different bent parts
 NUT_632 = 4.76     # hole for an S-632 nut, 5.6 or more from an edge
@@ -63,7 +66,7 @@ FAN_SCREW = 10.0
 M3_CLEAR = 3.5
 
 # Y stack: the tray stands against the far side wall and the board faces the other
-TRAY_Y = LY - T                                # tray face the standoffs sit in; its other face is welded to the side lips
+TRAY_Y = LY - T                                # tray face the standoffs sit in; its other face is against the side lips
 STANDOFF = 9.53    # BSO-632-12, 3/8 in: clears the M.2 holder, 8.4 under the board
 PCB = 1.6
 BOARD_Y = TRAY_Y - STANDOFF - PCB              # component face of the board
@@ -103,8 +106,8 @@ PSU_HOLES = [(6.0, 6.0), (57.5, 6.0), (31.7, 119.0)]
 PSU_HOLES_SPARE = [(6.0, 119.0), (57.5, 119.0), (31.7, 6.0)]
 # The PSU's weight goes to the floor through a bulkhead just inside the front, not into the top mesh.
 BULKHEAD_X = (LX - T, LX)
-LIP_TOP, LIP_BOTTOM = 18.5, 28.0               # front lips of the top and bottom panels, which the bulkhead is welded to
-BULKHEAD_WELDS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - WELD_IN), (98.0, LZ - WELD_IN)]   # spot welds to those lips, Y and Z
+LIP_TOP, LIP_BOTTOM = 18.5, 28.0               # front lips of the top and bottom panels, which the bulkhead is fixed to
+BULKHEAD_JOINS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - JOIN_IN), (98.0, LZ - JOIN_IN)]   # its fasteners to those lips, Y and Z
 SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
 # The tabs end at the corner of the cell diagonally in front of their screw's, so that cell's cut-out
 # takes the tab's corner off at a slant and stops there, with no point left beyond it.
@@ -122,6 +125,11 @@ GROMMET = (95.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
 
 FEET = [(17, 25), (LX - 17, 25), (17, LY - 25), (LX - 17, LY - 25)]   # clear of the fan screws' heads
 FOOT_PAD = 12.0    # solid land around each foot: the nearest cell is 1.3 outside the foot's 20 mm flange
+# A screw's head or a nut inside would sit under a fan's frame, so each foot turns onto a flush stud
+# pressed into the bottom panel, pointing down.
+FOOT_STUD = 9.53   # FH-632-6
+FOOT_TAP, FOOT_TAP_DEPTH = 2.7, 12.0   # tap drill for 6-32, and deep enough for the whole stud
+FOOT_RECESS, FOOT_RECESS_DEPTH = 9.0, 1.5   # recess underneath for a 3M SJ5076 bumper, 8.0 x 2.8
 
 # shell
 SHELL_Y0, SHELL_Y1 = -2 * T - SHELL_GAP, LY + 2 * T + SHELL_GAP
@@ -144,7 +152,7 @@ SLOT_CLEAR = 0.5   # each side of a nub in its slot
 # 12 mm vandal switch, Y and Z: top left seen from the front. It is fixed in the bulkhead with its nut
 # behind, and its head comes out through a larger hole in the shell, so the shell slides off over it.
 SWITCH = (14.0, LZ - 14.0)
-SWITCH_HOLE, SWITCH_SHELL, SWITCH_NUT = 12.0, 13.0, 16.0
+SWITCH_HOLE, SWITCH_SHELL, SWITCH_NUT = 12.0, 14.5, 16.0   # the head is 14
 INLET = (28.0, FAN_T + 13.0)   # Schurter 6100-3 C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 
 # Rear I/O aperture, ATX specification 2.03 figure 4: 6.25 x 1.75 in, its long side running from 2.44
@@ -291,7 +299,7 @@ def core():
     w = LY + 2 * T
     zt, xf = LZ + T, LX + T
     lip = lambda p: {"point": p, "height": str(SIDE_LIP)}
-    weld = lambda p: {"point": p, "height": str(WELD_LIP)}
+    wide = lambda p: {"point": p, "height": str(JOIN_LIP)}
     s = [("sketch.create", {"plane": "XZ", "offset": str(-T), "name": "core-profile"}),
          ("sketch.line", {"points": [[xf, -zt], [-T, -zt], [-T, T], [xf, T]]}),
          ("sketch.finish", {}),
@@ -299,8 +307,8 @@ def core():
                            "body_name": "core"}),
          ("sheet.flange", {"body": "core", "height": str(FLANGE), "flip": True, "edges": [
              {"point": [xf, LY / 2, zt], "height": str(LIP_TOP)}, {"point": [xf, LY / 2, -T], "height": str(LIP_BOTTOM)},
-             lip([LX / 2, -T, zt]), weld([LX / 2, LY + T, zt]), lip([LX / 2, -T, -T]), weld([LX / 2, LY + T, -T]),
-             lip([-T, -T, LZ / 2]), weld([-T, LY + T, LZ / 2])]})]
+             lip([LX / 2, -T, zt]), wide([LX / 2, LY + T, zt]), lip([LX / 2, -T, -T]), wide([LX / 2, LY + T, -T]),
+             lip([-T, -T, LZ / 2]), wide([-T, LY + T, LZ / 2])]})]
     # rear panel: the standard I/O aperture and the mains inlet with its two screws
     iy, iz = INLET
     rear = [(IO_Y[0], IO_Z[0], IO_Y[1], IO_Z[1]), ("round", iy - 14, iz - 10, iy + 14, iz + 10, 1.0),
@@ -308,12 +316,14 @@ def core():
     s += cut("rear-cuts", REAR, rear, 5, ["core"])
     pad = near(FEET, FOOT_PAD + HEX_AF / 2)
     s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, pad)
-             + [(x, y, 4.0) for x, y in FEET] + [SCREW + (PIN_TAP,), PINS[1] + (PIN_TAP,)], 5, ["core"])
+             + [(x, y, STUD_632) for x, y in FEET] + [SCREW + (PIN_TAP,), PINS[1] + (PIN_TAP,)], 5, ["core"])
     s += cut("top-mesh", TOP, top_mesh() + [(x, y, PIN_TAP) for x, y in PINS], 6, ["core"])
     # The top front lip steps back round the switch's head, from the lip's end so that no sliver is left
     # beside the switch. Then the free corners of both front lips are rounded.
     sy, sz = SWITCH
     front = plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1])
+    s += cut("lip-joins", TRAY, [(x, z, SF_HEAD) for x, z in TRAY_JOINS], 5, ["core"])
+    s += cut("front-lip-joins", front, [(y, z, SF_HEAD) for y, z in BULKHEAD_JOINS], 2.5, ["core"])
     s += cut("front-lips", front, [(-T - 1, sz - 4, sy + 10, sz + 9.5)], 2.5, ["core"])
     s += rounds("front-lip-corners", front, [(sy + 10, LZ + T - LIP_TOP, 1, 1), (T, LIP_BOTTOM - T, 1, -1),
                                              (LY - T, LIP_BOTTOM - T, -1, -1)], 2.5, ["core"])
@@ -325,7 +335,7 @@ def top_mesh():
 
 
 def tray():
-    """A flat plate the length of the case, spot welded to the side lips of the bottom, rear and top
+    """A flat plate the length of the case, fixed to the side lips of the bottom, rear and top
     panels. No flange at the rear: the I/O aperture's keepout reaches to within 5 mm of it."""
     x0, x1 = EDGE, LX - GAP
     s = [("sketch.create", {"plane": plane([x0, 0, 0], [0, 1, 0], [0, 0, 1]), "name": "tray-profile"}),
@@ -339,6 +349,7 @@ def tray():
     us, vs = [u for u, v in BOARD_HOLES], [v for u, v in BOARD_HOLES]
     holes.append(("round", BOARD_X + min(us) + 10, BOARD_Z + BOARD - max(vs) + 8,
                   BOARD_X + BOARD - 4, BOARD_Z + BOARD - min(vs) - 8, 8))
+    holes += [(x, z, SF_TAIL) for x, z in TRAY_JOINS]
     s += cut("tray-cuts", TRAY, holes, 5, ["tray"])
     s += rounds("tray-corners", TRAY, [(x0, EDGE, 1, 1), (x1, EDGE, -1, 1), (x0, LZ - EDGE, 1, -1),
                                        (x1, LZ - EDGE, -1, -1)], 5, ["tray"])
@@ -346,7 +357,7 @@ def tray():
 
 
 def bulkhead():
-    """A flat plate across the front, floor to top panel, spot welded to the front lips of both. It closes
+    """A flat plate across the front, floor to top panel, fixed to the front lips of both. It closes
     the open end of the core, holds the top panel's front edge up, and carries the PSU shelf."""
     ya, yb = 0.4, TRAY_Y - GAP
     x0, x1 = BULKHEAD_X
@@ -356,7 +367,8 @@ def bulkhead():
          ("sheet.flange", {"sketch": "bulkhead-profile", "curves": ["l1"], "distance": str(yb - ya),
                            "body_name": "bulkhead"})]
     s += cut("bulkhead-cuts", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [SWITCH + (SWITCH_HOLE,)] + [(y, z, STUD_632) for y, z in SHELF_STUDS], T + 0.3, ["bulkhead"])
+             [SWITCH + (SWITCH_HOLE,)] + [(y, z, STUD_632) for y, z in SHELF_STUDS]
+             + [(y, z, SF_TAIL) for y, z in BULKHEAD_JOINS], T + 0.3, ["bulkhead"])
     s += rounds("bulkhead-corners", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
                 [(ya, EDGE, 1, 1), (yb, EDGE, -1, 1), (ya, LZ - EDGE, 1, -1), (yb, LZ - EDGE, -1, -1)], T + 0.3, ["bulkhead"])
     return s
@@ -473,9 +485,9 @@ def slot(px, py):
     return ("poly", pts)
 
 
-# spot welds, tray to the side lips of the bottom and top panels and of the rear panel: X and Z
-TRAY_WELDS = ([(x, z) for x in (40, LX / 2, LX - 40) for z in (WELD_IN, LZ - WELD_IN)]
-              + [(WELD_IN, z) for z in (40, 105, 170)])
+# SpotFast fasteners, tray to the side lips of the bottom and top panels and of the rear panel: X and Z
+TRAY_JOINS = ([(x, z) for x in (40, LX / 2, LX - 40) for z in (JOIN_IN, LZ - JOIN_IN)]
+              + [(JOIN_IN, z) for z in (40, 105, 170)])
 
 
 def bought_in():
@@ -636,7 +648,7 @@ def nut(name, at, n):
 
 
 def hardware():
-    """Screws, nuts, standoffs, studs and weld marks, for the assembly only."""
+    """Screws, nuts, standoffs, studs and joining fasteners, for the assembly only."""
     up, down, back, fore, left = [0, 0, 1], [0, 0, -1], [-1, 0, 0], [1, 0, 0], [0, -1, 0]
     h = FAN_HOLES / 2
     s = []
@@ -670,25 +682,31 @@ def hardware():
         s += cap_screw("nub-top-%d" % (i + 1), [x, y, LZ + T], up, 3.0)
     s += cap_screw("nub-bottom", [PINS[1][0], PINS[1][1], -T], down, 3.0)
     s += cap_screw("screw-shell", [SCREW[0], SCREW[1], SHELL_Z0], down, 4.0)
-    # spot welds, drawn as marks on the outside
-    welds = [("weld-tray-%d" % (i + 1), [x, LY + T, z], [0, 1, 0]) for i, (x, z) in enumerate(TRAY_WELDS)]
-    welds += [("weld-bulkhead-%d" % (i + 1), [LX + T, y, z], fore) for i, (y, z) in enumerate(BULKHEAD_WELDS)]
-    for n, at, d in welds:
-        s += cyl(n, at, d, 5.0, 0.1, "new") + paint([n], "#3c4222")
+    # SpotFast: flush in the lip and in the plate behind it
+    joins = [("join-tray-%d" % (i + 1), [x, LY + T, z], left) for i, (x, z) in enumerate(TRAY_JOINS)]
+    joins += [("join-bulkhead-%d" % (i + 1), [LX + T, y, z], back) for i, (y, z) in enumerate(BULKHEAD_JOINS)]
+    for n, at, d in joins:
+        s += cyl(n, at, d, SF_HEAD, T, "new") + cyl(n, along(at, d, T), d, SF_TAIL, T) + paint([n], ZINC)
     # switch: plain 12 mm body, nut behind the bulkhead, head out through the shell
     y, z = SWITCH
     s += cyl("switch", [BULKHEAD_X[1] - 22, y, z], fore, 11.9, 22, "new")
-    s += cyl("switch", [BULKHEAD_X[1], y, z], fore, SWITCH_SHELL - 0.2, SHELL_XF + 0.6 - BULKHEAD_X[1])
+    s += cyl("switch", [BULKHEAD_X[1], y, z], fore, SWITCH_SHELL - 0.5, SHELL_XF + 0.6 - BULKHEAD_X[1])
     s += hexagon("switch-nut", [BULKHEAD_X[0], y, z], back, 13.5, 3.0)
     s += [("solid.cylinder", {"diameter": 12.0, "height": 3.0, "base": [BULKHEAD_X[0], y, z], "axis": back,
                               "operation": "cut", "targets": ["switch-nut"]})]
     s += paint(["switch", "switch-nut"], BLACK)
     for i, (x, y) in enumerate(FEET):
         n = "foot-%d" % (i + 1)
+        s += cyl("stud-foot-%d" % (i + 1), [x, y, 0], down, 3.5, T + FOOT_STUD, "new")
+        s += paint(["stud-foot-%d" % (i + 1)], ZINC)
         s += [("solid.cylinder", {"diameter": 20, "height": 2, "base": [x, y, -T - 2], "body_name": n,
                                   "operation": "new"}),
               ("solid.cone", {"diameter": 17, "top_diameter": 12, "height": -16, "base": [x, y, -T - 2],
-                              "operation": "join", "targets": [n]})] + paint([n], BLACK)
+                              "operation": "join", "targets": [n]}),
+              ("solid.cylinder", {"diameter": FOOT_TAP, "height": FOOT_TAP_DEPTH, "base": [x, y, -T],
+                                  "axis": down, "operation": "cut", "targets": [n]}),
+              ("solid.cylinder", {"diameter": FOOT_RECESS, "height": FOOT_RECESS_DEPTH, "base": [x, y, -T - 18],
+                                  "axis": up, "operation": "cut", "targets": [n]})] + paint([n], BLACK)
     return s
 
 
@@ -716,6 +734,8 @@ def main():
     for name, steps in (("bought-in", bought_in()), ("hardware", hardware())):
         sc.batch(steps, name)
         print("built", name)
+    sc.call("execute", {"command": "file.export_step", "params": {
+        "bodies": ["foot-1"], "path": os.path.join(EXPORT, "foot.step")}})
     sc.call("save", {"path": ASSEMBLY})
     m = sc.call("measure", {"summary": True})
     clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
@@ -726,12 +746,12 @@ def main():
 def ours(n):
     """A body this script made, as against one of the board model's."""
     return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "nub-",
-                                                     "weld-", "switch"))
+                                                     "join-", "switch"))
 
 
 # a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
 THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-shelf-", "nut-shelf-"),
-            ("screw-board-", "standoff-"), ("stud-", "nut-stud-"), ("screw-inlet-", "nut-inlet-"),
+            ("screw-board-", "standoff-"), ("stud-", "nut-stud-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
             ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces
 

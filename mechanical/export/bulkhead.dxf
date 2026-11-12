@@ -13,7 +13,7 @@ ANSI_1252
   9
 $HANDSEED
   5
-4A
+4E
   9
 $INSUNITS
  70
@@ -697,9 +697,89 @@ AcDbCircle
  40
 1.75
   0
-ARC
+CIRCLE
   5
 41
+330
+20
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+188.5
+ 20
+96.5
+ 30
+0.0
+ 40
+1.25
+  0
+CIRCLE
+  5
+42
+330
+20
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+188.5
+ 20
+28.5
+ 30
+0.0
+ 40
+1.25
+  0
+CIRCLE
+  5
+43
+330
+20
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+8.0
+ 20
+86.5
+ 30
+0.0
+ 40
+1.25
+  0
+CIRCLE
+  5
+44
+330
+20
+100
+AcDbEntity
+  8
+CUT
+100
+AcDbCircle
+ 10
+8.0
+ 20
+28.5
+ 30
+0.0
+ 40
+1.25
+  0
+ARC
+  5
+45
 330
 20
 100
@@ -725,7 +805,7 @@ AcDbArc
   0
 LINE
   5
-42
+46
 330
 20
 100
@@ -749,7 +829,7 @@ AcDbLine
   0
 ARC
   5
-43
+47
 330
 20
 100
@@ -775,7 +855,7 @@ AcDbArc
   0
 LINE
   5
-44
+48
 330
 20
 100
@@ -799,7 +879,7 @@ AcDbLine
   0
 ARC
   5
-45
+49
 330
 20
 100
@@ -825,7 +905,7 @@ AcDbArc
   0
 LINE
   5
-46
+4A
 330
 20
 100
@@ -849,7 +929,7 @@ AcDbLine
   0
 ARC
   5
-47
+4B
 330
 20
 100
@@ -875,7 +955,7 @@ AcDbArc
   0
 LINE
   5
-48
+4C
 330
 20
 100
@@ -915,11 +995,11 @@ AcDbDictionary
   3
 ACAD_GROUP
 350
-49
+4D
   0
 DICTIONARY
   5
-49
+4D
 330
 22
 100

@@ -11,7 +11,8 @@ Everything is in [mechanical/export/](../mechanical/export/):
   its thirteen fasteners, and a sheet for each part with its flat pattern,
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.
-- `foot.step` and the drawings' last sheet, for whoever prints the four feet.
+- `foot.step` and the drawings' last sheet, for whoever prints the feet:
+  one model, four off.
 
 The shop cuts and bends five parts in 1.2 mm cold rolled steel, presses in
 thirteen PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
@@ -114,7 +115,8 @@ them if it offers that. The shelf and shell come loose.
 
 ## Putting one together
 
-1. Feet onto their studs. Supply onto the shelf with three 6-32 screws, exhaust face up.
+1. Feet onto their studs with a 3 mm hex key, then a bumper into each
+   foot's recess, over the key's socket. Supply onto the shelf with three 6-32 screws, exhaust face up.
 2. Fans into the core, board onto its standoffs, heatsink fan, mains inlet.
    Cables tied to the tray's slots between the board and the supply.
 3. Shelf in through the open side and up against the top panel. Two screws

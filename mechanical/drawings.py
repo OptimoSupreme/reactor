@@ -38,13 +38,13 @@ HOLES = {
     ("core", 5.0): "fan screw, self-tapping, clearance",
     ("core", 4.5): "shelf screws 6-32, loose clearance",
     ("core", 3.5): "+0.08/0: PEM FH-632-6 stud, bottom panel (4); mains inlet M3, rear panel (2)",
-    ("core", 3.0): "PEM SF-3-1.2 SpotFast, head side, +0.08/0",
+    ("core", 2.5): "rivet, 3/32 in; countersunk by the customer",
     ("core", 4.76): "PEM S-632-1 nut for the shell's screw, +0.08/0",
-    ("core", 1.6): "tap M2 x 0.4 through",
-    ("tray", 2.5): "PEM SF-3-1.2 SpotFast, second panel: see PEM bulletin SF",
+    ("core", 1.6): "M2 x 0.4, tapped by the customer",
+    ("tray", 2.5): "rivet, 3/32 in",
     ("tray", 5.41): "PEM BSO-632-12 standoff, +0.08/0",
     ("bulkhead", 12.0): "power switch, +0.2/0",
-    ("bulkhead", 2.5): "PEM SF-3-1.2 SpotFast, second panel: see PEM bulletin SF",
+    ("bulkhead", 2.5): "rivet, 3/32 in",
     ("shelf", 4.0): "6-32 clearance, supply: SFX pattern both ways round",
     ("shelf", 4.76): "PEM S-632-1 nut, +0.08/0",
     ("shelf", 22.0): "cable grommet",
@@ -55,14 +55,14 @@ PART_NOTES = {
     "core": ["Hexagonal mesh: 9.6 across flats, webs 2.07; see DXF.",
              "Rear panel: I/O aperture 158.75 x 44.45 +/-0.2 to ATX 2.2 fig. 4; keep paint off both faces within 2.5 of it.",
              "Mains inlet cut-out 28 x 20 +0.2/0, R1, for Schurter 6100-3 mounted from outside.",
-             "M2 threads (4) at the rear corners of the top and bottom panels: tap after bending.",
+             "Four 1.6 holes at the rear corners of the top and bottom panels are tapped M2 by the customer: leave them plain.",
              "One PEM S-632-1 nut in the rear panel's open-side lip, flush on the outside, body inside.",
              "Four PEM FH-632-6 studs in the bottom panel for the feet, heads flush in its upper (inside) face, pointing down."],
     "tray": ["Flat. Four PEM BSO-632-12 standoffs pressed in from the face that goes against the core's lips, standing 9.53 off the other face.",
-             "Install the standoffs before joining: two heads end up under the core's lips.",
+             "The standoffs go in before the customer rivets the tray on: two heads end up under the core's lips.",
              "Eight slots 2.0 x 5.0 in four pairs, for cable ties."],
     "bulkhead": ["Flat, no hardware.", "Three slots 13.0 x 2.2, corners R0.5, for the shelf's tongues: keep their lower edges clean and square."],
-    "shelf": ["Two PEM S-632-1 nuts in the tabs, bodies under the tabs, flush on top. The tabs fold toward the rear, away from the front flange.",
+    "shelf": ["Two PEM S-632-1 nuts in the tabs, bodies under the tabs, flush on top. The tabs fold toward the rear, away from the supply.",
               "Three tongues 12.0 wide on the front edge, standing 2.4 beyond it, go through the bulkhead's slots: no burr on them.",
               "Supplied loose: its tongues sit in the bulkhead's slots and two screws through the top panel hold it."],
     "shell": ["Plain outside faces: no marks, grain or tooling witness on the front and sides.",
@@ -70,13 +70,13 @@ PART_NOTES = {
 }
 GENERAL = [
     "All dimensions in mm. The STEP model and the DXF flat patterns govern; do not scale this drawing.",
-    "Material: cold rolled low carbon steel, DC01 / SPCC / CR4 or equivalent, 1.2 thick.",
-    "Inside bend radius 1.2 nominal. Flat patterns are drawn for K = 0.44: adjust to your tooling so the formed sizes hold.",
+    "Material: cold rolled low carbon steel, 1008 or equivalent, 0.048 in (1.2) thick.",
+    "Inside bend radius 1.0 and K = 0.516, Fabworks' figures for this sheet. The STEP models are the formed sizes to hold.",
     "Tolerances unless stated: cut features +/-0.15, bend positions +/-0.4, angles +/-1 deg.",
     "Deburr all edges and break sharp corners. Outside corners are R1.5 where drawn.",
-    "Self-clinching hardware: PennEngineering (PEM) or equivalent, installed before finishing.",
-    "Core, tray and bulkhead are joined with PEM SF-3-1.2 SpotFast fasteners, flush or under flush on both faces (sheet 2).",
-    "Finish: powder coat all over after joining, if offered; colour and texture to be agreed. Mask threads, studs and standoff bores.",
+    "Self-clinching hardware: PennEngineering (PEM), installed by the fabricator: eleven pieces, listed below.",
+    "All five parts are supplied loose. The customer rivets the tray and bulkhead to the core (sheet 2) and taps the four M2 holes.",
+    "Finish: none ordered. If powder coated, mask threads, studs and standoff bores.",
 ]
 
 
@@ -274,7 +274,7 @@ def part_sheet(pdf, sc, body, sizes, n, total):
         bends = list(csv.DictReader(f))
     box = bbox(flat, ("OUTLINE",))
     place = placer(box, (22, 62, 268, 276))
-    s = Sheet(pdf, NUMBER[body], TITLE[body], "CRS DC01, 1.2 mm", "flat " + ratio(place.k), n, total)
+    s = Sheet(pdf, NUMBER[body], TITLE[body], "steel 1008, 0.048 in", "flat " + ratio(place.k), n, total)
     s.text(14, 284, "FLAT PATTERN  (bend lines dash-dot, numbered as in %s-bends.csv)" % body, 6.5, weight="bold")
     s.geometry(flat, place, ("OUTLINE",), 0.45)
     s.geometry(flat, place, ("CUT",), 0.25)
@@ -303,7 +303,7 @@ def part_sheet(pdf, sc, body, sizes, n, total):
     y = s.table(x0, 188, "PART", ["", ""], [
         ["Formed size", "%.1f x %.1f x %.1f" % tuple(hi[i] - lo[i] for i in range(3))],
         ["Flat size", "%.1f x %.1f" % (box[2] - box[0], box[3] - box[1])],
-        ["Bends", "%d, all 90 deg, inside R1.2" % len(bends) if bends else "none"],
+        ["Bends", "%d, all 90 deg, inside R1.0" % len(bends) if bends else "none"],
         ["Mass", "%.0f g" % sizes[body + "-g"]]], [26, 90])
     count = lambda d: sum(1 for e in flat if e["type"] == "CIRCLE" and e.get("layer") == "CUT" and round(2 * e[40], 2) == d)
     y = s.table(x0, y - 3, "ROUND HOLES", ["", "dia", "qty", "for"], [
@@ -393,22 +393,20 @@ def main():
         s.dim(pf(-dy / 2, -dz / 2), pf(dy / 2, -dz / 2), -8, "%.1f" % dy)
         s.notes(232, 284, "GENERAL NOTES", GENERAL, width=120)
         rows = [[NUMBER[b], TITLE[b], 1, "%.0f g" % sizes[b + "-g"], b + ".step, " + b + ".dxf"] for b in SHEET]
-        y = s.table(232, 196, "PARTS  (all 1.2 mm cold rolled steel)", ["no.", "part", "qty", "mass", "files"], rows, [18, 62, 9, 16, 60])
+        y = s.table(232, 196, "PARTS  (all 0.048 in / 1.2 mm cold rolled steel)", ["no.", "part", "qty", "mass", "files"], rows, [18, 62, 9, 16, 60])
         hw = [["PEM BSO-632-12", "blind standoff, 6-32, 9.53 long", 4, "tray"],
               ["PEM FH-632-6", "flush-head stud, 6-32, 9.53 long", 4, "core, bottom panel"],
-              ["PEM S-632-1", "self-clinching nut, 6-32", 3, "shelf 2, core 1"],
-              ["PEM SF-3-1.2", "SpotFast: tray to core 9, bulkhead to core 4", 13, "sheet 2"],
-              ["M2 x 0.4 tap", "through, 1.6 drill", 4, "core"]]
-        s.table(232, y - 4, "HARDWARE AND JOINING BY THE FABRICATOR", ["item", "", "qty", "where"], hw, [30, 62, 9, 40])
-        s.notes(30, 52, "SCOPE", ["Five sheet metal parts. Core, tray and bulkhead are supplied joined as one assembly (sheet 2); "
-                                  "shelf and shell are supplied loose.",
+              ["PEM S-632-1", "self-clinching nut, 6-32", 3, "shelf 2, core 1"]]
+        s.table(232, y - 4, "HARDWARE BY THE FABRICATOR  (Fabworks' ZI parts)", ["item", "", "qty", "where"], hw, [30, 62, 9, 40])
+        s.notes(30, 52, "SCOPE", ["Five sheet metal parts, cut, bent and with their PEM hardware pressed in, all supplied loose.",
+                                  "The customer rivets the core, tray and bulkhead together (sheet 2: 13 rivets MS20426AD3-4) and taps four M2 holes.",
                                   "Fans, mainboard, power supply, mains inlet, switch, screws and feet are fitted by the customer. "
                                   "The feet (sheet %d) are made separately." % total], width=135)
         s.done()
 
         # sheet 2: joined assembly
         k = 0.45
-        s = Sheet(pdf, "RMK1-10", "Joined assembly: core, tray, bulkhead", "RMK1-01, -02, -03", ratio(k), 2, total)
+        s = Sheet(pdf, "RMK1-10", "Riveted assembly: core, tray, bulkhead", "RMK1-01, -02, -03", ratio(k), 2, total)
         show = ["core", "tray", "bulkhead"]
         tray_side = view(sc, "weld-tray", math.pi, 0, mid, show=show)
         fr = view(sc, "weld-front", -math.pi / 2, 0, mid, show=show)
@@ -416,8 +414,8 @@ def main():
         pf = placer((-dy / 2, -dz / 2, dy / 2, dz / 2), (172, 150, 172 + dy * k, 150 + dz * k), k)
         s.geometry(tray_side, pt_, None, 0.2)
         s.geometry(fr, pf, None, 0.2)
-        s.text(28, 254, "TRAY SIDE (front at left): 9 SpotFast, tray to the side lips of the core", 6, weight="bold")
-        s.text(172, 254, "FRONT: 4 SpotFast, bulkhead to front lips", 6, weight="bold")
+        s.text(28, 254, "TRAY SIDE (front at left): 9 rivets, tray to the side lips of the core", 6, weight="bold")
+        s.text(172, 254, "FRONT: 4 rivets, bulkhead to front lips", 6, weight="bold")
         rows = []
         for i, (x, z) in enumerate(TRAY_JOINS):
             p = pt_(-(x - mid[0]), z - mid[2])
@@ -436,16 +434,18 @@ def main():
         for y_ in TONGUES:
             p = pf(y_ - mid[1], PSU_TOP - mid[2])
             s.text(p[0] - 2.5, p[1] - 4, "slot", 4.6, BLUE)
-        s.table(262, 284, "SPOTFAST SF-3-1.2  (centres; origin below)", ["", "X", "Y", "Z"], rows, [12, 20, 20, 20], size=5.4)
-        s.notes(262, 215, "JOINING", [
+        s.table(262, 284, "RIVETS MS20426AD3-4  (centres; origin below)", ["", "X", "Y", "Z"], rows, [12, 20, 20, 20], size=5.4)
+        s.notes(262, 215, "RIVETING  (by the customer)", [
             "Datum: X from the inside face of the rear panel, Y from the inside face of the open-side lips, Z from the top face of the bottom panel.",
             "Tray: its outer face against the inside of the 17 mm lips of the bottom, top and rear panels, 1.5 clear of each panel.",
             "Bulkhead: its front face against the inside of the front lips of the top and bottom panels, 1.5 clear of each panel, its edge 0.3 from the tray.",
-            "Every fastener is 9.5 from the panel its lip is folded from, except F1 and F2 at Z 20. Lip flats are 14.6 or more.",
-            "Install the studs and standoffs first. Join the tray first, then the bulkhead.",
-            "SpotFast: 3.0 +0.08/0 holes in the core's lips, 2.5 in the tray and bulkhead, heads in the lips. Both faces must end flush: there is 0.3 to 0.5 outside the lips and 2.8 inside the tray.",
-            "Spot welding at the same centres is an accepted alternative: nugget 5 min, upset dressed flush outside. Leave the 13 holes out.",
-            "After joining the open side must stay square: 128.0 +/-0.4 between the side lips, 210.0 +/-0.4 between top and bottom panels."],
+            "Every rivet is 9.5 from the panel its lip is folded from, except F1 and F2 at Z 20. Lip flats are 14.8 or more.",
+            "Rivet: MS20426AD3-4, 3/32 in flush head, 2117 aluminium, 1/4 in long, in the 2.5 (No. 40) holes cut in both parts.",
+            "Countersink each hole in the core's lip from outside, 100 deg to 4.6 across, until the head sits flush or 0.1 under. Do not countersink the tray or bulkhead.",
+            "Head in the lip, outside. Drive the head with a flat punch while a steel bar is held against the tail inside, until the tail is 3.0 to 4.1 across and 0.8 to 1.5 tall.",
+            "Both sides matter: the shell passes 0.3 to 0.5 outside the lips, and the fans stand 2.8 inside the tray.",
+            "Rivet the tray first, then the bulkhead, starting each from its middle.",
+            "After riveting the open side must stay square: 128.0 +/-0.4 between the side lips, 210.0 +/-0.4 between top and bottom panels."],
             width=92)
         s.notes(28, 52, "NOTES", ["Outside faces of the lips are under the shell, which slides over them 0.5 clear: nothing may stand proud of them.",
                                   "Slots marked in the front view take the shelf's three tongues, which stand 0.9 in front of the bulkhead, under the shell."], width=150)

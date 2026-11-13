@@ -52,9 +52,14 @@ ZINC = "#c8c8c8"
 
 # Every screw is the 6-32 hex washer head screw of PC cases and 3.5 in drives, apart from the M2 cap
 # screws that the shell slides onto, ordinary self-tapping fan screws, and the mains inlet's countersunk M3s. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
-# The tray and the bulkhead are fixed to the core's lips with PEM SF-3-1.2 SpotFast fasteners, which end
-# flush on both faces: the shell passes 0.3 to 0.5 outside the lips and the fans stand 2.8 inside the tray.
-SF_HEAD, SF_TAIL = 3.0, 2.5   # holes in the lip and in the plate behind it
+# The tray and the bulkhead are riveted to the core's lips by hand with 3/32 in flush solid rivets,
+# MS20426AD3-4: the 100 degree head sits in a countersink in the lip, flush outside where the shell passes
+# 0.3 to 0.5 away, and the tail is bucked to a head about 3.6 across and 1.2 tall inside, where the fans
+# stand 2.8 from the tray. A blind rivet's tail is too long for that.
+RIVET, RIVET_HOLE = 2.4, 2.5          # shank, and a No. 40 drill's hole
+RIVET_CSK = (4.6, 100)                # countersink for the head, 4.55 across and 0.91 tall
+RIVET_TAIL = (3.6, 1.2)
+BEND_R, K_FACTOR = 1.0, 0.516         # Fabworks' figures for 0.048 in steel
 CLEAR_632 = 4.0    # clearance hole
 LOOSE_632 = 4.5    # and where the two holes are on different bent parts
 NUT_632 = 4.76     # hole for an S-632 nut, 5.6 or more from an edge
@@ -338,8 +343,10 @@ def core():
     # beside the switch. Then the free corners of both front lips are rounded.
     sy, sz = SWITCH
     front = plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1])
-    s += cut("lip-joins", TRAY, [(x, z, SF_HEAD) for x, z in TRAY_JOINS], 5, ["core"])
-    s += cut("front-lip-joins", front, [(y, z, SF_HEAD) for y, z in BULKHEAD_JOINS], 2.5, ["core"])
+    # SolidCraft will not cut a countersink in a sheet metal part, so these are plain holes and the
+    # countersinks for the rivets' heads are made by hand: see the drawing.
+    s += cut("lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS], 5, ["core"])
+    s += cut("front-lip-joins", front, [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS], 2.5, ["core"])
     s += cut("lip-shell-screw", plane([0, -T - 0.3, 0], [0, 0, 1], [1, 0, 0]),
              [(SHELL_SCREW[1], SHELL_SCREW[0], NUT_632)], T + 0.6, ["core"])
     s += cut("front-lips", front, [(-T - 1, sz - 4, sy + 10, sz + 9.5)], 2.5, ["core"])
@@ -367,7 +374,7 @@ def tray():
     us, vs = [u for u, v in BOARD_HOLES], [v for u, v in BOARD_HOLES]
     holes.append(("round", BOARD_X + min(us) + 10, BOARD_Z + BOARD - max(vs) + 8,
                   BOARD_X + BOARD - 4, BOARD_Z + BOARD - min(vs) - 8, 8))
-    holes += [(x, z, SF_TAIL) for x, z in TRAY_JOINS]
+    holes += [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS]
     holes += [("round", TIE_X + d - TIE_SLOT[0] / 2, z - TIE_SLOT[1] / 2, TIE_X + d + TIE_SLOT[0] / 2,
                z + TIE_SLOT[1] / 2, 0.9) for z in TIE_Z for d in (-TIE_APART / 2, TIE_APART / 2)]
     s += cut("tray-cuts", TRAY, holes, 5, ["tray"])
@@ -390,7 +397,7 @@ def bulkhead():
              [SWITCH + (SWITCH_HOLE,)]
              + [("round", y - SLOT_W / 2, PSU_TOP + T / 2 - SLOT_H / 2, y + SLOT_W / 2, PSU_TOP + T / 2 + SLOT_H / 2, 0.5)
                 for y in TONGUES]
-             + [(y, z, SF_TAIL) for y, z in BULKHEAD_JOINS], T + 0.3, ["bulkhead"])
+             + [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS], T + 0.3, ["bulkhead"])
     s += rounds("bulkhead-corners", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
                 [(ya, EDGE, 1, 1), (yb, EDGE, -1, 1), (ya, LZ - EDGE, 1, -1), (yb, LZ - EDGE, -1, -1)], T + 0.3, ["bulkhead"])
     return s
@@ -401,7 +408,7 @@ def shelf():
     two tabs folded from its rear wall take screws down through the top panel, and that wall shuts the space above the PSU off from the rest of the case, so the exhaust can only
     leave through the top mesh. The bulkhead, the shell's side and the tray close the other sides."""
     zt = LZ - 0.1
-    zb = zt - 2 * T    # where the tabs' bends start
+    zb = zt - T - BEND_R    # where the tabs' bends start
     ya, yb = 0.4, TRAY_Y - GAP
     xr, xf = SHELF_X
     f = SHELF_FLANGE
@@ -520,7 +527,7 @@ def slot(px, py):
     return ("poly", pts)
 
 
-# SpotFast fasteners, tray to the side lips of the bottom and top panels and of the rear panel: X and Z
+# rivets, tray to the side lips of the bottom and top panels and of the rear panel: X and Z
 TRAY_JOINS = ([(x, z) for x in (40, LX / 2, LX - 40) for z in (JOIN_IN, LZ - JOIN_IN)]
               + [(JOIN_IN, z) for z in (40, 105, 170)])
 
@@ -719,11 +726,12 @@ def hardware():
         s += cap_screw("nub-bottom-%d" % (i + 1), [x, y, -T], down, 3.0)
     s += pc_screw("screw-shell", [SHELL_SCREW[0], SHELL_Y0, SHELL_SCREW[1]], left)
     s += cyl("nut-shell", [SHELL_SCREW[0], 0, SHELL_SCREW[1]], [0, 1, 0], 7.11, 1.78, "new") + paint(["nut-shell"], ZINC)
-    # SpotFast: flush in the lip and in the plate behind it
+    # rivets: flush in the lip, a bucked head behind the plate
     joins = [("join-tray-%d" % (i + 1), [x, LY + T, z], left) for i, (x, z) in enumerate(TRAY_JOINS)]
     joins += [("join-bulkhead-%d" % (i + 1), [LX + T, y, z], back) for i, (y, z) in enumerate(BULKHEAD_JOINS)]
     for n, at, d in joins:
-        s += cyl(n, at, d, SF_HEAD, T, "new") + cyl(n, along(at, d, T), d, SF_TAIL, T) + paint([n], ZINC)
+        s += cyl(n, at, d, RIVET, 2 * T, "new") + cyl(n, along(at, d, 2 * T), d, RIVET_TAIL[0], RIVET_TAIL[1])
+        s += paint([n], ZINC)
     # switch: plain 12 mm body, nut behind the bulkhead, head out through the shell
     y, z = SWITCH
     s += cyl("switch", [BULKHEAD_X[1] - 22, y, z], fore, 11.9, 22, "new")
@@ -761,8 +769,8 @@ def main():
     os.makedirs(EXPORT, exist_ok=True)
     os.makedirs(IMAGES, exist_ok=True)
     sc.call("new_design")
-    sc.batch([("sheet.manage_rules", {"name": "CRS 1.2", "thickness": "%g mm" % T, "k_factor": "0.44",
-                                      "bend_radius": "Thickness", "active": True})], "rule")
+    sc.batch([("sheet.manage_rules", {"name": "CRS 1.2", "thickness": "%g mm" % T, "k_factor": str(K_FACTOR),
+                                      "bend_radius": "%g mm" % BEND_R, "active": True})], "rule")
     for name, steps in (("core", core()), ("tray", tray()), ("bulkhead", bulkhead()), ("shelf", shelf()),
                         ("shell", shell())):
         sc.batch(steps, name)

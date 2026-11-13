@@ -119,7 +119,8 @@ supply is a plain SFX box; its noise paragraph was written around the SF750
 
 Every screw on the case is the 6-32 hex washer head screw used for PC cases
 and 3.5 in drives, 1/4 in long, apart from the fan screws, the mains inlet's
-two and the four M2 screws that hold the shell.
+two, the shelf's three low-headed ones and the four M2 pins the shell slides
+onto.
 
 | Where | Screw | Into | Hole in the sheet |
 | --- | --- | --- | --- |
@@ -130,7 +131,8 @@ two and the four M2 screws that hold the shell.
 | Shelf to bulkhead, three | 6-32 x 1/4 with a head no taller than 1.2: NBK SETS-#6-32, head 7.5 across and 0.86 tall, Torx T6 | PEM S-632-1 nut in the shelf's front flange | 4.76 +0.08, 7 from the flange's edge; 4.5 clearance in the bulkhead |
 | Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
-| Shell, four | M2 socket head cap | a thread tapped in the top and bottom panels | 1.6 tap drill; 2.8 clearance in the shell's flange for the one that holds it |
+| Shell's pins, four | M2 socket head cap, left in for good | a thread tapped in the top and bottom panels | 1.6 tap drill |
+| Shell, one | 6-32 | PEM S-632-1 nut in the rear panel's open-side lip | 4.76 +0.08, 5.8 from the lip's edge and from its bend; 4.5 clearance in the shell's side |
 
 The PEM figures are from PennEngineering's FH, CL and SO bulletins, read
 2026-11-11; all three take sheet from 1.02 up. The standoffs are 9.53 where
@@ -158,9 +160,11 @@ shell for its strap, which suits ties 2.5 or 3.6 wide (1.0 to 1.3 thick).
 A lanced bridge would hold a tie without going behind the tray, but it is
 a formed feature that laser-and-brake shops do not make.
 
-Three of the M2 screws are nubs for the shell's slots to run onto, their
-heads (3.8 across, 2 tall) standing proud of the panel. The fourth goes up
-through the shell's flange and is tightened. Pressed-in pilot pins were ruled
+The four M2 screws are nubs for the shell's slots to run onto, their heads
+(3.8 across, 2 tall) standing proud of the panel, and they stay in. One
+ordinary 6-32 case screw holds the shell: through its open-side panel 7 from
+the rear and halfway up, into a nut in the rear panel's lip. Its head stands 2.4 proud of the side, and it comes out with the
+case standing where it is. Pressed-in pilot pins were ruled
 out for the nubs: PEM's TPS-3mm comes only 8 long and wants 6.4 from hole
 centre to edge, and not every shop stocks pins. The slots are 0.5 clear of the
 nubs each side, since both parts are bent and a bend is good to about 0.4.

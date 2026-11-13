@@ -15,7 +15,7 @@ Everything is in [mechanical/export/](../mechanical/export/):
   one model, four off.
 
 The shop cuts and bends five parts in 1.2 mm cold rolled steel, presses in
-thirteen PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
+fourteen PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
 and bulkhead to the core with thirteen PEM SpotFast fasteners, and paints
 them if it offers that. The shelf and shell come loose.
 
@@ -122,4 +122,4 @@ them if it offers that. The shelf and shell come loose.
 3. Shelf in through the open side and up against the top panel. Two screws
    down through the top panel, three low-head screws in from the front.
 4. Switch through the bulkhead, wiring, then the shell on from the front and
-   its one screw underneath.
+   its one screw in the open side, at the rear and halfway up.

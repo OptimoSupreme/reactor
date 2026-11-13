@@ -96,11 +96,12 @@ three, they win.
   two through the top panel hold it, and nothing stands over the supply's
   own screws when it is out. Four pairs of slots in the tray, between the
   board and the supply, take cable ties. The shell slides on from the front, slots in its
-  flanges running onto screw heads at three rear corners, and one small
-  screw underneath at the fourth holds it there. Four steel feet, printed
+  flanges running onto screw heads at the four rear corners, and one
+  ordinary case screw through its side, at the rear and halfway up, holds it
+  there. Four steel feet, printed
   and tapped, turn onto studs under the bottom panel. Apart from the fan
-  screws, the mains inlet's and the shell's, every screw is the 6-32 thread
-  used all over PC cases.
+  screws, the mains inlet's and the shell's four pins, every screw is the
+  6-32 thread used all over PC cases.
 - [docs/before-ordering.md](docs/before-ordering.md) lists what has been
   checked and what is still open before one can be ordered.
 - [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts,

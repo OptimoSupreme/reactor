@@ -94,8 +94,8 @@ TOP_FAN = (LX / 2 - 3.5 * PITCH_X, LY / 2)      # half pitches from the middle, 
 
 # SFX supply standing in front of the board: fan toward the board, exhaust and mains inlet up
 PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
-# As far forward as it goes, 1.4 from the bulkhead: the heads of its front two screws still sit flat on
-# the shelf, 0.7 short of the bend into the shelf's front flange. That leaves 13.1 to the board's edge.
+# 1.4 from the bulkhead, its front two screws 7 from the shelf's front edge. That leaves 13.1 to the
+# board's edge.
 PSU_X = LX - T - 1.39 - PSU[0]
 PSU_Y = 0.7
 PSU_TOP = LZ - 35.0                            # room above for a right-angle mains plug
@@ -114,13 +114,13 @@ SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
 # screws when the shelf is out of the case. Each ends at the corner of the cell diagonally behind its
 # screw's, so that cell's cut-out takes the tab's corner off at a slant and stops there.
 SHELF_FLANGE = SHELF_X[0] + T - round(TOP_FAN[0] + 7 * PITCH_X, 4)   # rounded as the cells' corners are
-# The shelf comes out with the PSU on it, so three screws through the bulkhead from the front hold its
-# front flange, in nuts pressed into the flange. An ordinary head would foul the shell, 1.5 away, so
-# these are NBK's SETS-#6-32, whose head is 7.5 across and 0.86 tall. They stay 5.6 clear of the
-# flange's scallop round the switch.
-SHELF_FRONT = [(y, PSU_TOP + 9.0) for y in (26.0, 63.0, 100.0)]
-SHELF_LIP = 16.0     # the front flange: its nuts are 7 from its edge
-LOW_HEAD = (7.5, 0.86)
+# The shelf comes out with the PSU on it, and nothing in front of the bulkhead may stand more than 1.5
+# proud of it, which no ordinary screw's head manages. So the shelf's front has no screws: three tongues
+# on its front edge go into three slots in the bulkhead, which carries the PSU's weight there, and the
+# two screws through the top panel keep the shelf from sliding back out of them. Y of each tongue.
+TONGUES = [22.0, 63.45, 104.9]
+TONGUE_W, TONGUE_OUT = 12.0, 0.9    # width, and how far the tip stands in front of the bulkhead, 0.6 short of the shell
+SLOT_W, SLOT_H = 13.0, 2.2          # 0.5 clear each side of the tongue, and above and below it
 # two screws down through the top panel into nuts in the shelf's tabs: a cell in the outermost row on
 # each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 7.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
@@ -387,7 +387,9 @@ def bulkhead():
          ("sheet.flange", {"sketch": "bulkhead-profile", "curves": ["l1"], "distance": str(yb - ya),
                            "body_name": "bulkhead"})]
     s += cut("bulkhead-cuts", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [SWITCH + (SWITCH_HOLE,)] + [(y, z, LOOSE_632) for y, z in SHELF_FRONT]
+             [SWITCH + (SWITCH_HOLE,)]
+             + [("round", y - SLOT_W / 2, PSU_TOP + T / 2 - SLOT_H / 2, y + SLOT_W / 2, PSU_TOP + T / 2 + SLOT_H / 2, 0.5)
+                for y in TONGUES]
              + [(y, z, SF_TAIL) for y, z in BULKHEAD_JOINS], T + 0.3, ["bulkhead"])
     s += rounds("bulkhead-corners", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
                 [(ya, EDGE, 1, 1), (yb, EDGE, -1, 1), (ya, LZ - EDGE, 1, -1), (yb, LZ - EDGE, -1, -1)], T + 0.3, ["bulkhead"])
@@ -395,7 +397,7 @@ def bulkhead():
 
 
 def shelf():
-    """The PSU screws up against its underside, exhaust face up. Its front flange is screwed to the bulkhead from the front,
+    """The PSU screws up against its underside, exhaust face up. Three tongues on its front edge sit in slots in the bulkhead,
     two tabs folded from its rear wall take screws down through the top panel, and that wall shuts the space above the PSU off from the rest of the case, so the exhaust can only
     leave through the top mesh. The bulkhead, the shell's side and the tray close the other sides."""
     zt = LZ - 0.1
@@ -403,10 +405,11 @@ def shelf():
     ya, yb = 0.4, TRAY_Y - GAP
     xr, xf = SHELF_X
     f = SHELF_FLANGE
+    xt = LX + TONGUE_OUT   # the tongues' tips
     s = [("sketch.create", {"plane": plane([0, yb, 0], [1, 0, 0], [0, 0, 1]), "name": "shelf-profile"}),
-         ("sketch.line", {"points": [[xf, PSU_TOP + SHELF_LIP], [xf, PSU_TOP], [xr, PSU_TOP], [xr, zb]]}),
+         ("sketch.line", {"points": [[xt, PSU_TOP], [xr, PSU_TOP], [xr, zb]]}),
          ("sketch.finish", {}),
-         ("sheet.flange", {"sketch": "shelf-profile", "curves": ["l1", "l2", "l3"],
+         ("sheet.flange", {"sketch": "shelf-profile", "curves": ["l1", "l2"],
                            "distance": str(yb - ya), "body_name": "shelf"})]
     # The rear wall is straight, with a tab folded over at each side for the screws and a relief slot
     # beside each. SolidCraft folds only one flange feature on a side of a panel and levels the whole
@@ -455,12 +458,18 @@ def shelf():
     s += rounds("shelf-tab-corners", plane([0, 0, zb + 0.5], [1, 0, 0], [0, 1, 0]),
                 [(round(xr + T - f, 4), y0, 1, 1), (round(xr + T - f, 4), yb, 1, -1)], 2 * T, ["shelf"])
     s += cut("shelf-cables", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]), [GROMMET], 4, ["shelf"])
-    # the front flange is scalloped under the switch, so a socket fits over its nut, and has the holes
-    # for the nuts its screws go into
-    front = plane([xf - T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1])
-    s += cut("shelf-switch", front, [SWITCH + (SWITCH_NUT + 5,)] + [(y, z, NUT_632) for y, z in SHELF_FRONT],
-             T + 1, ["shelf"])
-    s += rounds("shelf-corners", front, [(ya, PSU_TOP + SHELF_LIP, 1, -1), (yb, PSU_TOP + SHELF_LIP, -1, -1)], T + 1, ["shelf"])
+    # the front edge is cut back between the tongues, and each tongue's corners come off to lead it into its slot
+    c = 0.6
+    ends = [ya - 1] + [y + d for y in TONGUES for d in (-TONGUE_W / 2, TONGUE_W / 2)] + [yb + 1]
+    gaps = []
+    for i in range(0, len(ends), 2):
+        y1, y2 = ends[i], ends[i + 1]
+        p = [[xf, y1]] + ([[xt - c, y1], [xt, y1 - c], [xt + 1, y1 - c]] if i else [[xt + 1, y1]])
+        p += [[xt + 1, y2 + c], [xt, y2 + c], [xt - c, y2]] if i < len(ends) - 2 else [[xt + 1, y2]]
+        gaps.append(("poly", [[round(x, 3), round(y, 3)] for x, y in p + [[xf, y2]]]))
+    under = plane([0, 0, PSU_TOP - 2], [1, 0, 0], [0, 1, 0])
+    s += cut("shelf-tongues", under, gaps, 5, ["shelf"])
+    s += rounds("shelf-front-corners", under, [(xf, ya, -1, 1), (xf, yb, -1, -1)], 5, ["shelf"])
     return s
 
 
@@ -698,13 +707,6 @@ def hardware():
         s += hexagon("standoff-%d" % (i + 1), [x, TRAY_Y, z], left, 6.35, STANDOFF)
         s += paint(["standoff-%d" % (i + 1)], ZINC)
         s += pc_screw("screw-board-%d" % (i + 1), [x, BOARD_Y, z], left)
-    # shelf: low-head screws through the bulkhead from the front, nuts behind the shelf's front flange
-    for i, (y, z) in enumerate(SHELF_FRONT):
-        n = "screw-front-%d" % (i + 1)
-        s += cyl(n, [LX, y, z], fore, LOW_HEAD[0], LOW_HEAD[1], "new") + cyl(n, [LX, y, z], back, 3.5, SCREW_632)
-        s += paint([n], BLACK)
-        s += cyl("nut-front-%d" % (i + 1), [SHELF_X[1] - T, y, z], back, 7.11, 1.78, "new")
-        s += paint(["nut-front-%d" % (i + 1)], ZINC)
     for i, d in enumerate((-20, 20)):
         n = "screw-inlet-%d" % (i + 1)   # countersunk M3, flush in the inlet's flange
         s += cyl(n, [-T - 2.6, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
@@ -792,7 +794,7 @@ def ours(n):
 
 # a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
 THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-shelf-", "nut-shelf-"), ("screw-shell", "nut-shell"),
-            ("screw-board-", "standoff-"), ("screw-front-", "nut-front-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
+            ("screw-board-", "standoff-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
             ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces
 

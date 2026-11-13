@@ -21,7 +21,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Arc, Circle
 
 import mk1
-from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_KEY, FOOT_KEY_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, FOOT_TAP_DEPTH, LX, LY, LZ, SHEET, SHELF_FRONT, T,
+from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_KEY, FOOT_KEY_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, FOOT_TAP_DEPTH, LX, LY, LZ, SHEET, PSU_TOP, T, TONGUES,
                  TRAY_JOINS)
 
 VIEWS = os.path.expanduser("~/.cache/reactor/drawings")
@@ -45,7 +45,6 @@ HOLES = {
     ("tray", 5.41): "PEM BSO-632-12 standoff, +0.08/0",
     ("bulkhead", 12.0): "power switch, +0.2/0",
     ("bulkhead", 2.5): "PEM SF-3-1.2 SpotFast, second panel: see PEM bulletin SF",
-    ("bulkhead", 4.5): "shelf screws 6-32, loose clearance",
     ("shelf", 4.0): "6-32 clearance, supply: SFX pattern both ways round",
     ("shelf", 4.76): "PEM S-632-1 nut, +0.08/0",
     ("shelf", 22.0): "cable grommet",
@@ -62,10 +61,10 @@ PART_NOTES = {
     "tray": ["Flat. Four PEM BSO-632-12 standoffs pressed in from the face that goes against the core's lips, standing 9.53 off the other face.",
              "Install the standoffs before joining: two heads end up under the core's lips.",
              "Eight slots 2.0 x 5.0 in four pairs, for cable ties."],
-    "bulkhead": ["Flat, no hardware."],
+    "bulkhead": ["Flat, no hardware.", "Three slots 13.0 x 2.2, corners R0.5, for the shelf's tongues: keep their lower edges clean and square."],
     "shelf": ["Two PEM S-632-1 nuts in the tabs, bodies under the tabs, flush on top. The tabs fold toward the rear, away from the front flange.",
-              "Three PEM S-632-1 nuts in the front flange, flush on its front face, bodies behind it.",
-              "Supplied loose: three screws through the bulkhead and two through the top panel hold it."],
+              "Three tongues 12.0 wide on the front edge, standing 2.4 beyond it, go through the bulkhead's slots: no burr on them.",
+              "Supplied loose: its tongues sit in the bulkhead's slots and two screws through the top panel hold it."],
     "shell": ["Plain outside faces: no marks, grain or tooling witness on the front and sides.",
               "Slots in the four return flanges run onto M2 screw heads on the core; check the slide fit before finishing."],
 }
@@ -397,7 +396,7 @@ def main():
         y = s.table(232, 196, "PARTS  (all 1.2 mm cold rolled steel)", ["no.", "part", "qty", "mass", "files"], rows, [18, 62, 9, 16, 60])
         hw = [["PEM BSO-632-12", "blind standoff, 6-32, 9.53 long", 4, "tray"],
               ["PEM FH-632-6", "flush-head stud, 6-32, 9.53 long", 4, "core, bottom panel"],
-              ["PEM S-632-1", "self-clinching nut, 6-32", 6, "shelf 5, core 1"],
+              ["PEM S-632-1", "self-clinching nut, 6-32", 3, "shelf 2, core 1"],
               ["PEM SF-3-1.2", "SpotFast: tray to core 9, bulkhead to core 4", 13, "sheet 2"],
               ["M2 x 0.4 tap", "through, 1.6 drill", 4, "core"]]
         s.table(232, y - 4, "HARDWARE AND JOINING BY THE FABRICATOR", ["item", "", "qty", "where"], hw, [30, 62, 9, 40])
@@ -434,9 +433,9 @@ def main():
             s.line([(p[0], p[1] - 2.4), (p[0], p[1] + 2.4)], 0.3, RED)
             s.text(p[0] + 2.2, p[1] + 2.2, "F%d" % (i + 1), 5.2, RED, weight="bold")
             rows.append(["F%d" % (i + 1), "front", "%.1f" % y_, "%.1f" % z])
-        for i, (y_, z) in enumerate(SHELF_FRONT):
-            p = pf(y_ - mid[1], z - mid[2])
-            s.text(p[0] + 1.5, p[1] - 3.5, "screw", 4.6, BLUE)
+        for y_ in TONGUES:
+            p = pf(y_ - mid[1], PSU_TOP - mid[2])
+            s.text(p[0] - 2.5, p[1] - 4, "slot", 4.6, BLUE)
         s.table(262, 284, "SPOTFAST SF-3-1.2  (centres; origin below)", ["", "X", "Y", "Z"], rows, [12, 20, 20, 20], size=5.4)
         s.notes(262, 215, "JOINING", [
             "Datum: X from the inside face of the rear panel, Y from the inside face of the open-side lips, Z from the top face of the bottom panel.",
@@ -449,7 +448,7 @@ def main():
             "After joining the open side must stay square: 128.0 +/-0.4 between the side lips, 210.0 +/-0.4 between top and bottom panels."],
             width=92)
         s.notes(28, 52, "NOTES", ["Outside faces of the lips are under the shell, which slides over them 0.5 clear: nothing may stand proud of them.",
-                                  "Holes marked in the front view take the shelf's three screws: NBK SETS-#6-32, head 0.86 tall, or any 6-32 with a head under 1.2."], width=150)
+                                  "Slots marked in the front view take the shelf's three tongues, which stand 0.9 in front of the bulkhead, under the shell."], width=150)
         s.done()
 
         for i, b in enumerate(SHEET):

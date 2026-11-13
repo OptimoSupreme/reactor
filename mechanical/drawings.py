@@ -39,6 +39,7 @@ HOLES = {
     ("core", 4.5): "shelf screws 6-32, loose clearance",
     ("core", 3.5): "+0.08/0: PEM FH-632-6 stud, bottom panel (4); mains inlet M3, rear panel (2)",
     ("core", 3.0): "PEM SF-3-1.2 SpotFast, head side, +0.08/0",
+    ("core", 4.76): "PEM S-632-1 nut for the shell's screw, +0.08/0",
     ("core", 1.6): "tap M2 x 0.4 through",
     ("tray", 2.5): "PEM SF-3-1.2 SpotFast, second panel: see PEM bulletin SF",
     ("tray", 5.41): "PEM BSO-632-12 standoff, +0.08/0",
@@ -49,13 +50,14 @@ HOLES = {
     ("shelf", 4.76): "PEM S-632-1 nut, +0.08/0",
     ("shelf", 22.0): "cable grommet",
     ("shell", 14.5): "power switch head, 14",
-    ("shell", 2.8): "M2 clearance",
+    ("shell", 4.5): "shell screw 6-32, loose clearance",
 }
 PART_NOTES = {
     "core": ["Hexagonal mesh: 9.6 across flats, webs 2.07; see DXF.",
              "Rear panel: I/O aperture 158.75 x 44.45 +/-0.2 to ATX 2.2 fig. 4; keep paint off both faces within 2.5 of it.",
              "Mains inlet cut-out 28 x 20 +0.2/0, R1, for Schurter 6100-3 mounted from outside.",
              "M2 threads (4) at the rear corners of the top and bottom panels: tap after bending.",
+             "One PEM S-632-1 nut in the rear panel's open-side lip, flush on the outside, body inside.",
              "Four PEM FH-632-6 studs in the bottom panel for the feet, heads flush in its upper (inside) face, pointing down."],
     "tray": ["Flat. Four PEM BSO-632-12 standoffs pressed in from the face that goes against the core's lips, standing 9.53 off the other face.",
              "Install the standoffs before joining: two heads end up under the core's lips.",
@@ -65,7 +67,7 @@ PART_NOTES = {
               "Three PEM S-632-1 nuts in the front flange, flush on its front face, bodies behind it.",
               "Supplied loose: three screws through the bulkhead and two through the top panel hold it."],
     "shell": ["Plain outside faces: no marks, grain or tooling witness on the front and sides.",
-              "Slots in three return flanges run onto M2 screw heads on the core; check the slide fit before finishing."],
+              "Slots in the four return flanges run onto M2 screw heads on the core; check the slide fit before finishing."],
 }
 GENERAL = [
     "All dimensions in mm. The STEP model and the DXF flat patterns govern; do not scale this drawing.",
@@ -395,7 +397,7 @@ def main():
         y = s.table(232, 196, "PARTS  (all 1.2 mm cold rolled steel)", ["no.", "part", "qty", "mass", "files"], rows, [18, 62, 9, 16, 60])
         hw = [["PEM BSO-632-12", "blind standoff, 6-32, 9.53 long", 4, "tray"],
               ["PEM FH-632-6", "flush-head stud, 6-32, 9.53 long", 4, "core, bottom panel"],
-              ["PEM S-632-1", "self-clinching nut, 6-32", 5, "shelf"],
+              ["PEM S-632-1", "self-clinching nut, 6-32", 6, "shelf 5, core 1"],
               ["PEM SF-3-1.2", "SpotFast: tray to core 9, bulkhead to core 4", 13, "sheet 2"],
               ["M2 x 0.4 tap", "through, 1.6 drill", 4, "core"]]
         s.table(232, y - 4, "HARDWARE AND JOINING BY THE FABRICATOR", ["item", "", "qty", "where"], hw, [30, 62, 9, 40])

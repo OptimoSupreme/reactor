@@ -51,7 +51,7 @@ BLACK = "#1b1b1b"
 ZINC = "#c8c8c8"
 
 # Every screw is the 6-32 hex washer head screw of PC cases and 3.5 in drives, apart from the M2 cap
-# screws that hold the shell, ordinary self-tapping fan screws, and the mains inlet's countersunk M3s. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
+# screws that the shell slides onto, ordinary self-tapping fan screws, and the mains inlet's countersunk M3s. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
 # The tray and the bulkhead are fixed to the core's lips with PEM SF-3-1.2 SpotFast fasteners, which end
 # flush on both faces: the shell passes 0.3 to 0.5 outside the lips and the fans stand 2.8 inside the tray.
 SF_HEAD, SF_TAIL = 3.0, 2.5   # holes in the lip and in the plate behind it
@@ -160,11 +160,10 @@ SHELL_RETURN = 9.5  # flanges over the top and under the bottom: narrow enough t
 PINS = [(6.0, 3.0), (6.0, LY - 3.0)]
 PIN = 3.8
 PIN_TAP = 1.6      # tap drill for M2
-# The bottom corner on the open side has the same M2 screw the other way up instead of a nub: up through
-# a hole in the flange into a thread in the bottom panel and tightened, which holds the shell on. It
-# sits closer to the edge than the nubs so that its end clears the corner of the fan above it.
-SCREW = (6.0, 2.5)
-M2_CLEAR = 2.8
+# One ordinary 6-32 screw holds the shell on: through its open-side panel at the rear, halfway up,
+# into a nut pressed into the rear panel's side lip. X and Z. It can be reached
+# with the case standing where it is.
+SHELL_SCREW = (7.0, LZ / 2)
 SLOT_CLEAR = 0.5   # each side of a nub in its slot
 # 12 mm vandal switch, Y and Z: top left seen from the front. It is fixed in the bulkhead with its nut
 # behind, and its head comes out through a larger hole in the shell, so the shell slides off over it.
@@ -333,7 +332,7 @@ def core():
     s += cut("rear-cuts", REAR, rear, 5, ["core"])
     pad = near(FEET, FOOT_PAD + HEX_AF / 2)
     s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, pad)
-             + [(x, y, STUD_632) for x, y in FEET] + [SCREW + (PIN_TAP,), PINS[1] + (PIN_TAP,)], 5, ["core"])
+             + [(x, y, STUD_632) for x, y in FEET] + [(x, y, PIN_TAP) for x, y in PINS], 5, ["core"])
     s += cut("top-mesh", TOP, top_mesh() + [(x, y, PIN_TAP) for x, y in PINS], 6, ["core"])
     # The top front lip steps back round the switch's head, from the lip's end so that no sliver is left
     # beside the switch. Then the free corners of both front lips are rounded.
@@ -341,6 +340,8 @@ def core():
     front = plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1])
     s += cut("lip-joins", TRAY, [(x, z, SF_HEAD) for x, z in TRAY_JOINS], 5, ["core"])
     s += cut("front-lip-joins", front, [(y, z, SF_HEAD) for y, z in BULKHEAD_JOINS], 2.5, ["core"])
+    s += cut("lip-shell-screw", plane([0, -T - 0.3, 0], [0, 0, 1], [1, 0, 0]),
+             [(SHELL_SCREW[1], SHELL_SCREW[0], NUT_632)], T + 0.6, ["core"])
     s += cut("front-lips", front, [(-T - 1, sz - 4, sy + 10, sz + 9.5)], 2.5, ["core"])
     s += rounds("front-lip-corners", front, [(sy + 10, LZ + T - LIP_TOP, 1, 1), (T, LIP_BOTTOM - T, 1, -1),
                                              (LY - T, LIP_BOTTOM - T, -1, -1)], 2.5, ["core"])
@@ -464,8 +465,8 @@ def shelf():
 
 
 def shell():
-    """Front and both sides, plain. Slides on from the front, three of its flanges running onto screw heads
-    at the rear corners; a screw at the fourth corner, underneath, keeps it there."""
+    """Front and both sides, plain. Slides on from the front, its four flanges running onto screw heads
+    at the rear corners; one screw through the open side, at the rear and halfway up, keeps it there."""
     y0, y1, z0, z1 = SHELL_Y0, SHELL_Y1, SHELL_Z0, SHELL_Z1
     s = [("sketch.create", {"plane": plane([0, 0, z0], [1, 0, 0], [0, 1, 0]), "name": "shell-profile"}),
          ("sketch.line", {"points": [[-T, y1], [SHELL_XF, y1], [SHELL_XF, y0], [-T, y0]]}),
@@ -476,17 +477,19 @@ def shell():
              [LX / 2, y0, z1], [LX / 2, y1, z1]]}),
          ("sheet.flange", {"body": "shell", "height": str(SHELL_RETURN), "flip": True, "edges": [
              [LX / 2, y0, z0], [LX / 2, y1, z0]]})]
-    # slots open at the rear for the core's nubs, and a hole for the screw that holds it
+    # slots open at the rear for the core's nubs, and a hole in the open side for the screw that holds it
     s += cut("shell-slots-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*p) for p in PINS], T + 1, ["shell"])
-    s += cut("shell-slots-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*PINS[1]), SCREW + (M2_CLEAR,)], T + 1,
+    s += cut("shell-slots-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*p) for p in PINS], T + 1,
              ["shell"])
+    s += cut("shell-screw", plane([0, y0 - 0.5, 0], [0, 0, 1], [1, 0, 0]),
+             [(SHELL_SCREW[1], SHELL_SCREW[0], LOOSE_632)], T + 1, ["shell"])
     s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (SWITCH_SHELL,)], 5, ["shell"])
-    # free corners of the flanges: their front ends, and the rear end of the one with no slot
+    # free corners of the flanges: their front ends
     xe, ta, tb = SHELL_XF - 2 * T, y0 + SHELL_RETURN, y1 - SHELL_RETURN
     s += rounds("shell-corners-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]),
                 [(xe, ta, -1, -1), (xe, tb, -1, 1)], T + 1, ["shell"])
     s += rounds("shell-corners-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]),
-                [(xe, ta, -1, -1), (xe, tb, -1, 1), (-T, ta, 1, -1)], T + 1, ["shell"])
+                [(xe, ta, -1, -1), (xe, tb, -1, 1)], T + 1, ["shell"])
     return s
 
 
@@ -708,11 +711,12 @@ def hardware():
         s += cyl(n, [-T - 2.2, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
         s += hexagon("nut-inlet-%d" % (i + 1), [0, INLET[0] + d, INLET[1]], fore, 5.5, 2.4)
         s += paint(["nut-inlet-%d" % (i + 1)], ZINC)
-    # shell: a nub at three corners and the screw that holds it at the fourth
+    # shell: a nub at each rear corner, and the one screw that holds it
     for i, (x, y) in enumerate(PINS):
         s += cap_screw("nub-top-%d" % (i + 1), [x, y, LZ + T], up, 3.0)
-    s += cap_screw("nub-bottom", [PINS[1][0], PINS[1][1], -T], down, 3.0)
-    s += cap_screw("screw-shell", [SCREW[0], SCREW[1], SHELL_Z0], down, 4.0)
+        s += cap_screw("nub-bottom-%d" % (i + 1), [x, y, -T], down, 3.0)
+    s += pc_screw("screw-shell", [SHELL_SCREW[0], SHELL_Y0, SHELL_SCREW[1]], left)
+    s += cyl("nut-shell", [SHELL_SCREW[0], 0, SHELL_SCREW[1]], [0, 1, 0], 7.11, 1.78, "new") + paint(["nut-shell"], ZINC)
     # SpotFast: flush in the lip and in the plate behind it
     joins = [("join-tray-%d" % (i + 1), [x, LY + T, z], left) for i, (x, z) in enumerate(TRAY_JOINS)]
     joins += [("join-bulkhead-%d" % (i + 1), [LX + T, y, z], back) for i, (y, z) in enumerate(BULKHEAD_JOINS)]
@@ -787,7 +791,7 @@ def ours(n):
 
 
 # a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
-THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-shelf-", "nut-shelf-"),
+THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-shelf-", "nut-shelf-"), ("screw-shell", "nut-shell"),
             ("screw-board-", "standoff-"), ("screw-front-", "nut-front-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
             ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces

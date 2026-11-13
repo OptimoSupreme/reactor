@@ -90,8 +90,8 @@ three, they win.
   and Seasonic's Focus SGX-550 (2021). It is five parts in 1.2 mm steel: a core (bottom, rear and top), the
   tray, a bulkhead across the front that carries the supply's weight to the
   floor, a shelf that the supply hangs under, and a plain shell (front and
-  sides). The tray and the bulkhead are fixed to the core with pressed-in
-  fasteners that end flush on both faces. The shelf comes out with the
+  sides). The tray and the bulkhead are riveted to the core by hand with
+  flush rivets. The shelf comes out with the
   supply on it: three tongues on its front edge sit in slots in the bulkhead,
   two screws through the top panel hold it, and nothing stands over the
   supply's own screws when it is out. Four pairs of slots in the tray, between the

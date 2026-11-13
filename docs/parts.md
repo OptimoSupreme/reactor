@@ -171,16 +171,18 @@ out for the nubs: PEM's TPS-3mm comes only 8 long and wants 6.4 from hole
 centre to edge, and not every shop stocks pins. The slots are 0.5 clear of the
 nubs each side, since both parts are bent and a bend is good to about 0.4.
 
-The tray is fixed to the core's side lips at nine places and the bulkhead to
-its front lips at four with PEM's SF-3-1.2 SpotFast, a pressed-in fastener
-that joins two sheets and ends flush on both faces: a 3.0 +0.08 hole in the
-lip, 2.5 in the plate behind it, 2.54 or more from an edge, for two sheets
-of 1.2 (PEM's bulletin SF, read 2026-11-12). Flush matters on both sides:
+The tray is riveted to the core's side lips at nine places and the bulkhead
+to its front lips at four, by hand, with 3/32 in flush solid rivets,
+MS20426AD3-4 (2117 aluminium, 100 degree head 0.179 in across and 0.036 in
+tall, 1/4 in long, in a No. 40 hole; from Olander's and Hanson's tables, read
+2026-11-12). The holes are cut 2.5 in both parts. The head sits in a
+countersink made by hand in the lip, flush outside, and the tail is bucked
+inside to a head 3.0 to 4.1 across and 0.8 to 1.5 tall. Both sides matter:
 the shell passes 0.5 from the side lips and 0.3 from the front ones, and the
 fans' frames stand 2.8 inside the tray, less than a blind rivet's tail. The
-lips are 17 tall (18.5 and 28 at the front) and each fastener is 9.5 from
-the panel its lip is
-folded from, which also leaves room for spot welds at the same places if a
+lips are 17 tall (18.5 and 28 at the front) and each rivet is 9.5 from the
+panel its lip is folded from. PEM's SpotFast was drawn first, and no
+prototyping shop found lists it or joins parts.
 shop would rather weld.
 
 | Part | Fit | Notes |

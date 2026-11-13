@@ -7,17 +7,18 @@ What has been checked, what is still open, and what goes to a shop. Updated
 
 Everything is in [mechanical/export/](../mechanical/export/):
 
-- `reactor-mk-i-drawings.pdf`: general arrangement, the joined assembly with
-  its thirteen fasteners, and a sheet for each part with its flat pattern,
+- `reactor-mk-i-drawings.pdf`: general arrangement, the riveted assembly with
+  its thirteen rivets, and a sheet for each part with its flat pattern,
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.
 - `foot.step` and the drawings' last sheet, for whoever prints the feet:
   one model, four off.
 
-The shop cuts and bends five parts in 1.2 mm cold rolled steel, presses in
-eleven PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
-and bulkhead to the core with thirteen PEM SpotFast fasteners, and paints
-them if it offers that. The shelf and shell come loose.
+The shop is Fabworks. It cuts and bends five parts in its 0.048 in (1.2 mm)
+1008 steel and presses in eleven PEM studs, standoffs and nuts, all on its
+hardware list: four BSO-632-12ZI, four FH-632-6ZI and three S-632-1ZI. The
+five parts come loose. Riveting the tray and bulkhead to the core and
+tapping the four M2 holes are done at home.
 
 ## Checked
 
@@ -41,14 +42,15 @@ them if it offers that. The shelf and shell come loose.
 - Clear of the shell: the shelf's three tongues stand 0.9 in front of the
   bulkhead, in the 1.5 between it and the shell. Nothing else stands proud
   of the bulkhead or the lips.
-- Sheet metal rules for 1.2 mm steel, against SendCutSend's, Protolabs' and
-  Komaspec's published limits: flanges are 9.5 or more (7.6 needed), mesh webs
-  2.07 (0.6 needed, 1.2 to 1.8 preferred), every part fits a 762 x 1118 bed,
-  and cut-outs are about 6 or more from a bend line except those listed below.
-- Joints: each SpotFast is 7 from its lip's edge and from the bend (2.54
-  needed), in 14.6 or more of flat overlap, with room for a 12.7 tool on both
-  sides; it ends flush, which the 0.3 to 0.5 outside the lips and the 2.8
-  between the tray and the fans both need.
+- Sheet metal rules, against Fabworks' figures for 0.048 in steel: the parts
+  are drawn with its inside radius of 1.0 and K of 0.516, flanges are 9.5 or
+  more (6.8 needed, 8.4 advised), and its hardware holes are the ones cut:
+  4.8 for the nuts, 3.5 for the studs, 5.4 for the standoffs. Mesh webs are
+  2.07. Features within 5.1 of a bend may distort; those are listed below.
+- Rivets: each is 7 or more from its lip's edge and from the bend, with a
+  bar's width of flat behind it inside. Flush outside and 1.5 at most
+  inside, which the 0.3 to 0.5 outside the lips and the 2.8 between the tray
+  and the fans both need.
 - The 13.1 between the board and the supply stays. It comes from spacing
   the bottom fans so one mesh pattern suits both, and the 8.3 it leaves
   between those fans is where their cables come up.
@@ -82,30 +84,39 @@ them if it offers that. The shelf and shell come loose.
   - It crosses the supply's exhaust grille on its way to the grommet, and
     it has no safety listing.
 
-## Open: to settle with the shop
+## Open: before the order
 
-- SpotFast. Any shop that presses PEM hardware can fit it, but ask: it wants
-  the two holes lined up across two parts. A shop that would rather spot weld
-  the same thirteen places may, leaving the holes out.
+- Upload the five STEP models to Fabworks and read what its checker says
+  about bending the core and the shell. Both are deep U shapes with return
+  lips, and whether a press brake reaches every bend has not been checked by
+  anyone who has one.
+- Close to bends, inside Fabworks' 5.1 distortion zone: the four M2 holes
+  (1.9), the shell's slots (about 3), the supply's front holes and the
+  shelf's grommet hole (4). All are clearance or tapped by hand afterwards.
+  The shell's four slots are the ones to watch: they have 0.5 a side.
+- The shell's outside faces want to arrive unmarked, and Fabworks says die
+  marks show on every bend. Ask.
 - The feet are printed in 316L stainless steel and tapped 6-32 by a 3D
-  printing service, not made by the sheet metal shop. Craftcloud will do
-  both.
-- M2 threads. A 1.2 sheet holds three threads of M2 x 0.4, and at least one
-  shop does not tap below 1.5. The four holes are also 1.9 from a bend, so
-  they should be drilled and tapped after bending. Doing these four by hand
-  at home is a fair fallback: they only hold the shell.
-- Holes close to bends, which may pull slightly out of round: the supply's
-  two front holes and the grommet hole in the shelf (4 from a bend), and the
-  shell's slots and screw hole (about 3). All are clearance features.
-- Bend allowance. The flat patterns are drawn for an inside radius of 1.2 and
-  K 0.44. A shop will redo them for its own tooling from the STEP models.
-- Paint, if the shop offers it, and then masking: threads, studs, standoff bores, and both
-  faces of the rear panel within 2.5 of the I/O aperture.
-- The shell's outside faces want to arrive unmarked. Say so on the order.
+  printing service. Craftcloud will do both.
+
+## To do at home
+
+Tools: a 100 degree countersink, a flat punch and a hammer, a steel bar to
+hold against the rivets' tails, an M2 x 0.4 tap, and thirteen MS20426AD3-4
+rivets with a few spare.
+
+1. Countersink the thirteen 2.5 holes in the core's lips from outside, to
+   4.6 across, until a rivet's head sits flush.
+2. Rivet the tray to the side lips, nine rivets, then the bulkhead to the
+   front lips, four: head outside, the bar against the tail inside, until
+   the tail is 3 to 4 across and about 1 tall.
+3. Tap the four 1.6 holes at the rear corners of the top and bottom panels
+   M2 and screw in the four pins.
+4. Paint, if wanted, with the threads, studs and standoff bores masked.
 
 ## Known limits of what has been checked
 
-- Nothing has been built. Bend accuracy, how flat the joints pull and the shell's
+- Nothing has been built. Bend accuracy, how flat the rivets pull the joints and the shell's
   slide fit are only known once a first one exists; expect to adjust.
 - The airflow and heat study uses a simplified case and assumed fan curves;
   see [thermal.md](thermal.md).

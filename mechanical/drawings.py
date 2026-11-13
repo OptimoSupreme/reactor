@@ -21,7 +21,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Arc, Circle
 
 import mk1
-from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, FOOT_TAP_DEPTH, LX, LY, LZ, SHEET, SHELF_FRONT, T,
+from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_KEY, FOOT_KEY_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, FOOT_TAP_DEPTH, LX, LY, LZ, SHEET, SHELF_FRONT, T,
                  TRAY_JOINS)
 
 VIEWS = os.path.expanduser("~/.cache/reactor/drawings")
@@ -328,6 +328,9 @@ def foot_sheet(pdf, n, total):
     rr, rd = FOOT_RECESS / 2, FOOT_RECESS_DEPTH
     s.line([at(-rr, 18), at(-rr, 18 - rd), at(rr, 18 - rd), at(rr, 18)], 0.35, INK, "--")
     s.dim(at(-rr, 18), at(rr, 18), -17, "recess dia %.1f x %.1f deep" % (FOOT_RECESS, rd))
+    kr, kd = FOOT_KEY / 2, FOOT_KEY_DEPTH
+    s.line([at(-kr, 18 - rd), at(-kr, 18 - rd - kd), at(kr, 18 - rd - kd), at(kr, 18 - rd)], 0.35, INK, "--")
+    s.text(at(kr, 18 - rd - kd / 2)[0] + 2, at(kr, 18 - rd - kd / 2)[1] - 1, "hex socket", 5.6, BLUE)
     s.line([at(0, -3), at(0, 21)], 0.2, THIN, "-.")
     s.text(cx - 50, top + 22, "SIDE  (flange up, against the bottom panel; hole and recess shown hidden)", 6.5, weight="bold")
     s.dim(at(-10, 0), at(10, 0), 8, "dia 20.0")
@@ -344,8 +347,9 @@ def foot_sheet(pdf, n, total):
         "Printed in 316L stainless steel by laser powder bed fusion or binder jetting.",
         "Tap 6-32 UNC-2B after printing, 10 of full thread or more. foot.step has the %.1f tap drill hole, not the thread; drill it to size first if it prints small." % FOOT_TAP,
         "The flange's top face sits against the case: flat within 0.1, no support marks.",
+        "Hexagon socket in the recess's floor for a 3 mm key: %.1f across flats as printed, %.1f deep. It stops 1 short of the tapped hole." % (FOOT_KEY, FOOT_KEY_DEPTH),
         "Recess underneath for a stick-on bumper, 3M Bumpon SJ5076 (8.0 dia x 2.8), which stands 1.3 below the rim.",
-        "Each foot turns onto a PEM FH-632-6 stud standing 9.5 out of the bottom panel, hand tight with thread lock.",
+        "Each foot turns onto a PEM FH-632-6 stud standing 9.5 out of the bottom panel, tightened with the 3 mm key before the bumper goes on.",
         "Finish to match the case."], width=92)
     s.done()
 

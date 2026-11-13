@@ -144,6 +144,9 @@ FOOT_PAD = 12.0    # solid land around each foot: the nearest cell is 1.3 outsid
 FOOT_STUD = 9.53   # FH-632-6
 FOOT_TAP, FOOT_TAP_DEPTH = 2.7, 12.0   # tap drill for 6-32, and deep enough for the whole stud
 FOOT_RECESS, FOOT_RECESS_DEPTH = 9.0, 1.5   # recess underneath for a 3M SJ5076 bumper, 8.0 x 2.8
+# A socket for a 3 mm hex key in the recess's floor, to turn the foot tight; the bumper goes on over it
+# and keeps five sixths of its face. Drawn 0.1 over, since it is printed and not broached.
+FOOT_KEY, FOOT_KEY_DEPTH = 3.1, 3.5
 
 # shell
 SHELL_Y0, SHELL_Y1 = -2 * T - SHELL_GAP, LY + 2 * T + SHELL_GAP
@@ -734,7 +737,12 @@ def hardware():
               ("solid.cylinder", {"diameter": FOOT_TAP, "height": FOOT_TAP_DEPTH, "base": [x, y, -T],
                                   "axis": down, "operation": "cut", "targets": [n]}),
               ("solid.cylinder", {"diameter": FOOT_RECESS, "height": FOOT_RECESS_DEPTH, "base": [x, y, -T - 18],
-                                  "axis": up, "operation": "cut", "targets": [n]})] + paint([n], BLACK)
+                                  "axis": up, "operation": "cut", "targets": [n]}),
+              ("sketch.create", {"plane": plane([x, y, -T - 18 + FOOT_RECESS_DEPTH], *frame(up)), "name": "sk-key-" + n}),
+              ("sketch.polygon.circumscribed", {"center": [0, 0], "radius": FOOT_KEY / 2, "sides": 6, "connect": False}),
+              ("sketch.finish", {}),
+              ("solid.extrude", {"sketch": "sk-key-" + n, "distance": str(FOOT_KEY_DEPTH), "operation": "cut",
+                                 "targets": [n]})] + paint([n], BLACK)
     return s
 
 

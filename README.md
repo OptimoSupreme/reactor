@@ -92,16 +92,17 @@ three, they win.
   floor, a shelf that the supply hangs under, and a plain shell (front and
   sides). The tray and the bulkhead are fixed to the core with pressed-in
   fasteners that end flush on both faces. The shelf comes out with the
-  supply on it: three low-headed screws through the bulkhead from the front and
-  two through the top panel hold it, and nothing stands over the supply's
-  own screws when it is out. Four pairs of slots in the tray, between the
+  supply on it: three tongues on its front edge sit in slots in the bulkhead,
+  two screws through the top panel hold it, and nothing stands over the
+  supply's own screws when it is out. Four pairs of slots in the tray, between the
   board and the supply, take cable ties. The shell slides on from the front, slots in its
   flanges running onto screw heads at the four rear corners, and one
   ordinary case screw through its side, at the rear and halfway up, holds it
   there. Four steel feet, printed
   and tapped, turn onto studs under the bottom panel. Apart from the fan
   screws, the mains inlet's and the shell's four pins, every screw is the
-  6-32 thread used all over PC cases.
+  one 6-32 case screw, so a single Phillips driver opens the case and takes
+  out the shelf and the supply.
 - [docs/before-ordering.md](docs/before-ordering.md) lists what has been
   checked and what is still open before one can be ordered.
 - [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts,

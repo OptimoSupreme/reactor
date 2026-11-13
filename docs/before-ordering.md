@@ -15,7 +15,7 @@ Everything is in [mechanical/export/](../mechanical/export/):
   one model, four off.
 
 The shop cuts and bends five parts in 1.2 mm cold rolled steel, presses in
-fourteen PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
+eleven PEM studs, standoffs and nuts, taps four M2 holes, joins the tray
 and bulkhead to the core with thirteen PEM SpotFast fasteners, and paints
 them if it offers that. The shelf and shell come loose.
 
@@ -38,9 +38,9 @@ them if it offers that. The shelf and shell come loose.
 - Fasteners: every pressed-in part's hole size, sheet thickness and edge
   distance against PEM's bulletins. The closest is the shelf's two nuts, at
   PEM's minimum of 5.6 from the tab's edge.
-- Screw heads against the shell: the shelf's three front screws have heads
-  0.86 tall in the 1.5 between the bulkhead and the shell. Nothing else
-  stands proud of the bulkhead or the lips.
+- Clear of the shell: the shelf's three tongues stand 0.9 in front of the
+  bulkhead, in the 1.5 between it and the shell. Nothing else stands proud
+  of the bulkhead or the lips.
 - Sheet metal rules for 1.2 mm steel, against SendCutSend's, Protolabs' and
   Komaspec's published limits: flanges are 9.5 or more (7.6 needed), mesh webs
   2.07 (0.6 needed, 1.2 to 1.8 preferred), every part fits a 762 x 1118 bed,
@@ -52,16 +52,15 @@ them if it offers that. The shelf and shell come loose.
 - The 13.1 between the board and the supply stays. It comes from spacing
   the bottom fans so one mesh pattern suits both, and the 8.3 it leaves
   between those fans is where their cables come up.
+- The shelf's tongues have 0.5 each side and 0.5 above and below in their
+  slots, and 1.8 of each is in or through the bulkhead, which the 0.25 of
+  play at the top screws cannot undo.
 - Fits that depend on two bent parts are loose: the shell is 0.5 clear of
   the lips all round, the nub slots 0.5 a side, and the clearance holes for
   the shelf's screws 4.5.
 
 ## Open: needs the part in hand
 
-- The shelf's three front screws. NBK's SETS-#6-32-1/4, sold in packs of ten
-  from NBK America's own shop, with their SKX-6 key or a T6 driver; or any
-  6-32 with a head under 1.2 tall. An ordinary case screw does not fit
-  there.
 - Mains lead: a ready-made one, a straight screw-mount C14 to a side-angle
   C13, 0.6 long. Its plug points the cable across the top of the supply to
   the grommet hole at the tray's side of the shelf, and the lead then runs
@@ -119,7 +118,8 @@ them if it offers that. The shelf and shell come loose.
    foot's recess, over the key's socket. Supply onto the shelf with three 6-32 screws, exhaust face up.
 2. Fans into the core, board onto its standoffs, heatsink fan, mains inlet.
    Cables tied to the tray's slots between the board and the supply.
-3. Shelf in through the open side and up against the top panel. Two screws
-   down through the top panel, three low-head screws in from the front.
+3. Shelf in through the open side, low, then up against the top panel and
+   forward until its three tongues are in the bulkhead's slots. Two screws
+   down through the top panel.
 4. Switch through the bulkhead, wiring, then the shell on from the front and
    its one screw in the open side, at the rear and halfway up.

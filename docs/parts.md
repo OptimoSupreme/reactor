@@ -119,8 +119,7 @@ supply is a plain SFX box; its noise paragraph was written around the SF750
 
 Every screw on the case is the 6-32 hex washer head screw used for PC cases
 and 3.5 in drives, 1/4 in long, apart from the fan screws, the mains inlet's
-two, the shelf's three low-headed ones and the four M2 pins the shell slides
-onto.
+two and the four M2 pins the shell slides onto.
 
 | Where | Screw | Into | Hole in the sheet |
 | --- | --- | --- | --- |
@@ -128,7 +127,6 @@ onto.
 | Board, four | 6-32 | PEM BSO-632-12 standoff, 9.53 long, in the tray | 5.41 +0.08, 6.9 or more from an edge |
 | Supply, three | 6-32 | the supply's own threads | 4.0 clearance in the shelf, six holes |
 | Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top panel |
-| Shelf to bulkhead, three | 6-32 x 1/4 with a head no taller than 1.2: NBK SETS-#6-32, head 7.5 across and 0.86 tall, Torx T6 | PEM S-632-1 nut in the shelf's front flange | 4.76 +0.08, 7 from the flange's edge; 4.5 clearance in the bulkhead |
 | Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
 | Shell's pins, four | M2 socket head cap, left in for good | a thread tapped in the top and bottom panels | 1.6 tap drill |
@@ -142,13 +140,17 @@ table); it is drawn 2.8 and 8.0. The fan screw's head is drawn 8.5 across, not
 measured from a screw.
 
 The shelf has to come out with the supply on it, so nothing that holds it is
-permanent. Its front flange is held by three screws through the bulkhead from
-the front, where a driver reaches them with the shell off. An ordinary 6-32
-head is 2.0 to 2.4 tall and there is 1.5 between the bulkhead and the shell,
-so these three are NBK's SETS-#6-32, a stock low-head screw: head 7.5 across
-and 0.86 tall (0.295 and 0.034 in, from NBK's table, read 2026-11-12). Flush
-studs in the bulkhead with nuts behind the flange were tried first, and the
-nuts could not be reached with a tool. The shelf's two tabs for the top
+permanent, and its front has no screws. An ordinary 6-32 head is 2.0 to 2.4
+tall and there is 1.5 between the bulkhead and the shell, so no ordinary
+screw goes in from the front, and one from behind cannot be reached with a
+driver. Instead three tongues on the shelf's front edge, 12 wide, go through
+three slots in the bulkhead, 13.0 x 2.2, and stand 0.9 in front of it, 0.6
+short of the shell. The bulkhead carries the supply's weight there, and the
+two screws through the top panel hold the shelf up at the rear and keep it
+from sliding the 2.4 back out of the slots. Flush studs with nuts behind,
+and then low-headed screws from the front, were both tried first: the nuts
+could not be reached, and the screws were a special part with its own
+driver. The shelf's two tabs for the top
 panel's screws fold toward the rear, away from the supply: folded forward
 they stood over the supply's rear corner screws, which then could not be
 reached with the shelf out of the case.

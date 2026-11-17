@@ -15,7 +15,7 @@ MIN_FEATURE = 0.51     # smallest hole or slot
 MIN_WEB = 1.22         # between cut-outs: one thickness
 DISTORTION = 5.11      # a 90 degree bend can distort a feature this close to the bend line: half the die's opening
 MIN_FLANGE = 6.81      # 8.4 advised
-BEND_HALF = 1.27       # half the width of a bend in the flat: R 1.0, K 0.516
+FLAT_TO_OUTSIDE = 0.93  # from a bend line in the flat to the flange's outside length: T + R less half the bend, 1.27
 
 
 def points(e, step=0.4):
@@ -109,20 +109,34 @@ def main():
         print("  cut-outs within %.2f of a bend line: %d" % (DISTORTION, len(close)))
         for d, what in sorted(close):
             print("    %.2f  %s" % (d, what))
-        # each flange: from a bend's edge to the nearest outline point square to it
-        for a, b in bends:
-            ux, uy = (b[0] - a[0]), (b[1] - a[1])
-            n = math.hypot(ux, uy)
-            ux, uy = ux / n, uy / n
-            side = {1: 0, -1: 0}
-            for q in edge:
-                t = (q[0] - a[0]) * ux + (q[1] - a[1]) * uy
-                if 0 <= t <= n:
-                    s = (q[0] - a[0]) * -uy + (q[1] - a[1]) * ux
-                    side[1 if s > 0 else -1] = max(side[1 if s > 0 else -1], abs(s))
-            fl = min(side.values()) + T + 1.0 - BEND_HALF   # outside length of the shorter side
-            if fl < MIN_FLANGE + 1.6:
-                print("    flange %.1f at bend from %.0f, %.0f: %s" % (fl, a[0], a[1], "ok, under the advised 8.4" if fl >= MIN_FLANGE else "TOO SHORT"))
+        # Each flange, measured all along its bend: from the bend line square out to the first edge on each
+        # side, the shorter side being the flange. A lip that steps back part of the way along shows up here.
+        # The last 7 at each end are left out: lips are mitred where they meet at a corner and taper there.
+        rim_segs = [(q[i], q[i + 1]) for e in ents if e.get("layer") == "OUTLINE" and e["type"] in ("LINE", "ARC", "CIRCLE")
+                    for q in [points(e)] for i in range(len(q) - 1)]
+        for k, (a, b) in enumerate(bends):
+            n = math.hypot(b[0] - a[0], b[1] - a[1])
+            ux, uy = (b[0] - a[0]) / n, (b[1] - a[1]) / n
+            worst = (1e9, 0)
+            for i in range(7, int(n) - 6):
+                o = (a[0] + ux * i, a[1] + uy * i)
+                reach = []
+                for sign in (1, -1):
+                    dx, dy = -uy * sign, ux * sign
+                    best = 1e9
+                    for p, q in rim_segs:
+                        ex, ey = q[0] - p[0], q[1] - p[1]
+                        den = dx * ey - dy * ex
+                        if abs(den) < 1e-12:
+                            continue
+                        t = ((p[0] - o[0]) * ey - (p[1] - o[1]) * ex) / den
+                        v = ((p[0] - o[0]) * dy - (p[1] - o[1]) * dx) / den
+                        if t > 1e-6 and -1e-9 <= v <= 1 + 1e-9:
+                            best = min(best, t)
+                    reach.append(best)
+                worst = min(worst, (min(reach) + FLAT_TO_OUTSIDE, i))
+            verdict = "ok" if worst[0] >= MIN_FLANGE + 1.6 else "ok, under the advised 8.4" if worst[0] >= MIN_FLANGE else "TOO SHORT"
+            print("    bend %d, %.0f long: shortest flange %.2f, %d along: %s" % (k + 1, n, worst[0], worst[1], verdict))
 
 
 if __name__ == "__main__":

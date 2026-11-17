@@ -10,7 +10,7 @@ import os
 import sys
 
 import mk1
-from mk1 import FEET, HANDLE_X, IMAGES, LX, LY, LZ, PSU_TOP, SHELL_SCREW, SWITCH, TIE_X
+from mk1 import FEET, FRONT_Z, HANDLE_X, IMAGES, LEDS, LX, LY, LZ, PSU_TOP, SHELL_SCREW, SWITCH, TIE_X
 
 MID = [LX / 2, LY / 2, LZ / 2]
 UP, DOWN = math.pi / 2 - 1e-4, -(math.pi / 2 - 1e-4)
@@ -32,6 +32,8 @@ VIEWS = {
     "mk1-shell-screw-inside": ([SHELL_SCREW[0], 0, SHELL_SCREW[1]], math.pi + 0.5, 0.2, 90,
                                ("only", "core", "shell", "screw-shell", "nut-shell")),
     "mk1-switch-front": ([LX, SWITCH[0] + 10, SWITCH[1] - 8], -1.05, 0.25, 170, ()),
+    "mk1-lamps": ([LX, LEDS[0][0] - 10, FRONT_Z - 8], -2.1, 0.25, 170, ()),
+    "mk1-front-face": ([LX, LY / 2, LZ - 40], -math.pi / 2, 0.0, 330, ()),
     "mk1-switch-inside": ([LX - 12, SWITCH[0], SWITCH[1] - 4], 0.55, -0.2, 150, ("shell", "screw-shell")),
     "mk1-board-open": (MID, 0.4, 0.3, 720, ("shell", "screw-shell")),
     "mk1-board-rear": (MID, 1.15, 0.3, 720, ("shell", "screw-shell")),

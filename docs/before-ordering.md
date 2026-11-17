@@ -1,28 +1,28 @@
 # Before ordering a Mk I
 
 What has been checked, what is still open, and what goes to a shop. Updated
-2026-11-12.
+2026-11-17.
 
 ## What a shop gets
 
 Everything is in [mechanical/export/](../mechanical/export/):
 
 - `reactor-mk-i-drawings.pdf`: general arrangement, the riveted assembly with
-  its thirteen rivets, and a sheet for each part with its flat pattern,
+  its fourteen rivets, and a sheet for each part with its flat pattern,
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.
 - `foot.step` and `foot-drawing.pdf`, for whoever prints the feet: one model,
   four off. The drawing is also the last sheet of the set.
 
 The shop is Fabworks. It cuts and bends five parts in its 0.048 in (1.2 mm)
-1008 steel and presses in eleven PEM studs, standoffs and nuts, all on its
-hardware list: four BSO-632-12ZI, four FH-632-6ZI and three S-632-1ZI. The
-five parts come loose. Riveting the tray and bulkhead to the core and
-tapping the four M2 holes are done at home.
+1008 steel and presses in twelve PEM studs, standoffs and nuts, all on its
+hardware list: four BSO-632-12ZI, four FH-632-6ZI and four S-632-1ZI. The
+five parts come loose. Riveting the tray and bulkhead to the core is done at
+home. Nothing is tapped or countersunk by the shop.
 
 ## Checked
 
-- Clashes: the whole assembly, 82 bodies with every screw, nut, stud and fan
+- Clashes: the whole assembly, 91 bodies with every screw, nut, stud, handle and fan
   in place, has no two parts sharing volume apart from threads in what they
   screw into. Framework's own board model sits on the four standoffs to
   0.00 mm, 0.5 inside the rear panel, 3.0 under the top fan, 7.0 over the
@@ -46,7 +46,18 @@ tapping the four M2 holes are done at home.
   are drawn with its inside radius of 1.0 and K of 0.516, flanges are 9.5 or
   more (6.8 needed, 8.4 advised), and its hardware holes are the ones cut:
   4.8 for the nuts, 3.5 for the studs, 5.4 for the standoffs. Mesh webs are
-  2.07. Features within 5.1 of a bend may distort; those are listed below.
+  2.07. [mechanical/dfm.py](../mechanical/dfm.py) measures every cut-out
+  in the five flat patterns against its published figures, read 2026-11-17:
+  the smallest is 2.0 across (0.51 needed), the thinnest web 2.07 (1.22
+  needed), and none is within 5.11 of a bend line, the zone a bend can
+  distort. Getting there moved the shell's screws to 7.6 from the rear,
+  made the open side's rear lip 15, and moved the shelf's rear wall to 2.1
+  behind the supply.
+- Handles: RAF 8120-632-A-24, 4 in between centres, against Fascomp's
+  drawing of the same part. Each leg has 2.2 of metal to the nearest mesh
+  cell and is 3.4 inside the shell's flange; the screw heads under the top
+  panel are 5.5 from the rear panel, 11.3 from the top fan and clear of
+  the switch and of every part of the board.
 - Rivets: each is 7 or more from its lip's edge and from the bend, with a
   bar's width of flat behind it inside. Flush outside and 1.5 at most
   inside, which the 0.3 to 0.5 outside the lips and the 2.8 between the tray
@@ -58,14 +69,14 @@ tapping the four M2 holes are done at home.
   slots, and 1.8 of each is in or through the bulkhead, which the 0.25 of
   play at the top screws cannot undo.
 - Fits that depend on two bent parts are loose: the shell is 0.5 clear of
-  the lips all round, the nub slots 0.5 a side, and the clearance holes for
+  the lips all round, and the clearance holes for
   the shelf's screws 4.5.
 
 ## Open: needs the part in hand
 
 - Mains lead: a ready-made one, a straight screw-mount C14 to a side-angle
   C13, 0.6 long. Its plug points the cable across the top of the supply to
-  the grommet hole at the tray's side of the shelf, and the lead then runs
+  the notch in the top of the shelf's rear wall, at the tray's side, and the lead then runs
   down the gap between the board and the supply, past the tie slots, along
   the bottom and across between the two bottom fans to the inlet: about 450
   of cable, 500 with slack, which is what a 0.6 lead has between its
@@ -81,7 +92,7 @@ tapping the four M2 holes are done at home.
     relied on: check it on the supply, and the "Left" one is the same price.
   - Still to measure: how far the plug stands above the supply, which has
     34, and the lead's real length.
-  - It crosses the supply's exhaust grille on its way to the grommet, and
+  - It crosses the supply's exhaust grille on its way to the notch, and
     it has no safety listing.
 
 ## Open: before the order
@@ -90,10 +101,15 @@ tapping the four M2 holes are done at home.
   about bending the core and the shell. Both are deep U shapes with return
   lips, and whether a press brake reaches every bend has not been checked by
   anyone who has one.
-- Close to bends, inside Fabworks' 5.1 distortion zone: the four M2 holes
-  (1.9), the shell's slots (about 3), the supply's front holes and the
-  shelf's grommet hole (4). All are clearance or tapped by hand afterwards.
-  The shell's four slots are the ones to watch: they have 0.5 a side.
+- Fabworks presses hardware in after bending and needs a press on both
+  sides of each hole. The two nuts in the rear panel's side lips are 7.6
+  from the rear panel, inside the corner, and the four studs are in the
+  floor of the core. Ask whether its tooling reaches them.
+- The handles: two RAF 8120-632-A-24 (Fascomp FC8120-632-A-24), black
+  anodised. AFT Fasteners lists them in tens. The plain stainless
+  8120-632-SS is the same size if the black one is out of stock.
+- Edge trim or a snap-on edge grommet for the mains lead's notch in the
+  shelf, 12 wide in 1.2 sheet.
 - The shell's outside faces want to arrive unmarked, and Fabworks says die
   marks show on every bend. Ask.
 - The feet are printed in 316L stainless steel and tapped 6-32 by a 3D
@@ -103,17 +119,16 @@ tapping the four M2 holes are done at home.
 ## To do at home
 
 Tools: a 100 degree countersink, a flat punch and a hammer, a steel bar to
-hold against the rivets' tails, an M2 x 0.4 tap, and thirteen MS20426AD3-4
-rivets with a few spare.
+hold against the rivets' tails, and fourteen MS20426AD3-4 rivets with a
+few spare. McMaster-Carr sells them as 96685A146, Aircraft Spruce and Van's
+Aircraft by weight.
 
-1. Countersink the thirteen 2.5 holes in the core's lips from outside, to
+1. Countersink the fourteen 2.5 holes in the core's lips from outside, to
    4.6 across, until a rivet's head sits flush.
-2. Rivet the tray to the side lips, nine rivets, then the bulkhead to the
+2. Rivet the tray to the side lips, ten rivets, then the bulkhead to the
    front lips, four: head outside, the bar against the tail inside, until
    the tail is 3 to 4 across and about 1 tall.
-3. Tap the four 1.6 holes at the rear corners of the top and bottom panels
-   M2 and screw in the four pins.
-4. Paint, if wanted, with the threads, studs and standoff bores masked.
+3. Paint, if wanted, with the threads, studs and standoff bores masked.
 
 ## Known limits of what has been checked
 
@@ -126,12 +141,15 @@ rivets with a few spare.
 
 ## Putting one together
 
-1. Feet onto their studs with the PH2 screwdriver, then a bumper into each
-   foot's recess, over the cross slot. Supply onto the shelf with three 6-32 screws, exhaust face up.
+1. Handles onto the top panel first, a screw up into each leg from inside,
+   while the core is empty: the board and the shelf stand under them later.
+   Feet onto their studs with the PH2 screwdriver, then a bumper into each
+   foot's recess, over the cross slot. Supply onto the shelf with its 6-32
+   screws, three or six as the unit has threads, exhaust face up.
 2. Fans into the core, board onto its standoffs, heatsink fan, mains inlet.
    Cables tied to the tray's slots between the board and the supply.
 3. Shelf in through the open side, low, then up against the top panel and
    forward until its three tongues are in the bulkhead's slots. Two screws
    down through the top panel.
 4. Switch through the bulkhead, wiring, then the shell on from the front and
-   its one screw in the open side, at the rear and halfway up.
+   its two screws, one in each side, at the rear and halfway up.

@@ -4,7 +4,7 @@ A small, quiet mini-ITX case for boards that have all their graphics on the
 CPU.
 
 The first design, the Mk I, is drawn and checked and close to orderable:
-255 x 134 x 216 mm without its feet, 7.4 litres, for an SFX power supply.
+255 x 134 x 216 mm without its feet and handles, 7.4 litres, for an SFX power supply.
 None has been built yet, so everything here is a model and a simulation.
 
 ![The Mk I from the front](docs/images/mk1-front.png)
@@ -95,14 +95,21 @@ three, they win.
   supply on it: three tongues on its front edge sit in slots in the bulkhead,
   two screws through the top panel hold it, and nothing stands over the
   supply's own screws when it is out. Four pairs of slots in the tray, between the
-  board and the supply, take cable ties. The shell slides on from the front, slots in its
-  flanges running onto screw heads at the four rear corners, and one
-  ordinary case screw through its side, at the rear and halfway up, holds it
-  there. Four steel feet, printed
-  and tapped, turn onto studs under the bottom panel. Apart from the fan
-  screws, the mains inlet's and the shell's four pins, every screw is the
-  one 6-32 case screw, so a single Phillips driver opens the case and takes
-  out the shelf and the supply.
+  board and the supply, take cable ties. The shell slides on from the front, its
+  flanges over the top panel and under the bottom one, and an ordinary case
+  screw through each side, at the rear and halfway up, holds it there. Two
+  black handles of bent 1/4 in rod cross the top, one at the rear and one at
+  the front, each leg held by a case screw from underneath. Four steel feet,
+  printed and tapped, turn onto studs under the bottom panel. Apart from the
+  fan screws and the mains inlet's two, every screw is the one 6-32 case
+  screw, feet and handles included, so a single Phillips driver opens the
+  case and takes out the shelf and the supply.
+
+  ![The handles and the top](docs/images/mk1-top-detail.png)
+- [mechanical/dfm.py](mechanical/dfm.py) measures every cut-out in the flat
+  patterns against the shop's rules, and
+  [mechanical/renders.py](mechanical/renders.py) redraws the pictures in
+  [docs/images/](docs/images/) from the assembly.
 - [docs/before-ordering.md](docs/before-ordering.md) lists what has been
   checked and what is still open before one can be ordered.
 - [docs/parts.md](docs/parts.md) has the dimensions of the bought-in parts,

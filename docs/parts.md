@@ -106,7 +106,7 @@ width with the earth pin nearest the fan, and the switch is beside it on
 the far side from the fan. That is from the makers' pictures and from
 Justin; the model's
 supply follows that. The mains lead's plug points its cable across the top
-of the supply to a grommet hole at the tray's side of the shelf, since a
+of the supply to a notch in the top of the shelf's rear wall, at the tray's side, since a
 plug angled at the shelf's rear wall, 25 from the inlet, would land on the
 shelf. SFX-L
 units, 130 long, have not been checked.
@@ -119,18 +119,19 @@ supply is a plain SFX box; its noise paragraph was written around the SF750
 
 Every screw on the case is the 6-32 hex washer head screw used for PC cases
 and 3.5 in drives, 1/4 in long, apart from the fan screws, the mains inlet's
-two and the four M2 pins the shell slides onto.
+two. It has a Phillips recess in its hexagon, so one PH2 driver turns
+every one of them, the feet too.
 
 | Where | Screw | Into | Hole in the sheet |
 | --- | --- | --- | --- |
 | Fans, twelve | ordinary self-tapping fan screw, about 5 x 10 | the fan's own frame | 5.0 clearance |
 | Board, four | 6-32 | PEM BSO-632-12 standoff, 9.53 long, in the tray | 5.41 +0.08, 6.9 or more from an edge |
-| Supply, three | 6-32 | the supply's own threads | 4.0 clearance in the shelf, six holes |
+| Supply, three or six | 6-32 | the supply's own threads: three by Intel's guide, six on a unit threaded for both ways round | 4.0 clearance in the shelf, six holes, 5.2 or more from the rear wall's bend line |
 | Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top panel |
 | Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
-| Shell's pins, four | M2 socket head cap, left in for good | a thread tapped in the top and bottom panels | 1.6 tap drill |
-| Shell, one | 6-32 | PEM S-632-1 nut in the rear panel's open-side lip | 4.76 +0.08, 5.8 from the lip's edge and from its bend; 4.5 clearance in the shell's side |
+| Shell, two | 6-32 | PEM S-632-1 nut in each side lip of the rear panel | 4.76 +0.08, 7.6 from the rear panel: 5.5 from the bend line and 6.2 from the edge of the open side's 15 lip; 4.5 clearance in each side of the shell; the tray is notched 9.0 wide round the nut on its side |
+| Handles, four | 6-32, up from under the top panel | the handle's own thread, 3/8 in deep | 4.5 clearance in the top panel |
 
 The PEM figures are from PennEngineering's FH, CL and SO bulletins, read
 2026-11-11; all three take sheet from 1.02 up. The standoffs are 9.53 where
@@ -162,16 +163,17 @@ shell for its strap, which suits ties 2.5 or 3.6 wide (1.0 to 1.3 thick).
 A lanced bridge would hold a tie without going behind the tray, but it is
 a formed feature that laser-and-brake shops do not make.
 
-The four M2 screws are nubs for the shell's slots to run onto, their heads
-(3.8 across, 2 tall) standing proud of the panel, and they stay in. One
-ordinary 6-32 case screw holds the shell: through its open-side panel 7 from
-the rear and halfway up, into a nut in the rear panel's lip. Its head stands 2.4 proud of the side, and it comes out with the
-case standing where it is. Pressed-in pilot pins were ruled
-out for the nubs: PEM's TPS-3mm comes only 8 long and wants 6.4 from hole
-centre to edge, and not every shop stocks pins. The slots are 0.5 clear of the
-nubs each side, since both parts are bent and a bend is good to about 0.4.
+Two ordinary 6-32 case screws hold the shell, one through each side, 7.6
+from the rear and halfway up, into a nut in the rear panel's side lip. Each
+head stands 2.8 proud of the side, and both come out with the case standing
+where it is. They also hold the rear edges of the sides in. The shell's
+flanges over the top and under the bottom are plain. An earlier version had
+one screw and four M2 cap screws at the rear corners as nubs for slots in
+the flanges: the M2 holes were 1.9 from a bend where Fabworks asks for 5.1,
+Fabworks does not tap M2, and they were the only screws on the case that
+needed a hex key.
 
-The tray is riveted to the core's side lips at nine places and the bulkhead
+The tray is riveted to the core's side lips at ten places and the bulkhead
 to its front lips at four, by hand, with 3/32 in flush solid rivets,
 MS20426AD3-4 (2117 aluminium, 100 degree head 0.179 in across and 0.036 in
 tall, 1/4 in long, in a No. 40 hole; from Olander's and Hanson's tables, read
@@ -182,14 +184,18 @@ the shell passes 0.5 from the side lips and 0.3 from the front ones, and the
 fans' frames stand 2.8 inside the tray, less than a blind rivet's tail. The
 lips are 17 tall (18.5 and 28 at the front) and each rivet is 9.5 from the
 panel its lip is folded from. PEM's SpotFast was drawn first, and no
-prototyping shop found lists it or joins parts.
-shop would rather weld.
+prototyping shop found lists it or joins parts. The rivet is a standard
+aircraft part, used by the thousand in kit aircraft: McMaster-Carr sells it
+as 96685A146 (250 for about $8), and Aircraft Spruce and Van's Aircraft by
+weight, read 2026-11-17. For the 2.4 of sheet here 1/4 in is the right
+length, grip plus one and a half diameters.
 
 | Part | Fit | Notes |
 | --- | --- | --- |
 | 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
 | Power button | 12.0 hole in the bulkhead, nut behind it; 14.5 hole in the shell for its 14 head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
 | IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | Schurter 6100-3 (6100.3200 with 4.8 tabs), mounted from outside: flange 48 x 23, countersunk for M3, 23.5 behind the panel. From its datasheet, read 2026-11-11. The same cut-out takes Bulgin's PX0580 and Schurter's 6061. The lead to the supply is made up: see before-ordering.md |
+| Handles, two | two 4.5 holes 101.6 apart, a 6-32 screw up into each leg | RAF 8120-632-A-24, also Fascomp FC8120-632-A-24: 6061 aluminium, black anodised, 1/4 in rod, 4.000 +/-0.031 in between the legs, 1 1/4 in tall, 1/4 in bend radius, each leg tapped 6-32 5/16 to 3/8 in deep. From Fascomp's drawing, read 2026-11-17; it does not say that the 4 in is between centres, which is taken from RAF's drawing of the family. The 4.5 holes allow for the +/-0.8. One across the rear of the top and one across the front, legs 9.5 from each end. 8120-632-SS is the same in plain stainless, and 8130 is 1 1/2 in tall |
 | Feet | a 6-32 stud standing 9.5 out of the bottom panel | Our own part, one model made four times, [foot.step](../mechanical/export/foot.step) and [its drawing](../mechanical/export/foot-drawing.pdf), also the last sheet of the drawings: a 20 flange 2 thick over a cone from 17 to 12, 18 tall, printed in 316L stainless steel and tapped 6-32 right through, with a 9.0 x 1.5 recess underneath for a 3M Bumpon SJ5076 pad (8.0 x 2.8) and, in the recess's floor around the hole, a cross of two slots 1.6 x 6.0, 2.5 deep, to tighten it with the same PH2 screwdriver as the case's screws; the pad goes on over the cross and keeps three fifths of its face. A screw from inside is no good, since each foot is under the corner of a fan's frame, so the thread is a flush stud in the panel |
 
 ## Still to collect

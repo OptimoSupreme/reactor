@@ -53,6 +53,15 @@ home. Nothing is tapped or countersunk by the shop.
   distort. Getting there moved the shell's screws to 7.6 from the rear,
   made the open side's rear lip 15, and moved the shelf's rear wall to 2.1
   behind the supply.
+- Flanges: dfm.py also measures every flange all along its bend, which
+  catches a lip that steps back. The shortest is the top panel's front lip
+  where it is cut back over the lamps, 7.0 (6.81 needed, 8.4 advised); the
+  lip's step over the power button was 5.7 until the button and the lamps
+  were set 18.5 below the top panel, and is now 12.4. The mitred last 7 of
+  each lip are not counted.
+- Lamps and button: each is under a leg of the front handle. The upper
+  lamp's holder is 2.9 under a handle screw and the lower one 1.5 over the
+  head of a supply screw; the button's body is 6 over the supply's screws.
 - Handles: RAF 8120-632-A-24, 4 in between centres, against Fascomp's
   drawing of the same part. Each leg has 2.2 of metal to the nearest mesh
   cell and is 3.4 inside the shell's flange; the screw heads under the top
@@ -146,5 +155,5 @@ Aircraft by weight.
 3. Shelf in through the open side, low, then up against the top panel and
    forward until its three tongues are in the bulkhead's slots. Two screws
    down through the top panel.
-4. Switch through the bulkhead, wiring, then the shell on from the front and
+4. Switch and lamps through the bulkhead, wiring, then the shell on from the front and
    its two screws, one in each side, at the rear and halfway up.

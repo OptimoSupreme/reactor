@@ -63,7 +63,7 @@ three, they win.
   cooling needs, with room and thermal headroom for the boards that follow
   it. The next upgrade is likely to be a Medusa Halo board, possibly with the
   top chip in the range, so the cooling is sized for more than the 385 needs.
-- No ports on the case itself, only a power button.
+- No ports on the case itself, only a power button and two lamps.
 
 ## Where things are
 
@@ -99,11 +99,16 @@ three, they win.
   flanges over the top panel and under the bottom one, and an ordinary case
   screw through each side, at the rear and halfway up, holds it there. Two
   black handles of bent 1/4 in rod cross the top, one at the rear and one at
-  the front, each leg held by a case screw from underneath. Four steel feet,
-  printed and tapped, turn onto studs under the bottom panel. Apart from the
-  fan screws and the mains inlet's two, every screw is the one 6-32 case
-  screw, feet and handles included, so a single Phillips driver opens the
-  case and takes out the shelf and the supply.
+  the front, each leg held by a case screw from underneath. On the front,
+  the power button sits under one leg of the front handle and two lamps
+  under the other, green for power over amber for drive activity; all three
+  are fixed in the bulkhead and the shell slides off over them. Four steel
+  feet, printed and tapped, turn onto studs under the bottom panel. Apart
+  from the fan screws and the mains inlet's two, every screw is the one 6-32
+  case screw, feet and handles included, so a single Phillips driver opens
+  the case and takes out the shelf and the supply.
+
+  ![The front, with the button and the lamps](docs/images/mk1-front-face.png)
 
   ![The handles and the top](docs/images/mk1-top-detail.png)
 - [mechanical/dfm.py](mechanical/dfm.py) measures every cut-out in the flat

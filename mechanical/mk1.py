@@ -7,8 +7,8 @@
                                        report of how the board fits
   python3 mechanical/mk1.py --sheet    the sheet metal design and its exports only
 
-The assembly holds Framework's model of the board and is too big for the repo, so it is saved beside
-that model, outside it.
+The assembly, reactor-mk-i-with-board.sc, is saved beside the sheet metal design. It holds Framework's
+model of the board and is too big to commit, so .gitignore leaves it out.
 
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
@@ -30,9 +30,9 @@ DESIGN = os.path.join(REPO, "mechanical", "reactor-mk-i.sc")
 EXPORT = os.path.join(REPO, "mechanical", "export")
 # Framework's own model of the board (CC BY 4.0), from github.com/FrameworkComputer/Framework-Desktop,
 # Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
-# rebuild, so both stay outside the repo and the committed design draws the board as a block.
+# rebuild, so the model stays outside the repo and the assembly is not committed.
 MAINBOARD_STEP = os.path.expanduser("~/.cache/reactor/framework-desktop/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp")
-ASSEMBLY = os.path.expanduser("~/.cache/reactor/reactor-mk-i-with-board.sc")
+ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-with-board.sc")
 WITH_BOARD = os.path.exists(MAINBOARD_STEP)    # without the model the board is drawn as a block
 IMAGES = os.path.join(REPO, "docs", "images")
 

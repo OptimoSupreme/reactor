@@ -3,3 +3,4 @@
 *.sc.bak
 sim/out/
 __pycache__/
+mechanical/reactor-mk-i-with-board.sc

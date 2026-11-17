@@ -77,8 +77,10 @@ three, they win.
   their last sheet. The second design
   is the whole machine: the same parts with Framework's own model of the
   mainboard, the fans, the supply and every screw, nut and stud in place,
-  for looking at and for checking that nothing clashes. Framework's model is
-  73 MB, so it and that design are kept outside the repo.
+  for looking at and for checking that nothing clashes. mk1.py saves it
+  beside the first as `reactor-mk-i-with-board.sc`; it is 46 MB with
+  Framework's 73 MB model in it, so it is not committed, and Framework's
+  model is fetched separately.
 
   ![The Mk I open, with the Framework board](docs/images/mk1-board-open.png)
 

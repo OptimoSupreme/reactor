@@ -1,6 +1,7 @@
 """Draw the Reactor Mk I's manufacturing drawings as one PDF, mechanical/export/reactor-mk-i-drawings.pdf.
 
   python3 mechanical/drawings.py
+  python3 mechanical/drawings.py --foot    the foot's sheet alone, as foot-drawing.pdf, for whoever prints it
 
 Run mk1.py first: the drawings are made from the saved sheet metal design, its flat pattern DXFs and
 its bend tables. Views of the formed parts come from the running SolidCraft, so SOLIDCRAFT_MCP is
@@ -11,6 +12,7 @@ import datetime
 import math
 import os
 import shutil
+import sys
 import time
 
 import matplotlib
@@ -18,10 +20,10 @@ matplotlib.use("pdf")
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.collections import LineCollection
-from matplotlib.patches import Arc, Circle
+from matplotlib.patches import Arc, Circle, Polygon
 
 import mk1
-from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_KEY, FOOT_KEY_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, FOOT_TAP_DEPTH, LX, LY, LZ, SHEET, PSU_TOP, T, TONGUES,
+from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_CROSS, FOOT_CROSS_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, LX, LY, LZ, SHEET, PSU_TOP, T, TONGUES,
                  TRAY_JOINS)
 
 VIEWS = os.path.expanduser("~/.cache/reactor/drawings")
@@ -208,6 +210,12 @@ class Sheet:
             self.ax.annotate("", (a[0], y), (b[0], y), arrowprops=dict(arrowstyle="<|-|>", lw=0.3, color=BLUE, shrinkA=0, shrinkB=0, mutation_scale=5))
             self.text((a[0] + b[0]) / 2, y + 1.2, label, 6, BLUE, ha="center")
 
+    def leader(self, tip, at, lines, color=BLUE):
+        """A note at page point `at` with an arrow to `tip`."""
+        self.ax.annotate("", tip, at, arrowprops=dict(arrowstyle="-|>", lw=0.3, color=color, shrinkA=0, shrinkB=0, mutation_scale=5))
+        for i, l in enumerate(lines):
+            self.text(at[0] + 1, at[1] - 1 - 3.6 * i, l, 5.6, color)
+
     def done(self):
         self.pdf.savefig(self.fig)
         plt.close(self.fig)
@@ -315,47 +323,102 @@ def part_sheet(pdf, sc, body, sizes, n, total):
     s.done()
 
 
+FOOT_PDF = os.path.join(EXPORT, "foot-drawing.pdf")
+FOOT_THREAD = 10.0   # full thread asked for: the stud stands 9.5 at most
+
+
 def foot_sheet(pdf, n, total):
-    """The foot in half section, as it stands under the case."""
+    """The foot in section as it stands under the case, with a view on each end."""
     k = 5.0
-    s = Sheet(pdf, "RMK1-06", "Foot", "316L stainless steel, printed", "5 : 1", n, total)
-    cx, top = 110.0, 230.0
+    s = Sheet(pdf, "RMK1-06", "Foot", "316L stainless steel, SLM / DMLS", "5 : 1, views 3 : 1", n, total)
+    cx, top = 92.0, 222.0
     at = lambda r, z: (cx + r * k, top - z * k)
-    out = [(0, 0), (10, 0), (10, 2), (8.5, 2), (6, 18), (0, 18)]
-    s.line([at(-r, z) for r, z in out[::-1]] + [at(r, z) for r, z in out], 0.5)
-    s.line([at(-8.5, 2), at(8.5, 2)], 0.25)
-    d, r = FOOT_TAP_DEPTH, FOOT_TAP / 2
-    s.line([at(r, 0), at(r, d), at(0, d + r * 0.6), at(-r, d), at(-r, 0)], 0.35, INK, "--")
+    r = FOOT_TAP / 2
     rr, rd = FOOT_RECESS / 2, FOOT_RECESS_DEPTH
-    s.line([at(-rr, 18), at(-rr, 18 - rd), at(rr, 18 - rd), at(rr, 18)], 0.35, INK, "--")
-    s.dim(at(-rr, 18), at(rr, 18), -17, "recess dia %.1f x %.1f deep" % (FOOT_RECESS, rd))
-    kr, kd = FOOT_KEY / 2, FOOT_KEY_DEPTH
-    s.line([at(-kr, 18 - rd), at(-kr, 18 - rd - kd), at(kr, 18 - rd - kd), at(kr, 18 - rd)], 0.35, INK, "--")
-    s.text(at(kr, 18 - rd - kd / 2)[0] + 2, at(kr, 18 - rd - kd / 2)[1] - 1, "hex socket", 5.6, BLUE)
+    (sw, sl), sd = FOOT_CROSS, FOOT_CROSS_DEPTH
+    floor = 18 - rd - sd
+    half = [(r, 0), (10, 0), (10, 2), (8.5, 2), (6, 18), (rr, 18), (rr, 18 - rd), (sl / 2, 18 - rd), (sl / 2, floor),
+            (r, floor)]
+    for sign in (-1, 1):
+        cut = [at(sign * x, z) for x, z in half]
+        s.ax.add_patch(Polygon(cut, closed=True, fill=False, hatch="////", ec=THIN, lw=0))
+        s.line(cut + [cut[0]], 0.5)
+        s.line([at(sign * 1.753, 0), at(sign * 1.753, FOOT_THREAD)], 0.2)   # the thread's major diameter
+    s.line([at(-r, 0), at(r, 0)], 0.2)
+    s.line([at(-1.753, FOOT_THREAD), at(1.753, FOOT_THREAD)], 0.2)
+    for sign in (-1, 1):    # the other slot's walls, seen beyond
+        s.line([at(sign * sw / 2, floor), at(sign * sw / 2, 18 - rd)], 0.25)
     s.line([at(0, -3), at(0, 21)], 0.2, THIN, "-.")
-    s.text(cx - 50, top + 22, "SIDE  (flange up, against the bottom panel; hole and recess shown hidden)", 6.5, weight="bold")
+    s.text(cx - 50, top + 20, "SECTION A-A   5 : 1", 6.5, weight="bold")
+    s.text(cx - 50, top + 15.5, "as it stands under the case: flange up, against the bottom panel", 5.6, THIN)
     s.dim(at(-10, 0), at(10, 0), 8, "dia 20.0")
     s.dim(at(-6, 18), at(6, 18), -8, "dia 12.0")
-    s.dim(at(10, 0), at(10, 2), 16, "2.0", vertical=True)
-    s.dim(at(10, 0), at(10, 18), 30, "18.0", vertical=True)
-    s.dim(at(-10, 0), at(-10, d), -22, "%.1f min" % d, vertical=True)
-    s.text(at(8.5, 2)[0] + 3, at(8.5, 2)[1] - 4, "dia 17.0 under the flange,", 5.6, BLUE)
-    s.text(at(8.5, 2)[0] + 3, at(8.5, 2)[1] - 8, "tapering to 12.0", 5.6, BLUE)
-    s.text(at(0, 6)[0] + 9, at(0, 6)[1], "6-32 UNC-2B", 5.6, BLUE)
-    s.table(262, 284, "PART", ["", ""], [["Quantity", "4"], ["Model", "foot.step"], ["Mass", "about 25 g"],
-                                         ["Thread", "6-32 UNC-2B, %.1f drill, %.0f deep" % (FOOT_TAP, d)]], [26, 90])
-    s.notes(262, 250, "NOTES", [
-        "Printed in 316L stainless steel by laser powder bed fusion or binder jetting.",
-        "Tap 6-32 UNC-2B after printing, 10 of full thread or more. foot.step has the %.1f tap drill hole, not the thread; drill it to size first if it prints small." % FOOT_TAP,
-        "The flange's top face sits against the case: flat within 0.1, no support marks.",
-        "Hexagon socket in the recess's floor for a 3 mm key: %.1f across flats as printed, %.1f deep. It stops 1 short of the tapped hole." % (FOOT_KEY, FOOT_KEY_DEPTH),
-        "Recess underneath for a stick-on bumper, 3M Bumpon SJ5076 (8.0 dia x 2.8), which stands 1.3 below the rim.",
-        "Each foot turns onto a PEM FH-632-6 stud standing 9.5 out of the bottom panel, tightened with the 3 mm key before the bumper goes on.",
-        "Finish to match the case."], width=92)
+    s.dim(at(-rr, 18), at(rr, 18), -17, "recess dia %.1f x %.1f deep" % (FOOT_RECESS, rd))
+    s.dim(at(10, 0), at(10, 2), 10, "2.0", vertical=True)
+    s.dim(at(10, 0), at(6, 18), 20, "18.0", vertical=True)
+    s.dim(at(-10, 0), at(-1.753, FOOT_THREAD), -10, "%.1f min full thread" % FOOT_THREAD, vertical=True)
+    s.dim(at(-sl / 2, 18 - rd), at(-sl / 2, floor), -34, "%.1f" % sd, vertical=True)
+    note = cx + 10 * k + 26
+    s.leader(at(8.2, 4), (note, top - 14), ["dia 17.0 under the flange,", "tapering to 12.0"])
+    s.leader(at(1.753, 6), (note, top - 40), ["6-32 UNC-2B, tapped", "after printing: full thread",
+                                              "%.0f deep or more. Hole dia" % FOOT_THREAD,
+                                              "%.1f, right through, in the" % FOOT_TAP, "model"], RED)
+    s.leader(at(sl / 2 - 0.6, floor + 1.2), (note, top - 78), ["cross slot, as printed,", "for a PH2 screwdriver"])
+
+    k2 = 3.0
+    for cy, name, below in ((222.0, "VIEW ON THE FLANGE   3 : 1", False), (118.0, "VIEW FROM BELOW   3 : 1", True)):
+        px = 244.0
+        s.ax.add_patch(Circle((px, cy), 10 * k2, fill=False, lw=0.5, ec=INK))
+        s.line([(px - 11.5 * k2, cy), (px + 11.5 * k2, cy)], 0.2, THIN, "-.")
+        s.line([(px, cy - 11.5 * k2), (px, cy + 11.5 * k2)], 0.2, THIN, "-.")
+        s.text(px - 10 * k2, cy + 12.5 * k2, name, 6.5, weight="bold")
+        s.ax.add_patch(Circle((px, cy), r * k2, fill=False, lw=0.5, ec=INK))
+        if not below:
+            s.ax.add_patch(Arc((px, cy), 3.505 * k2, 3.505 * k2, theta1=100, theta2=10, lw=0.2, ec=INK))
+            for sign in (-1, 1):
+                s.line([(px + sign * 11.5 * k2, cy), (px + sign * 11.5 * k2, cy + 4)], 0.5)
+                s.text(px + sign * 11.5 * k2, cy + 5, "A", 7, ha="center", weight="bold")
+            s.leader((px + 1.24 * k2, cy - 1.24 * k2), (px + 8, cy - 14), ["6-32 UNC-2B"], RED)
+        else:
+            for rad in (8.5, 6.0, rr):
+                s.ax.add_patch(Circle((px, cy), rad * k2, fill=False, lw=0.35, ec=INK))
+            a, b = sl / 2, sw / 2
+            cross = [(a, b), (b, b), (b, a), (-b, a), (-b, b), (-a, b), (-a, -b), (-b, -b), (-b, -a), (b, -a), (b, -b),
+                     (a, -b), (a, b)]
+            s.line([(px + x * k2, cy + y * k2) for x, y in cross], 0.5)
+            s.leader((px - a * k2 + 1, cy - b * k2), (px - 34, cy - 36), ["cross slot: two slots", "%.1f wide x %.1f long," % (sw, sl), "%.1f deep" % sd])
+            s.leader((px + rr * k2 * 0.7, cy - rr * k2 * 0.7), (px + 6, cy - 36), ["recess dia %.1f for" % FOOT_RECESS, "a stick-on pad"])
+
+    s.table(288, 284, "PART", ["", ""], [["Quantity", "4"], ["Model", "foot.step  (one body, mm)"],
+                                         ["Material", "316L stainless steel, laser powder bed fusion"],
+                                         ["Finish", "blasted matte all over, as ordered"],
+                                         ["Mass", "about 25 g each"]], [22, 100])
+    s.notes(288, 248, "THREAD  (the one operation after printing)", [
+        "Tap one 6-32 UNC-2B thread in each foot, on its axis, from the flange's flat face.",
+        "Full thread to %.0f deep or more. The hole goes right through into the cross slot, so the tap can run through: no bottoming tap is needed." % FOOT_THREAD,
+        "foot.step has the hole at %.1f, the tap drill size, with no thread modelled. Drill it out before tapping if it prints small; any drill from 2.7 to 2.9 will do." % FOOT_TAP,
+        "Thread square to the flange's face within 0.5 deg: the foot is screwed down onto a stud until that face seats.",
+        "Check: a 6-32 screw turns in by hand to %.0f deep." % FOOT_THREAD], width=84)
+    s.notes(288, 186, "NOTES", [
+        "All dimensions in mm. The STEP model governs; this drawing adds the thread and the notes.",
+        "Tolerance +/-0.3 unless stated.",
+        "The flange's flat face sits against the case: flat within 0.2, with no support marks left standing on it.",
+        "The cross slot in the recess's floor is as printed: the foot is turned tight with a PH2 (No. 2 Phillips) screwdriver, whose point goes into the hole and whose wings sit in the slots. Slots %.1f wide or more." % (sw - 0.3),
+        "The recess underneath takes a stick-on pad 8.0 across, which the customer fits.",
+        "Each foot turns onto a 6-32 stud that stands 9.5 out of the case's bottom panel.",
+        "Remove loose powder from the hole, the slots and the recess. Break sharp edges."], width=84)
     s.done()
 
 
+def foot_only():
+    with PdfPages(FOOT_PDF) as pdf:
+        foot_sheet(pdf, 1, 1)
+    print("wrote", FOOT_PDF)
+
+
 def main():
+    if "--foot" in sys.argv:
+        return foot_only()
     sc = mk1.Bridge()
     os.makedirs(VIEWS, exist_ok=True)
     # a copy under a new name: opening DESIGN itself can land on a tab still showing an earlier build

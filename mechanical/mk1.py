@@ -147,11 +147,13 @@ FOOT_PAD = 12.0    # solid land around each foot: the nearest cell is 1.3 outsid
 # A screw's head or a nut inside would sit under a fan's frame, so each foot turns onto a flush stud
 # pressed into the bottom panel, pointing down.
 FOOT_STUD = 9.53   # FH-632-6
-FOOT_TAP, FOOT_TAP_DEPTH = 2.7, 12.0   # tap drill for 6-32, and deep enough for the whole stud
+FOOT_TAP = 2.7     # tap drill for 6-32, right through, so that an ordinary tap can run out of the far end
 FOOT_RECESS, FOOT_RECESS_DEPTH = 9.0, 1.5   # recess underneath for a 3M SJ5076 bumper, 8.0 x 2.8
-# A socket for a 3 mm hex key in the recess's floor, to turn the foot tight; the bumper goes on over it
-# and keeps five sixths of its face. Drawn 0.1 over, since it is printed and not broached.
-FOOT_KEY, FOOT_KEY_DEPTH = 3.1, 3.5
+# A cross slot in the recess's floor, around the hole, to turn the foot tight with the PH2 driver the case's
+# screws take. It is printed to +/-0.3, so it is a plain cross that a driver's wings drop into, not a Phillips
+# recess: the point goes down the hole and the wings stop on the slot's floor at the hole's edge, 4 below the
+# recess's floor and 3 short of the stud. The bumper goes on over it and keeps three fifths of its face.
+FOOT_CROSS, FOOT_CROSS_DEPTH = (1.6, 6.0), 2.5   # each slot's width and length; a PH2's shank is 6 across
 
 # shell
 SHELL_Y0, SHELL_Y1 = -2 * T - SHELL_GAP, LY + 2 * T + SHELL_GAP
@@ -748,15 +750,16 @@ def hardware():
                                   "operation": "new"}),
               ("solid.cone", {"diameter": 17, "top_diameter": 12, "height": -16, "base": [x, y, -T - 2],
                               "operation": "join", "targets": [n]}),
-              ("solid.cylinder", {"diameter": FOOT_TAP, "height": FOOT_TAP_DEPTH, "base": [x, y, -T],
+              ("solid.cylinder", {"diameter": FOOT_TAP, "height": 19, "base": [x, y, -T],
                                   "axis": down, "operation": "cut", "targets": [n]}),
               ("solid.cylinder", {"diameter": FOOT_RECESS, "height": FOOT_RECESS_DEPTH, "base": [x, y, -T - 18],
-                                  "axis": up, "operation": "cut", "targets": [n]}),
-              ("sketch.create", {"plane": plane([x, y, -T - 18 + FOOT_RECESS_DEPTH], *frame(up)), "name": "sk-key-" + n}),
-              ("sketch.polygon.circumscribed", {"center": [0, 0], "radius": FOOT_KEY / 2, "sides": 6, "connect": False}),
-              ("sketch.finish", {}),
-              ("solid.extrude", {"sketch": "sk-key-" + n, "distance": str(FOOT_KEY_DEPTH), "operation": "cut",
-                                 "targets": [n]})] + paint([n], BLACK)
+                                  "axis": up, "operation": "cut", "targets": [n]})]
+        w, l = FOOT_CROSS
+        for a, b in ((l, w), (w, l)):   # from 1 below the foot, so no face of the cut lies on one of the foot's
+            s.append(("solid.box", {"length": a, "width": b, "height": 1 + FOOT_RECESS_DEPTH + FOOT_CROSS_DEPTH,
+                                    "corner": [round(x - a / 2, 3), round(y - b / 2, 3), -T - 19],
+                                    "operation": "cut", "targets": [n]}))
+        s += paint([n], BLACK)
     return s
 
 

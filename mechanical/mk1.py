@@ -50,8 +50,9 @@ OLIVE = "#5a6332"
 BLACK = "#1b1b1b"
 ZINC = "#c8c8c8"
 
-# Every screw is the 6-32 hex washer head screw of PC cases and 3.5 in drives, apart from the M2 cap
-# screws that the shell slides onto, ordinary self-tapping fan screws, and the mains inlet's countersunk M3s. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
+# Every screw is the 6-32 hex washer head screw of PC cases and 3.5 in drives, with its Phillips recess,
+# apart from ordinary self-tapping fan screws and the mains inlet's countersunk M3s: one PH2 driver does
+# them all. Sizes of the pressed-in parts are PEM's, see docs/parts.md.
 # The tray and the bulkhead are riveted to the core's lips by hand with 3/32 in flush solid rivets,
 # MS20426AD3-4: the 100 degree head sits in a countersink in the lip, flush outside where the shell passes
 # 0.3 to 0.5 away, and the tail is bucked to a head about 3.6 across and 1.2 tall inside, where the fans
@@ -114,7 +115,9 @@ PSU_HOLES_SPARE = [(6.0, 6.0), (57.5, 6.0), (31.7, 119.0)]
 BULKHEAD_X = (LX - T, LX)
 LIP_TOP, LIP_BOTTOM = 18.5, 28.0               # front lips of the top and bottom panels, which the bulkhead is fixed to
 BULKHEAD_JOINS = [(30.0, 20.0), (98.0, 20.0), (40.0, LZ - JOIN_IN), (98.0, LZ - JOIN_IN)]   # its fasteners to those lips, Y and Z
-SHELF_X = (PSU_X - 1.0, BULKHEAD_X[0] - GAP)
+# Its rear wall stands 2.1 behind the supply's fan face, which puts the supply's two rear holes 5.2 from
+# the wall's bend line, outside the 5.1 that Fabworks says a bend can distort.
+SHELF_X = (PSU_X - 2.1, BULKHEAD_X[0] - GAP)
 # The shelf's two tabs fold toward the rear, away from the PSU, so that nothing stands over the PSU's
 # screws when the shelf is out of the case. Each ends at the corner of the cell diagonally behind its
 # screw's, so that cell's cut-out takes the tab's corner off at a slant and stops there.
@@ -129,11 +132,12 @@ SLOT_W, SLOT_H = 13.0, 2.2          # 0.5 clear each side of the tongue, and abo
 # two screws down through the top panel into nuts in the shelf's tabs: a cell in the outermost row on
 # each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 7.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
-# Hole in the shelf's rear wall for a cable grommet: Y, Z, diameter. It is at the tray's side, over the gap
-# between the board and the supply: the mains lead's plug points its cable across the top of the
-# supply to it, and the lead then runs down that gap past the tie slots. Midway between the bend into the
-# shelf below it and the relief slot beside the tab above it.
-GROMMET = (95.0, (PSU_TOP + 2 * T + LZ - 0.1 - 2 * T - 3) / 2, 22.0)
+# Notch in the top of the shelf's rear wall for the mains lead: Y of its middle, Z of its round bottom's
+# lowest point, width. A ready-made lead has a moulded connector on each end and neither goes through a
+# hole, so the lead drops in from above; a snap-on edge grommet or a strip of edge trim lines it. It is at
+# the tray's side, over the gap between the board and the supply: the lead's plug points its cable
+# across the top of the supply to it, and the lead then runs down that gap past the tie slots.
+LEAD_NOTCH = (95.0, PSU_TOP + 15.0, 12.0)
 
 # Cable ties: four pairs of slots in the tray, in the gap between the board's edge and the PSU. A tie
 # goes in at one slot, behind the tray and out at the other, round a cable running up the gap. There
@@ -160,18 +164,26 @@ SHELL_Y0, SHELL_Y1 = -2 * T - SHELL_GAP, LY + 2 * T + SHELL_GAP
 SHELL_Z0, SHELL_Z1 = -2 * T - SHELL_GAP, LZ + 2 * T + SHELL_GAP
 SHELL_XF = LX + 2 * T + GAP
 SHELL_RETURN = 9.5  # flanges over the top and under the bottom: narrow enough to pass the fan screws' heads
-# A nub at each rear corner of the top and bottom panels, and a slot in each of the shell's flanges that
-# runs onto it as the shell slides home, so the sides cannot be pulled outward: X and Y. Each nub is the
-# head of an M2 socket cap screw (3.8 across, 2 tall) in a tapped hole, which any shop can make; pressed-in
-# pins come too long and want more edge distance than the flange leaves.
-PINS = [(6.0, 3.0), (6.0, LY - 3.0)]
-PIN = 3.8
-PIN_TAP = 1.6      # tap drill for M2
-# One ordinary 6-32 screw holds the shell on: through its open-side panel at the rear, halfway up,
-# into a nut pressed into the rear panel's side lip. X and Z. It can be reached
-# with the case standing where it is.
-SHELL_SCREW = (7.0, LZ / 2)
-SLOT_CLEAR = 0.5   # each side of a nub in its slot
+# One ordinary 6-32 screw through each side holds the shell on: 7.6 from the rear and halfway up, into a
+# nut pressed into the rear panel's side lip. X and Z. That puts the nut's hole 5.5 from the lip's bend
+# line, outside the 5.1 Fabworks says a bend can distort, and the open side's rear lip is 15 so that the nut
+# still has PEM's 5.6 to the lip's edge. Both can be reached with the case standing where
+# it is. They also hold the sides' rear edges in, which the flanges over the top and under the bottom
+# cannot do; nothing is fixed to those flanges, so they are plain.
+SHELL_SCREW = (7.6, LZ / 2)
+REAR_LIP = 15.0
+NUT_BODY = (7.11, 1.78)   # an S-632-1's body behind the sheet: across, tall
+NUT_NOTCH = 9.0           # the tray's notch round the body of the nut in the lip it lies against
+# Two handles across the top, one at the rear and one at the front: RAF 8120-632-A-24 (Fascomp
+# FC8120-632-A-24), 1/4 in black anodised aluminium rod bent twice, 4 in between its legs and 1 1/4 in
+# tall, each leg tapped 6-32 3/8 in deep. A case screw goes up into each leg from under the top panel.
+# The legs stand in the bare corners beyond the ends of the mesh's outer rows, 3.4 inside the shell's
+# flanges, with the rear pair's screw heads between the rear panel and the top fan and the front pair's
+# over the supply.
+HANDLE = (101.6, 6.35, 31.75, 9.525)   # between centres, rod, overall height, bend radius to the rod's centre
+HANDLE_X = [9.5, LX - 9.5]
+HANDLE_Y = [LY / 2 - HANDLE[0] / 2, LY / 2 + HANDLE[0] / 2]
+HANDLE_HOLES = [(x, y) for x in HANDLE_X for y in HANDLE_Y]
 # 12 mm vandal switch, Y and Z: top left seen from the front. It is fixed in the bulkhead with its nut
 # behind, and its head comes out through a larger hole in the shell, so the shell slides off over it.
 SWITCH = (14.0, LZ - 14.0)
@@ -331,7 +343,7 @@ def core():
          ("sheet.flange", {"body": "core", "height": str(FLANGE), "flip": True, "edges": [
              {"point": [xf, LY / 2, zt], "height": str(LIP_TOP)}, {"point": [xf, LY / 2, -T], "height": str(LIP_BOTTOM)},
              lip([LX / 2, -T, zt]), wide([LX / 2, LY + T, zt]), lip([LX / 2, -T, -T]), wide([LX / 2, LY + T, -T]),
-             lip([-T, -T, LZ / 2]), wide([-T, LY + T, LZ / 2])]})]
+             {"point": [-T, -T, LZ / 2], "height": str(REAR_LIP)}, wide([-T, LY + T, LZ / 2])]})]
     # rear panel: the standard I/O aperture and the mains inlet with its two screws
     iy, iz = INLET
     rear = [(IO_Y[0], IO_Z[0], IO_Y[1], IO_Z[1]), ("round", iy - 14, iz - 10, iy + 14, iz + 10, 1.0),
@@ -339,8 +351,8 @@ def core():
     s += cut("rear-cuts", REAR, rear, 5, ["core"])
     pad = near(FEET, FOOT_PAD + HEX_AF / 2)
     s += cut("bottom-mesh", XY, mesh(BOTTOM_FANS, pad)
-             + [(x, y, STUD_632) for x, y in FEET] + [(x, y, PIN_TAP) for x, y in PINS], 5, ["core"])
-    s += cut("top-mesh", TOP, top_mesh() + [(x, y, PIN_TAP) for x, y in PINS], 6, ["core"])
+             + [(x, y, STUD_632) for x, y in FEET], 5, ["core"])
+    s += cut("top-mesh", TOP, top_mesh() + [(x, y, LOOSE_632) for x, y in HANDLE_HOLES], 6, ["core"])
     # The top front lip steps back round the switch's head, from the lip's end so that no sliver is left
     # beside the switch. Then the free corners of both front lips are rounded.
     sy, sz = SWITCH
@@ -349,8 +361,9 @@ def core():
     # countersinks for the rivets' heads are made by hand: see the drawing.
     s += cut("lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS], 5, ["core"])
     s += cut("front-lip-joins", front, [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS], 2.5, ["core"])
-    s += cut("lip-shell-screw", plane([0, -T - 0.3, 0], [0, 0, 1], [1, 0, 0]),
-             [(SHELL_SCREW[1], SHELL_SCREW[0], NUT_632)], T + 0.6, ["core"])
+    for name, y in (("lip-shell-screw", -T - 0.3), ("lip-shell-screw-tray", LY - 0.3)):
+        s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(SHELL_SCREW[1], SHELL_SCREW[0], NUT_632)], T + 0.6,
+                 ["core"])
     s += cut("front-lips", front, [(-T - 1, sz - 4, sy + 10, sz + 9.5)], 2.5, ["core"])
     s += rounds("front-lip-corners", front, [(sy + 10, LZ + T - LIP_TOP, 1, 1), (T, LIP_BOTTOM - T, 1, -1),
                                              (LY - T, LIP_BOTTOM - T, -1, -1)], 2.5, ["core"])
@@ -377,6 +390,10 @@ def tray():
     holes.append(("round", BOARD_X + min(us) + 10, BOARD_Z + BOARD - max(vs) + 8,
                   BOARD_X + BOARD - 4, BOARD_Z + BOARD - min(vs) - 8, 8))
     holes += [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS]
+    # a notch in from the rear edge, round the nut for the shell's screw in the lip the tray lies against
+    sx, sz = SHELL_SCREW
+    holes.append(("round", x0 - 2 * NUT_NOTCH, sz - NUT_NOTCH / 2, sx + NUT_NOTCH / 2, sz + NUT_NOTCH / 2,
+                  NUT_NOTCH / 2 - 0.1))
     holes += [("round", TIE_X + d - TIE_SLOT[0] / 2, z - TIE_SLOT[1] / 2, TIE_X + d + TIE_SLOT[0] / 2,
                z + TIE_SLOT[1] / 2, 0.9) for z in TIE_Z for d in (-TIE_APART / 2, TIE_APART / 2)]
     s += cut("tray-cuts", TRAY, holes, 5, ["tray"])
@@ -429,7 +446,9 @@ def shelf():
     a, b = SHELF_SCREWS[0][1] + 5.6, SHELF_SCREWS[1][1] - 5.6
     y0 = EDGE
     s += cut("shelf-reliefs", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [(a, zb - 3, a + 2, zb + 1), (b - 2, zb - 3, b, zb + 1), (ya - 1, zb - 3, y0, zb + 1)], 4, ["shelf"])
+             [(a, zb - 3, a + 2, zb + 1), (b - 2, zb - 3, b, zb + 1), (ya - 1, zb - 3, y0, zb + 1),
+              ("round", LEAD_NOTCH[0] - LEAD_NOTCH[2] / 2, LEAD_NOTCH[1], LEAD_NOTCH[0] + LEAD_NOTCH[2] / 2,
+               zb + LEAD_NOTCH[2], LEAD_NOTCH[2] / 2 - 0.1)], 4, ["shelf"])
     s += [("sheet.flange", {"body": "shelf", "height": str(f), "flip": TAB_FLIP, "position": TAB_POSITION, "edges": [
         [xr, (y0 + a) / 2, zb], [xr, (b + yb) / 2, zb]]})]
     web = [("round", PSU_X + 8, PSU_Y + 12, PSU_X + 55.5, PSU_Y + 113, 3)]
@@ -466,7 +485,6 @@ def shelf():
              beside + [(x, y, NUT_632) for x, y in SHELF_SCREWS], 2 * T, ["shelf"])
     s += rounds("shelf-tab-corners", plane([0, 0, zb + 0.5], [1, 0, 0], [0, 1, 0]),
                 [(round(xr + T - f, 4), y0, 1, 1), (round(xr + T - f, 4), yb, 1, -1)], 2 * T, ["shelf"])
-    s += cut("shelf-cables", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]), [GROMMET], 4, ["shelf"])
     # the front edge is cut back between the tongues, and each tongue's corners come off to lead it into its slot
     c = 0.6
     ends = [ya - 1] + [y + d for y in TONGUES for d in (-TONGUE_W / 2, TONGUE_W / 2)] + [yb + 1]
@@ -483,8 +501,8 @@ def shelf():
 
 
 def shell():
-    """Front and both sides, plain. Slides on from the front, its four flanges running onto screw heads
-    at the rear corners; one screw through the open side, at the rear and halfway up, keeps it there."""
+    """Front and both sides, plain. Slides on from the front, its four flanges over the top panel and
+    under the bottom one; a screw through each side, at the rear and halfway up, keeps it there."""
     y0, y1, z0, z1 = SHELL_Y0, SHELL_Y1, SHELL_Z0, SHELL_Z1
     s = [("sketch.create", {"plane": plane([0, 0, z0], [1, 0, 0], [0, 1, 0]), "name": "shell-profile"}),
          ("sketch.line", {"points": [[-T, y1], [SHELL_XF, y1], [SHELL_XF, y0], [-T, y0]]}),
@@ -495,43 +513,22 @@ def shell():
              [LX / 2, y0, z1], [LX / 2, y1, z1]]}),
          ("sheet.flange", {"body": "shell", "height": str(SHELL_RETURN), "flip": True, "edges": [
              [LX / 2, y0, z0], [LX / 2, y1, z0]]})]
-    # slots open at the rear for the core's nubs, and a hole in the open side for the screw that holds it
-    s += cut("shell-slots-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*p) for p in PINS], T + 1, ["shell"])
-    s += cut("shell-slots-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), [slot(*p) for p in PINS], T + 1,
-             ["shell"])
-    s += cut("shell-screw", plane([0, y0 - 0.5, 0], [0, 0, 1], [1, 0, 0]),
-             [(SHELL_SCREW[1], SHELL_SCREW[0], LOOSE_632)], T + 1, ["shell"])
+    # a hole in each side for the screw that holds it
+    for name, y in (("shell-screw", y0 - 0.5), ("shell-screw-tray", y1 - T - 0.5)):
+        s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(SHELL_SCREW[1], SHELL_SCREW[0], LOOSE_632)], T + 1,
+                 ["shell"])
     s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (SWITCH_SHELL,)], 5, ["shell"])
-    # free corners of the flanges: their front ends
+    # free corners of the flanges, at both ends
     xe, ta, tb = SHELL_XF - 2 * T, y0 + SHELL_RETURN, y1 - SHELL_RETURN
-    s += rounds("shell-corners-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]),
-                [(xe, ta, -1, -1), (xe, tb, -1, 1)], T + 1, ["shell"])
-    s += rounds("shell-corners-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]),
-                [(xe, ta, -1, -1), (xe, tb, -1, 1)], T + 1, ["shell"])
+    corners = [(xe, ta, -1, -1), (xe, tb, -1, 1), (-T, ta, 1, -1), (-T, tb, 1, 1)]
+    s += rounds("shell-corners-top", plane([0, 0, z1 - T - 0.5], [1, 0, 0], [0, 1, 0]), corners, T + 1, ["shell"])
+    s += rounds("shell-corners-bottom", plane([0, 0, z0 - 0.5], [1, 0, 0], [0, 1, 0]), corners, T + 1, ["shell"])
     return s
-
-
-def slot(px, py):
-    """Outline to cut from a shell flange for the pin at (px, py): a slot open at the rear with a round
-    end on the pin, and the narrow finger left between the slot and the flange's tip cut back to just
-    past the pin and rounded."""
-    side = 1 if py < LY / 2 else -1                 # which way the flange's tip lies from the pin
-    r = PIN / 2 + SLOT_CLEAR
-    tip = (SHELL_Y0 + SHELL_RETURN) if side > 0 else (SHELL_Y1 - SHELL_RETURN)
-    a, b = py - side * r, py + side * r             # the slot's edges: toward the bend, toward the tip
-    fr = abs(tip - b) / 2                           # half the finger's width
-    fx = px - PIN / 2 - 1.0 + fr                    # centre of the finger's round end
-    arc = lambda cx, cy, rad, a0, a1: [[round(cx + rad * math.cos(math.radians(a0 + (a1 - a0) * k / 8)), 3),
-                                        round(cy + side * rad * math.sin(math.radians(a0 + (a1 - a0) * k / 8)), 3)]
-                                       for k in range(9)]
-    pts = [[-T - 1, a]] + arc(px, py, r, -90, 90) + arc(fx, b + side * fr, fr, -90, -270)
-    pts += [[fx, tip + side * 0.3], [-T - 1, tip + side * 0.3]]
-    return ("poly", pts)
 
 
 # rivets, tray to the side lips of the bottom and top panels and of the rear panel: X and Z
 TRAY_JOINS = ([(x, z) for x in (40, LX / 2, LX - 40) for z in (JOIN_IN, LZ - JOIN_IN)]
-              + [(JOIN_IN, z) for z in (40, 105, 170)])
+              + [(JOIN_IN, z) for z in (40, 75, 135, 170)])   # either side of the nut for the shell's screw
 
 
 def bought_in():
@@ -663,23 +660,18 @@ def paint(names, color):
 
 
 def pc_screw(name, at, n, length=SCREW_632):
-    """6-32 hex washer head screw with its head on the point `at`, which faces along n."""
-    return (hexagon(name, along(at, n, 0.8), n, 6.35, 2.0) + cyl(name, at, n, 8.0, 0.8)
-            + cyl(name, at, neg(n), 3.5, length) + paint([name], BLACK))
-
-
-def cap_screw(name, at, n, length):
-    """M2 socket head cap screw. The thread is drawn at its root, so it does not read as a clash with
-    the tapped hole it is in."""
-    top = along(at, n, 2.0)
-    xd, yd = frame(neg(n))
-    return (cyl(name, at, n, PIN, 2.0, "new") + cyl(name, at, neg(n), 1.55, length)
-            + [("sketch.create", {"plane": plane(top, xd, yd), "name": "sk-" + name}),
-               ("sketch.polygon.circumscribed", {"center": [0, 0], "radius": 0.75, "sides": 6, "connect": False}),
-               ("sketch.finish", {}),
-               ("solid.extrude", {"sketch": "sk-" + name, "distance": "1.2", "operation": "cut", "targets": [name]}),
-               ("solid.chamfer", {"body": name, "edges": [along(top, xd, PIN / 2)], "distance": "0.2"})]
-            + paint([name], BLACK))
+    """6-32 hex washer head screw with its head on the point `at`, which faces along n: a 1/4 in hexagon
+    with a Phillips recess in it."""
+    k = [abs(c) for c in n].index(1)
+    s = hexagon(name, along(at, n, 0.8), n, 6.35, 2.0) + cyl(name, at, n, 8.0, 0.8) + cyl(name, at, neg(n), 3.5, length)
+    lo, hi = sorted((at[k] + n[k] * 1.6, at[k] + n[k] * 3.3))   # 1.2 into the head, from above it
+    for j in ((k + 1) % 3, (k + 2) % 3):
+        size, corner = [1.0, 1.0, 1.0], [at[i] - 0.5 for i in range(3)]
+        size[j], corner[j] = 4.4, at[j] - 2.2
+        size[k], corner[k] = hi - lo, lo
+        s.append(("solid.box", {"length": size[0], "width": size[1], "height": size[2],
+                                "corner": [round(c, 3) for c in corner], "operation": "cut", "targets": [name]}))
+    return s + paint([name], BLACK)
 
 
 def fan_screw(name, at, n):
@@ -709,7 +701,7 @@ def hardware():
         s += pc_screw("screw-shelf-%d" % (i + 1), [x, y, LZ + T], up)
         s += cyl("nut-shelf-%d" % (i + 1), [x, y, LZ - 0.1 - T], down, 7.11, 1.78, "new")
         s += paint(["nut-shelf-%d" % (i + 1)], ZINC)
-    for i, (a, b) in enumerate(PSU_HOLES):
+    for i, (a, b) in enumerate(PSU_HOLES + PSU_HOLES_SPARE):
         s += pc_screw("screw-psu-%d" % (i + 1), [PSU_X + a, PSU_Y + b, PSU_TOP + T], up)
     for i, (u, v) in enumerate(BOARD_HOLES):
         x, z = BOARD_X + u, BOARD_Z + BOARD - v
@@ -722,12 +714,30 @@ def hardware():
         s += cyl(n, [-T - 2.2, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
         s += hexagon("nut-inlet-%d" % (i + 1), [0, INLET[0] + d, INLET[1]], fore, 5.5, 2.4)
         s += paint(["nut-inlet-%d" % (i + 1)], ZINC)
-    # shell: a nub at each rear corner, and the one screw that holds it
-    for i, (x, y) in enumerate(PINS):
-        s += cap_screw("nub-top-%d" % (i + 1), [x, y, LZ + T], up, 3.0)
-        s += cap_screw("nub-bottom-%d" % (i + 1), [x, y, -T], down, 3.0)
-    s += pc_screw("screw-shell", [SHELL_SCREW[0], SHELL_Y0, SHELL_SCREW[1]], left)
-    s += cyl("nut-shell", [SHELL_SCREW[0], 0, SHELL_SCREW[1]], [0, 1, 0], 7.11, 1.78, "new") + paint(["nut-shell"], ZINC)
+    # shell: a screw through each side into a nut in the rear panel's lip
+    right = [0, 1, 0]
+    for i, (out, y_shell, y_lip) in enumerate(((left, SHELL_Y0, 0), (right, SHELL_Y1, LY))):
+        s += pc_screw("screw-shell-%d" % (i + 1), [SHELL_SCREW[0], y_shell, SHELL_SCREW[1]], out)
+        s += cyl("nut-shell-%d" % (i + 1), [SHELL_SCREW[0], y_lip, SHELL_SCREW[1]], neg(out), *NUT_BODY, "new")
+        s += paint(["nut-shell-%d" % (i + 1)], ZINC)
+    # handles: a pipe along the rod's centre line, and a screw up into each leg
+    c, d, ht, r = HANDLE
+    top = ht - d / 2
+    for i, x in enumerate(HANDLE_X):
+        n = "ref-handle-%d" % (i + 1)
+        s += [("sketch.create", {"plane": plane([x, HANDLE_Y[0], LZ + T], [0, 1, 0], [0, 0, 1]), "name": "sk-" + n}),
+              ("sketch.line", {"points": [[0, 0], [0, top - r]], "connect": False, "infer": False}),
+              ("sketch.arc.center_point", {"center": [r, top - r], "start": [0, top - r], "sweep": -90, "connect": False}),
+              ("sketch.line", {"points": [[r, top], [c - r, top]], "connect": False, "infer": False}),
+              ("sketch.arc.center_point", {"center": [c - r, top - r], "start": [c - r, top], "sweep": -90,
+                                           "connect": False}),
+              ("sketch.line", {"points": [[c, top - r], [c, 0]], "connect": False, "infer": False}),
+              ("sketch.finish", {}),
+              ("solid.pipe", {"path_sketch": "sk-" + n, "path": ["l1", "a1", "l2", "a2", "l3"], "diameter": d,
+                              "body_name": n}),
+              ("browser.visibility", {"visible": False, "items": ["sk-" + n]})] + paint([n], BLACK)
+        for j, y in enumerate(HANDLE_Y):
+            s += pc_screw("screw-handle-%d" % (2 * i + j + 1), [x, y, LZ], down)
     # rivets: flush in the lip, a bucked head behind the plate
     joins = [("join-tray-%d" % (i + 1), [x, LY + T, z], left) for i, (x, z) in enumerate(TRAY_JOINS)]
     joins += [("join-bulkhead-%d" % (i + 1), [LX + T, y, z], back) for i, (y, z) in enumerate(BULKHEAD_JOINS)]
@@ -790,6 +800,7 @@ def main():
         print("built", name)
     sc.call("execute", {"command": "file.export_step", "params": {
         "bodies": ["foot-1"], "path": os.path.join(EXPORT, "foot.step")}})
+    sc.batch([("browser.visibility", {"visible": True, "items": SHEET})], "show")   # the insert can leave the shell hidden
     sc.call("save", {"path": ASSEMBLY})
     m = sc.call("measure", {"summary": True})
     clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
@@ -799,12 +810,12 @@ def main():
 
 def ours(n):
     """A body this script made, as against one of the board model's."""
-    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "nub-",
+    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-",
                                                      "join-", "switch"))
 
 
 # a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
-THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-shelf-", "nut-shelf-"), ("screw-shell", "nut-shell"),
+THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-handle-", "ref-handle-"), ("screw-shelf-", "nut-shelf-"), ("screw-shell", "nut-shell"),
             ("screw-board-", "standoff-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
             ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces

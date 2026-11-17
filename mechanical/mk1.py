@@ -1,14 +1,16 @@
-"""Build the Reactor Mk I in SolidCraft, as two designs.
+"""Build the Reactor Mk I in SolidCraft, as three designs.
 
   python3 mechanical/mk1.py            reactor-mk-i.sc: the five sheet metal parts alone, which is what a
-                                       shop makes, with their flat patterns and bend tables; then the
-                                       assembly: the same parts with the board, fans, power supply and
-                                       every screw, nut and stud in place, a check for clashes and a
-                                       report of how the board fits
+                                       shop makes, with their flat patterns and bend tables.
+                                       reactor-mk-i-with-board.sc: the same parts with the fans, power
+                                       supply, handles, lamps and every screw, nut and stud in place, the
+                                       board drawn as a block, and a check for clashes.
+                                       reactor-mk-i-with-framework.sc: that assembly with Framework's own
+                                       model of the board in the block's place, and a report of how it
+                                       fits. Only built when Framework's model is there.
   python3 mechanical/mk1.py --sheet    the sheet metal design and its exports only
 
-The assembly, reactor-mk-i-with-board.sc, is saved beside the sheet metal design. It holds Framework's
-model of the board and is too big to commit, so .gitignore leaves it out.
+The third holds Framework's model and is too big to commit, so .gitignore leaves it out.
 
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
@@ -30,10 +32,12 @@ DESIGN = os.path.join(REPO, "mechanical", "reactor-mk-i.sc")
 EXPORT = os.path.join(REPO, "mechanical", "export")
 # Framework's own model of the board (CC BY 4.0), from github.com/FrameworkComputer/Framework-Desktop,
 # Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
-# rebuild, so the model stays outside the repo and the assembly is not committed.
+# rebuild, so the model stays outside the repo and the assembly that holds it is not committed.
 MAINBOARD_STEP = os.path.expanduser("~/.cache/reactor/framework-desktop/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp")
-ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-with-board.sc")
-WITH_BOARD = os.path.exists(MAINBOARD_STEP)    # without the model the board is drawn as a block
+ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-with-board.sc")       # the board as a block: committed
+WITH_FRAMEWORK = os.path.join(REPO, "mechanical", "reactor-mk-i-with-framework.sc") # Framework's board: not committed
+WITH_BOARD = os.path.exists(MAINBOARD_STEP)    # without Framework's model only the first is built
+BLOCK_BOARD = ["ref-mainboard", "ref-rear-ports"]
 IMAGES = os.path.join(REPO, "docs", "images")
 
 T = 1.2            # sheet
@@ -558,14 +562,9 @@ def bought_in():
     hx, hz = bx + 18.54, bz + BOARD - 136.06     # fan duct square from Framework's drawing
     cx, cz = hx + 63.1, hz + 63.1
     hy = BOARD_Y - HEATSINK
-    if WITH_BOARD:
-        # The file has the board in its XZ plane, parts toward +Y, ports along its low-Z edge, with
-        # the board's top face at y 10.9 and its corners at x -178.6..-8.6, z 1.7..171.7.
-        s = [("file.insert_step", {"path": MAINBOARD_STEP, "name": "framework-mainboard", "matrix": [
-            0, 0, 1, bx - 1.7, 0, -1, 0, BOARD_Y + 10.9, 1, 0, 0, bz + 178.6]})]
-    else:
-        s = box("ref-mainboard", "#2f7d4f", bx, bx + BOARD, BOARD_Y, BOARD_Y + PCB, bz, bz + BOARD)
-        s += box("ref-rear-ports", "#7d8791", 0.2, 20, BOARD_Y - 31.1, BOARD_Y, bz + 11.5, bz + 143.9)
+    # the board as a plain block, with another for its rear ports
+    s = box(BLOCK_BOARD[0], "#2f7d4f", bx, bx + BOARD, BOARD_Y, BOARD_Y + PCB, bz, bz + BOARD)
+    s += box(BLOCK_BOARD[1], "#7d8791", 0.2, 20, BOARD_Y - 31.1, BOARD_Y, bz + 11.5, bz + 143.9)
     s += box("ref-heatsink", "#b8bcc2", hx, hx + 126.2, hy, BOARD_Y - 4, hz, hz + 126.2)
     s += fan("ref-cpu-fan", [cx, hy - FAN_T, cz], [0, 1, 0])
     s += psu()
@@ -581,6 +580,15 @@ def bought_in():
         s += fan("ref-fan-bottom-%d" % (i + 1), [fx, fy, 0], [0, 0, 1])
     s += fan("ref-fan-top", [TOP_FAN[0], TOP_FAN[1], LZ], [0, 0, -1])
     return s
+
+
+def framework_board():
+    """Framework's model of the board in place of the block. The file has the board in its XZ plane,
+    parts toward +Y, ports along its low-Z edge, with the board's top face at y 10.9 and its corners at
+    x -178.6..-8.6, z 1.7..171.7."""
+    return [("solid.remove", {"bodies": BLOCK_BOARD}),
+            ("file.insert_step", {"path": MAINBOARD_STEP, "name": "framework-mainboard", "matrix": [
+                0, 0, 1, BOARD_X - 1.7, 0, -1, 0, BOARD_Y + 10.9, 1, 0, 0, BOARD_Z + 178.6]})]
 
 
 def rotor(name, at, n, hub, tip, h, color):
@@ -839,11 +847,16 @@ def main():
         print("built", name)
     sc.call("execute", {"command": "file.export_step", "params": {
         "bodies": ["foot-1"], "path": os.path.join(EXPORT, "foot.step")}})
-    sc.batch([("browser.visibility", {"visible": True, "items": SHEET})], "show")   # the insert can leave the shell hidden
+    show = [("browser.visibility", {"visible": True, "items": SHEET})]   # a body hidden for a render stays hidden
+    sc.batch(show, "show")
     sc.call("save", {"path": ASSEMBLY})
     m = sc.call("measure", {"summary": True})
     clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
     if WITH_BOARD:
+        sc.batch(framework_board() + show, "framework's board")
+        sc.call("save", {"path": WITH_FRAMEWORK})
+        m = sc.call("measure", {"summary": True})
+        clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
         board_fit(sc, m)
 
 
@@ -855,7 +868,7 @@ def ours(n):
 
 # a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
 THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-handle-", "ref-handle-"), ("screw-shelf-", "nut-shelf-"), ("screw-shell", "nut-shell"),
-            ("screw-board-", "standoff-"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
+            ("screw-board-", "standoff-"), ("screw-board-", "ref-mainboard"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
             ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces
 

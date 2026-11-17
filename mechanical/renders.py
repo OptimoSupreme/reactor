@@ -52,7 +52,7 @@ VIEWS = {
 def main():
     sc = mk1.Bridge()
     for _ in range(8):   # the assembly's tab, whichever is shown
-        if sc.call("inspect_design").get("name") == os.path.splitext(os.path.basename(mk1.ASSEMBLY))[0]:
+        if sc.call("inspect_design").get("name") == os.path.splitext(os.path.basename(mk1.WITH_FRAMEWORK))[0]:
             break
         sc.call("execute", {"command": "view.next_tab", "params": {}})
     else:

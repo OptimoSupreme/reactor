@@ -68,19 +68,21 @@ three, they win.
 ## Where things are
 
 - [mechanical/mk1.py](mechanical/mk1.py) builds the Mk I in SolidCraft, as
-  two designs. [mechanical/reactor-mk-i.sc](mechanical/reactor-mk-i.sc) is
+  three designs. [mechanical/reactor-mk-i.sc](mechanical/reactor-mk-i.sc) is
   the sheet metal alone, which is what a shop makes.
   [mechanical/export/](mechanical/export/) has what a shop quotes from: a
   STEP model, a flat pattern and a bend table for each part, and
   [the drawings](mechanical/export/reactor-mk-i-drawings.pdf), which
   [mechanical/drawings.py](mechanical/drawings.py) draws, with the foot on
-  their last sheet. The second design
-  is the whole machine: the same parts with Framework's own model of the
-  mainboard, the fans, the supply and every screw, nut and stud in place,
-  for looking at and for checking that nothing clashes. mk1.py saves it
-  beside the first as `reactor-mk-i-with-board.sc`; it is 46 MB with
-  Framework's 73 MB model in it, so it is not committed, and Framework's
-  model is fetched separately.
+  their last sheet.
+  [mechanical/reactor-mk-i-with-board.sc](mechanical/reactor-mk-i-with-board.sc)
+  is the whole machine: the same parts with the fans, the supply, the
+  handles and every screw, nut and stud in place, and the mainboard drawn as
+  a block, for looking at and for checking that nothing clashes. The third,
+  `reactor-mk-i-with-framework.sc`, is that with Framework's own model of
+  the mainboard in the block's place. It is 46 MB with Framework's 73 MB
+  model in it, so it is not committed: mk1.py builds it beside the others
+  when Framework's model has been fetched.
 
   ![The Mk I open, with the Framework board](docs/images/mk1-board-open.png)
 

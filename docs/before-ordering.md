@@ -68,32 +68,27 @@ home. Nothing is tapped or countersunk by the shop.
 - The shelf's tongues have 0.5 each side and 0.5 above and below in their
   slots, and 1.8 of each is in or through the bulkhead, which the 0.25 of
   play at the top screws cannot undo.
+- Mains lead: Toptekits' "C14 w/screw hole to Right C13", 2 ft / 0.6 m,
+  18 AWG, measured from the part by Justin on 2026-11-17. The C14 is
+  27.2 x 19.2 with two 3.5 countersunk holes 40.0 apart, as its seller
+  draws it, in a flange 48.9 wide and 3.0 thick, and it is rigid for 50
+  behind the flange; nothing is within 6 of it there but the bottom fan,
+  3.4 below. It mounts from outside: the C13 plug is small enough to go in
+  through the 28 x 20 cut-out. On the supply the plug stands 17 where
+  there is 34, and its cable leaves toward the tray's side. The cable is
+  7 across, for a 12 notch, and 490 long between its mouldings.
+  - The route: across the top of the supply to the notch in the top of the
+    shelf's rear wall, down the gap between the board and the supply past
+    the tie slots, along the bottom and across between the two bottom fans
+    to the inlet. That is about 450, so the 490 has little to spare and
+    the lead has to keep to it.
+  - It crosses the supply's exhaust grille on its way to the notch, and it
+    has no safety listing.
+  - The flange is only as tall as the body, so the cut-out shows 0.4 above
+    and below it.
 - Fits that depend on two bent parts are loose: the shell is 0.5 clear of
   the lips all round, and the clearance holes for
   the shelf's screws 4.5.
-
-## Open: needs the part in hand
-
-- Mains lead: a ready-made one, a straight screw-mount C14 to a side-angle
-  C13, 0.6 long. Its plug points the cable across the top of the supply to
-  the notch in the top of the shelf's rear wall, at the tray's side, and the lead then runs
-  down the gap between the board and the supply, past the tie slots, along
-  the bottom and across between the two bottom fans to the inlet: about 450
-  of cable, 500 with slack, which is what a 0.6 lead has between its
-  connectors. A plug angled straight at the rear wall would land on the
-  shelf, 25 from the inlet.
-  - The candidate is Toptekits' "C14 w/screw hole to Right C13", 2 ft /
-    0.6 m, 18 AWG. Its seller's drawing gives the C14 a 27.2 x 19.2 cut-out
-    and screws 40 apart, which the 28 x 20 cut-out and 40 spacing here
-    take.
-  - Which hand: holding the plug with its holes toward you and the earth
-    hole uppermost, the cable must leave to the left. The "Right" one's
-    photograph shows that, but sellers' names and pictures are not to be
-    relied on: check it on the supply, and the "Left" one is the same price.
-  - Still to measure: how far the plug stands above the supply, which has
-    34, and the lead's real length.
-  - It crosses the supply's exhaust grille on its way to the notch, and
-    it has no safety listing.
 
 ## Open: before the order
 

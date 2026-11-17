@@ -188,7 +188,11 @@ HANDLE_HOLES = [(x, y) for x in HANDLE_X for y in HANDLE_Y]
 # behind, and its head comes out through a larger hole in the shell, so the shell slides off over it.
 SWITCH = (14.0, LZ - 14.0)
 SWITCH_HOLE, SWITCH_SHELL, SWITCH_NUT = 12.0, 14.5, 16.0   # the head is 14
-INLET = (28.0, FAN_T + 13.0)   # Schurter 6100-3 C14 inlet lying flat, low on the rear panel: Y and Z of its centre
+INLET = (28.0, FAN_T + 13.0)   # C14 inlet lying flat, low on the rear panel: Y and Z of its centre
+# The inlet is the moulded end of the mains lead, Toptekits' screw-mount C14 to right-angle C13, measured
+# from the part: body 27.2 x 19.2, flange 48.9 wide, as tall as the body and 3.0 thick, rigid for 50 behind
+# the flange. The cut-out is Schurter's for the 6100-3, which the lead's seller draws too.
+INLET_BODY, INLET_FLANGE, INLET_DEPTH = (27.2, 19.2), (48.9, 3.0), 50.0
 
 # Rear I/O aperture, ATX specification 2.03 figure 4: 6.25 x 1.75 in, its long side running from 2.44
 # past the board's edge on the port side, its lower side 0.088 in below the underside of the board.
@@ -549,10 +553,11 @@ def bought_in():
     s += psu()
     # mains inlet: a body through the panel with a flange outside, held by two countersunk M3 screws
     iy, iz = INLET
-    s += box("ref-mains-inlet", "#2b2e33", -T - 2.5, 23.5, iy - 13.6, iy + 13.6, iz - 9.6, iz + 9.6)
-    s += [("solid.box", {"length": 2.5, "width": 48, "height": 23, "corner": [-T - 2.5, iy - 24, iz - 11.5],
+    (bw, bh), (fw, ft) = INLET_BODY, INLET_FLANGE
+    s += box("ref-mains-inlet", "#2b2e33", -T - ft, INLET_DEPTH - T - ft, iy - bw / 2, iy + bw / 2, iz - bh / 2, iz + bh / 2)
+    s += [("solid.box", {"length": ft, "width": fw, "height": bh, "corner": [-T - ft, iy - fw / 2, round(iz - bh / 2, 3)],
                          "operation": "join", "targets": ["ref-mains-inlet"]}),
-          ("solid.box", {"length": 14, "width": 23, "height": 15, "corner": [-T - 2.5, iy - 11.5, iz - 7.5],
+          ("solid.box", {"length": 14, "width": 23, "height": 15, "corner": [-T - ft, iy - 11.5, iz - 7.5],
                          "operation": "cut", "targets": ["ref-mains-inlet"]})]
     for i, (fx, fy) in enumerate(BOTTOM_FANS):
         s += fan("ref-fan-bottom-%d" % (i + 1), [fx, fy, 0], [0, 0, 1])
@@ -710,8 +715,8 @@ def hardware():
         s += pc_screw("screw-board-%d" % (i + 1), [x, BOARD_Y, z], left)
     for i, d in enumerate((-20, 20)):
         n = "screw-inlet-%d" % (i + 1)   # countersunk M3, flush in the inlet's flange
-        s += cyl(n, [-T - 2.6, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
-        s += cyl(n, [-T - 2.2, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
+        s += cyl(n, [-T - INLET_FLANGE[1] - 0.1, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
+        s += cyl(n, [-T - INLET_FLANGE[1] + 0.3, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
         s += hexagon("nut-inlet-%d" % (i + 1), [0, INLET[0] + d, INLET[1]], fore, 5.5, 2.4)
         s += paint(["nut-inlet-%d" % (i + 1)], ZINC)
     # shell: a screw through each side into a nut in the rear panel's lip

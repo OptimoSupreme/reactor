@@ -45,10 +45,12 @@ HOLES = {
     ("tray", 2.5): "rivet, 3/32 in",
     ("tray", 5.41): "PEM BSO-632-12 standoff, +0.08/0",
     ("bulkhead", 12.0): "power switch, +0.2/0",
+    ("bulkhead", 8.0): "LED holder, +0.2/0",
     ("bulkhead", 2.5): "rivet, 3/32 in",
     ("shelf", 4.0): "6-32 clearance, supply: SFX pattern both ways round",
     ("shelf", 4.76): "PEM S-632-1 nut, +0.08/0",
     ("shell", 14.5): "power switch head, 14",
+    ("shell", 11.3): "LED holder's bezel, 10.8",
     ("shell", 4.5): "shell screw 6-32, loose clearance, one in each side",
 }
 PART_NOTES = {
@@ -57,6 +59,7 @@ PART_NOTES = {
              "Mains inlet cut-out 28 x 20 +0.2/0, R1, for Schurter 6100-3 mounted from outside.",
              "Two PEM S-632-1 nuts, one in each side lip of the rear panel, flush on the outside, bodies inside.",
              "Four 4.5 holes at the corners of the top panel take the screws of two handles, fitted by the customer.",
+             "The top panel's front lip is cut back at both ends, round the switch and the two lamps in the bulkhead behind it: 7.0 of flange is left over the lamps.",
              "Four PEM FH-632-6 studs in the bottom panel for the feet, heads flush in its upper (inside) face, pointing down."],
     "tray": ["Flat. Four PEM BSO-632-12 standoffs pressed in from the face that goes against the core's lips, standing 9.53 off the other face.",
              "The standoffs go in before the customer rivets the tray on: two heads end up under the core's lips.",

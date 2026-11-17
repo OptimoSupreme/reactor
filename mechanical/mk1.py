@@ -182,12 +182,26 @@ NUT_NOTCH = 9.0           # the tray's notch round the body of the nut in the li
 # over the supply.
 HANDLE = (101.6, 6.35, 31.75, 9.525)   # between centres, rod, overall height, bend radius to the rod's centre
 HANDLE_X = [9.5, LX - 9.5]
-HANDLE_Y = [LY / 2 - HANDLE[0] / 2, LY / 2 + HANDLE[0] / 2]
+HANDLE_Y = [round(LY / 2 - HANDLE[0] / 2, 3), round(LY / 2 + HANDLE[0] / 2, 3)]
 HANDLE_HOLES = [(x, y) for x in HANDLE_X for y in HANDLE_Y]
-# 12 mm vandal switch, Y and Z: top left seen from the front. It is fixed in the bulkhead with its nut
-# behind, and its head comes out through a larger hole in the shell, so the shell slides off over it.
-SWITCH = (14.0, LZ - 14.0)
+# 12 mm vandal switch, Y and Z: top left seen from the front, under the handle's leg. It is fixed in the
+# bulkhead with its nut behind, and its head comes out through a larger hole in the shell, so the shell
+# slides off over it.
+FRONT_Z = LZ - 18.5   # the switch, and the middle of the pair of lamps on the other side
+SWITCH = (HANDLE_Y[0], FRONT_Z)
 SWITCH_HOLE, SWITCH_SHELL, SWITCH_NUT = 12.0, 14.5, 16.0   # the head is 14
+# Two lamps under the other leg, one above the other: power above, in green, and drive activity below, in
+# amber. Each is a 5 mm LED in a black panel holder for an 8 mm hole, measured from the part: its bezel is
+# 10.8 across where it sits on the panel, tapering to 8.8, and 4.3 tall; 11 of it is behind the bezel. They
+# are fixed in the bulkhead as the switch is, and the shell slides off over their bezels. Y and Z.
+LEDS = [(HANDLE_Y[1], FRONT_Z + 7.0), (HANDLE_Y[1], FRONT_Z - 7.0)]
+LED_HOLE, LED_SHELL = 8.0, 11.3
+LED_BEZEL, LED_BEHIND, LED_NUT = (10.8, 8.8, 4.3), 11.0, 9.4   # the nut across its flats
+LED_COLORS = ["#3fa34d", "#e08a1e"]
+# The top panel's front lip stands in front of the bulkhead, so it is cut back round the switch's head
+# and round the lamps' bezels, from the lip's end each time so that no sliver is left beside them. What
+# is left over the lamps is 7.0 of flange, Fabworks' least being 6.8, which is what set FRONT_Z.
+LIP_CLEAR = 0.3
 INLET = (28.0, FAN_T + 13.0)   # C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 # The inlet is the moulded end of the mains lead, Toptekits' screw-mount C14 to right-angle C13, measured
 # from the part: body 27.2 x 19.2, flange 48.9 wide, as tall as the body and 3.0 thick, rigid for 50 behind
@@ -368,8 +382,12 @@ def core():
     for name, y in (("lip-shell-screw", -T - 0.3), ("lip-shell-screw-tray", LY - 0.3)):
         s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(SHELL_SCREW[1], SHELL_SCREW[0], NUT_632)], T + 0.6,
                  ["core"])
-    s += cut("front-lips", front, [(-T - 1, sz - 4, sy + 10, sz + 9.5)], 2.5, ["core"])
-    s += rounds("front-lip-corners", front, [(sy + 10, LZ + T - LIP_TOP, 1, 1), (T, LIP_BOTTOM - T, 1, -1),
+    foot = LZ + T - LIP_TOP                     # the lip's lower edge
+    ly, lz = LEDS[0][0], max(z for y, z in LEDS)
+    led_edge = ly - LED_BEZEL[0] / 2 - 2 * LIP_CLEAR
+    s += cut("front-lips", front, [(-T - 1, foot - 3, sy + 10, sz + 7 + LIP_CLEAR),
+                                   (led_edge, foot - 3, LY + T + 1, lz + LED_BEZEL[0] / 2 + LIP_CLEAR)], 2.5, ["core"])
+    s += rounds("front-lip-corners", front, [(sy + 10, foot, 1, 1), (led_edge, foot, -1, 1), (T, LIP_BOTTOM - T, 1, -1),
                                              (LY - T, LIP_BOTTOM - T, -1, -1)], 2.5, ["core"])
     return s
 
@@ -417,7 +435,7 @@ def bulkhead():
          ("sheet.flange", {"sketch": "bulkhead-profile", "curves": ["l1"], "distance": str(yb - ya),
                            "body_name": "bulkhead"})]
     s += cut("bulkhead-cuts", plane([x0 - 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [SWITCH + (SWITCH_HOLE,)]
+             [SWITCH + (SWITCH_HOLE,)] + [p + (LED_HOLE,) for p in LEDS]
              + [("round", y - SLOT_W / 2, PSU_TOP + T / 2 - SLOT_H / 2, y + SLOT_W / 2, PSU_TOP + T / 2 + SLOT_H / 2, 0.5)
                 for y in TONGUES]
              + [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS], T + 0.3, ["bulkhead"])
@@ -521,7 +539,7 @@ def shell():
     for name, y in (("shell-screw", y0 - 0.5), ("shell-screw-tray", y1 - T - 0.5)):
         s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(SHELL_SCREW[1], SHELL_SCREW[0], LOOSE_632)], T + 1,
                  ["shell"])
-    s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (SWITCH_SHELL,)], 5, ["shell"])
+    s += cut("shell-switch", plane([LX, 0, 0], [0, 1, 0], [0, 0, 1]), [SWITCH + (SWITCH_SHELL,)] + [p + (LED_SHELL,) for p in LEDS], 5, ["shell"])
     # free corners of the flanges, at both ends
     xe, ta, tb = SHELL_XF - 2 * T, y0 + SHELL_RETURN, y1 - SHELL_RETURN
     corners = [(xe, ta, -1, -1), (xe, tb, -1, 1), (-T, ta, 1, -1), (-T, tb, 1, 1)]
@@ -757,6 +775,22 @@ def hardware():
     s += [("solid.cylinder", {"diameter": 12.0, "height": 3.0, "base": [BULKHEAD_X[0], y, z], "axis": back,
                               "operation": "cut", "targets": ["switch-nut"]})]
     s += paint(["switch", "switch-nut"], BLACK)
+    # lamps: holder through the bulkhead with its bezel in front and a nut behind, and the LED's dome in it
+    d0, d1, bh = LED_BEZEL
+    for i, (y, z) in enumerate(LEDS):
+        n, at = "led-%d" % (i + 1), [BULKHEAD_X[1], y, z]
+        s += cyl(n, at, back, LED_HOLE - 0.2, LED_BEHIND, "new")
+        s += [("solid.cone", {"diameter": d0, "top_diameter": d1, "height": bh, "base": at, "axis": fore,
+                              "operation": "join", "targets": [n]})]
+        s += [("solid.cylinder", {"diameter": 5.2, "height": bh + 1, "base": along(at, fore, 0.2), "axis": fore,
+                                  "operation": "cut", "targets": [n]})]
+        s += hexagon("led-nut-%d" % (i + 1), [BULKHEAD_X[0], y, z], back, LED_NUT, 2.5)
+        s += [("solid.cylinder", {"diameter": LED_HOLE, "height": 2.5, "base": [BULKHEAD_X[0], y, z], "axis": back,
+                                  "operation": "cut", "targets": ["led-nut-%d" % (i + 1)]})]
+        s += cyl("lamp-%d" % (i + 1), along(at, fore, 1.0), fore, 5.0, bh - 2.5, "new")
+        s += [("solid.sphere", {"diameter": 5.0, "center": along(at, fore, bh - 1.5), "operation": "join",
+                                "targets": ["lamp-%d" % (i + 1)]})]
+        s += paint([n, "led-nut-%d" % (i + 1)], BLACK) + paint(["lamp-%d" % (i + 1)], LED_COLORS[i])
     for i, (x, y) in enumerate(FEET):
         n = "foot-%d" % (i + 1)
         s += cyl("stud-foot-%d" % (i + 1), [x, y, 0], down, 3.5, T + FOOT_STUD, "new")
@@ -815,7 +849,7 @@ def main():
 
 def ours(n):
     """A body this script made, as against one of the board model's."""
-    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-",
+    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "led-", "lamp-",
                                                      "join-", "switch"))
 
 

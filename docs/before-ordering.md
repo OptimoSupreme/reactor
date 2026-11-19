@@ -1,7 +1,7 @@
 # Before ordering a Mk I
 
 What has been checked, what is still open, and what goes to a shop. Updated
-2026-11-17.
+2026-11-19.
 
 ## What a shop gets
 
@@ -22,8 +22,8 @@ home. Nothing is tapped or countersunk by the shop.
 
 ## Checked
 
-- Clashes: the whole assembly, 91 bodies with every screw, nut, stud, handle and fan
-  in place, has no two parts sharing volume apart from threads in what they
+- Clashes: the whole assembly, 149 bodies with every screw, nut, stud, handle and fan
+  in place and the mains lead on its route, has no two parts sharing volume apart from threads in what they
   screw into. Framework's own board model sits on the four standoffs to
   0.00 mm, 0.5 inside the rear panel, 3.0 under the top fan, 7.0 over the
   bottom fans and 13.1 from the supply.
@@ -58,7 +58,8 @@ home. Nothing is tapped or countersunk by the shop.
   where it is cut back over the lamps, 7.0 (6.81 needed, 8.4 advised); the
   lip's step over the power button was 5.7 until the button and the lamps
   were set 18.5 below the top panel, and is now 12.4. The mitred last 7 of
-  each lip are not counted.
+  each lip are not counted. The shelf's rear wall has 9.0 under its notch
+  and 8.9 over it.
 - Lamps and button: each is under a leg of the front handle. The upper
   lamp's holder is 2.9 under a handle screw and the lower one 1.5 over the
   head of a supply screw; the button's body is 6 over the supply's screws.
@@ -85,12 +86,45 @@ home. Nothing is tapped or countersunk by the shop.
   3.4 below. It mounts from outside: the C13 plug is small enough to go in
   through the 28 x 20 cut-out. On the supply the plug stands 17 where
   there is 34, and its cable leaves toward the tray's side. The cable is
-  7 across, for a 12 notch, and 490 long between its mouldings.
-  - The route: across the top of the supply to the notch in the top of the
+  7 across, for a 12 notch, and 521 long between its mouldings (20.5 in,
+  measured again 2026-11-19).
+  - The route: across the top of the supply to the notch in the side of the
     shelf's rear wall, down the gap between the board and the supply past
-    the tie slots, along the bottom and across between the two bottom fans
-    to the inlet. That is about 450, so the 490 has little to spare and
-    the lead has to keep to it.
+    the tie slots, across the bottom toward the open side and, after one turn,
+    back to the inlet. Drawn in the assembly it is 475, so there is about 45
+    to spare, and the lead runs down the tray past all four pairs of tie
+    slots.
+  - The notch is in the tray-side edge of the shelf's rear wall, 13.0 deep
+    and 17.0 tall, open toward the tray, which shuts it when the shelf is
+    in. The lead and the switch and lamp wires share it, and rubber U
+    channel on its edge leaves 12 by 15 of opening: 8 for the lead at the
+    tray's end and 4 beside it for the three wires, one above another. There is 9.0 of wall
+    under it and 8.9 over it, to the outside of the tab above.
+  - Through the notch is the tight part. The cable has to drop into a gap
+    13 wide just behind the wall, so it goes through on an arch of 18
+    radius, 0.3 from the channel above and below. Its other bends are 20
+    to 25.
+  - The switch's and the two lamps' wires are drawn as twisted pairs, 1.2
+    a conductor, from each part through the notch to a plug on the
+    board's 9-pin power header, which is at the top front corner of
+    Framework's board, 25 behind the shelf's wall. Along their middles
+    they are 214 for the switch, 125 for the upper lamp and 113 for the
+    lower one, with nothing to spare; the plug is drawn as a block and
+    which pin each goes to is not known.
+  - The 24-pin and CPU cables are drawn wire by wire for a Corsair SF750,
+    2.3 a wire, from plugs under the supply to the board's two
+    connectors, which are low on the board under the heatsink. The
+    supply's sockets are scaled from Corsair's pictures of its panel, not
+    measured: with the fan toward the board they are toward the open side
+    and the front. The wires drop from the supply, run rearward 28 above
+    the bottom fans as a band twelve wide and two deep with the CPU's
+    four under its edge, and turn into the board's plugs. Between the
+    plugs they are 181 to 265 for the 24-pin and 177 to 210 for the CPU,
+    with nothing to spare. Which supply pin feeds which board pin is not
+    Corsair's pinout, the plugs are blocks 13 and 10 long, and the band
+    lies flat over both bottom fans, in the air the CPU cooler draws.
+  - The plug's reach toward the tray (drawn 20 from the middle of the
+    inlet) and the height its cable leaves at are guesses.
   - It crosses the supply's exhaust grille on its way to the notch, and it
     has no safety listing.
   - The flange is only as tall as the body, so the cut-out shows 0.4 above
@@ -112,8 +146,8 @@ home. Nothing is tapped or countersunk by the shop.
 - The handles: two RAF 8120-632-A-24 (Fascomp FC8120-632-A-24), black
   anodised. AFT Fasteners lists them in tens. The plain stainless
   8120-632-SS is the same size if the black one is out of stock.
-- Edge trim or a snap-on edge grommet for the mains lead's notch in the
-  shelf, 12 wide in 1.2 sheet.
+- Rubber U channel for the notch in the shelf's rear wall, about 35 of it
+  for 1.2 sheet. The one drawn is a placeholder.
 - The shell's outside faces want to arrive unmarked, and Fabworks says die
   marks show on every bend. Ask.
 - The feet are printed in 316L stainless steel and tapped 6-32 by a 3D

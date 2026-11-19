@@ -10,7 +10,7 @@
                                        fits. Only built when Framework's model is there.
   python3 mechanical/mk1.py --sheet    the sheet metal design and its exports only
 
-The third holds Framework's model and is too big to commit, so .gitignore leaves it out.
+The two assemblies are too big to commit, so .gitignore leaves them out.
 
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
@@ -34,8 +34,8 @@ EXPORT = os.path.join(REPO, "mechanical", "export")
 # Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
 # rebuild, so the model stays outside the repo and the assembly that holds it is not committed.
 MAINBOARD_STEP = os.path.expanduser("~/.cache/reactor/framework-desktop/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp")
-ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-with-board.sc")       # the board as a block: committed
-WITH_FRAMEWORK = os.path.join(REPO, "mechanical", "reactor-mk-i-with-framework.sc") # Framework's board: not committed
+ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-with-board.sc")       # the board as a block
+WITH_FRAMEWORK = os.path.join(REPO, "mechanical", "reactor-mk-i-with-framework.sc") # Framework's board
 WITH_BOARD = os.path.exists(MAINBOARD_STEP)    # without Framework's model only the first is built
 BLOCK_BOARD = ["ref-mainboard", "ref-rear-ports"]
 IMAGES = os.path.join(REPO, "docs", "images")
@@ -108,7 +108,8 @@ PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
 # board's edge.
 PSU_X = LX - T - 1.39 - PSU[0]
 PSU_Y = 0.7
-PSU_TOP = LZ - 35.0                            # room above for a right-angle mains plug
+PSU_TOP = LZ - 35.0                            # room above for an angled mains plug, which stands 17
+PSU_INLET = (25.0, 29.0)                       # middle of its mains inlet, along X and Y from the PSU's corner
 # The three mounting holes of Intel's SFX12V guide, along X, Y from the PSU's corner: a pair at the tray's
 # side and one at the open side, the end the guide draws the mains inlet at. With its fan toward the
 # board, the SF450 and the Focus SGX-550 both have the inlet at the open side. The shelf has the same
@@ -136,12 +137,17 @@ SLOT_W, SLOT_H = 13.0, 2.2          # 0.5 clear each side of the tongue, and abo
 # two screws down through the top panel into nuts in the shelf's tabs: a cell in the outermost row on
 # each side, the rows the fan screws are in
 SHELF_SCREWS = [(TOP_FAN[0] + 7.5 * PITCH_X, LY / 2 + j * PITCH_Y) for j in (-HEX_NY, HEX_NY)]
-# Notch in the top of the shelf's rear wall for the mains lead: Y of its middle, Z of its round bottom's
-# lowest point, width. A ready-made lead has a moulded connector on each end and neither goes through a
-# hole, so the lead drops in from above; a snap-on edge grommet or a strip of edge trim lines it. It is at
-# the tray's side, over the gap between the board and the supply: the lead's plug points its cable
-# across the top of the supply to it, and the lead then runs down that gap past the tie slots.
-LEAD_NOTCH = (95.0, PSU_TOP + 15.0, 12.0)
+# Notch in the tray-side edge of the shelf's rear wall for the mains lead and the wires of the switch and
+# the lamps: Y of its closed end, Z of its lower and upper edges, corner radius. It is open toward the
+# tray, which shuts it when the shelf is in, so the lead and the wires go in from the side with the shelf
+# out. It is over the gap between the board and the supply, and the lead runs down that gap against the
+# tray, past the tie slots. It is 13 deep: 8 for the lead at the tray's end and 4 beside it for the three
+# wires, one above another. Fabworks wants 6.8 of flange and advises 8.4: there is 9.0 of wall under it
+# and 8.9 over it, up to the outside of the tab folded from the wall's top.
+LEAD_NOTCH = (TRAY_Y - GAP - 13.0, PSU_TOP + 9.0, PSU_TOP + 26.0, 3.0)
+# Rubber U channel pushed onto the notch's edge. No part is chosen yet, so this is a placeholder: how thick
+# it is over the edge and on each face of the wall, and how far its legs reach onto the wall.
+TRIM, TRIM_LEG = 1.0, 4.0
 
 # Cable ties: four pairs of slots in the tray, in the gap between the board's edge and the PSU. A tie
 # goes in at one slot, behind the tray and out at the other, round a cable running up the gap. There
@@ -208,9 +214,60 @@ LED_COLORS = ["#3fa34d", "#e08a1e"]
 LIP_CLEAR = 0.3
 INLET = (28.0, FAN_T + 13.0)   # C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 # The inlet is the moulded end of the mains lead, Toptekits' screw-mount C14 to right-angle C13, measured
-# from the part: body 27.2 x 19.2, flange 48.9 wide, as tall as the body and 3.0 thick, rigid for 50 behind
-# the flange. The cut-out is Schurter's for the 6100-3, which the lead's seller draws too.
-INLET_BODY, INLET_FLANGE, INLET_DEPTH = (27.2, 19.2), (48.9, 3.0), 50.0
+# from the part: body 27.2 x 19.2, flange 48.9 wide, as tall as the body and 3.0 thick, rigid for 50 from
+# the flange's face, and 20.5 in of cable, 7 across, between the mouldings. The cut-out is Schurter's for
+# the 6100-3, which the lead's seller draws too.
+INLET_BODY, INLET_FLANGE, INLET_BLOCK = (27.2, 19.2), (48.9, 19.2, 3.0), 47.0
+LEAD, LEAD_LENGTH = 7.0, 520.7
+# Its C13 plug stands 17 above the supply and points its cable at the tray's side. How far the plug
+# reaches that way from the middle of the inlet, its width, and the cable's height where it leaves are
+# guesses.
+PLUG = (20.0, 19.5, 17.0)
+PLUG_CABLE = 12.0                              # the cable's middle above the supply's top
+# The lead as it lies, in four flat pieces. It climbs across the top of the supply toward the tray,
+# veering toward the front to make room for its turn; arches through the notch and down into the gap
+# between the board and the supply; runs down the tray past the tie slots; then goes across the bottom
+# toward the open side and, after one turn, back to the inlet. The bends' radii: over the supply,
+# through the notch (18 is what passes between the notch's two edges), at the tray's foot, on the bottom.
+LEAD_BENDS = (25.0, 18.0, 20.0, 30.0)
+LEAD_GAP_X = 177.5                             # where it goes down the gap: 1.9 from the board, 2.1 from the shelf's wall
+LEAD_ARCH = PSU_TOP + 5.5                      # the arch's middle: the cable passes 0.3 from the trim above and below
+LEAD_Y = TRAY_Y - 1.0 - LEAD / 2                # in the notch and down the tray, 1.0 from the tray
+# The switch's and the lamps' wires, each a twisted pair that fits a 2.5 circle. They go through the notch
+# beside the mains lead, one above another, and on to a plug on the board's 9-pin power header, which is
+# at the top front corner of Framework's board (its 618013-009101: X, Y and Z of its body in the case).
+# The plug, and which pin each wire goes to, are not known: the plug is a block and the wires enter it
+# side by side.
+WIRE = 2.5
+STRAND, TWIST_PITCH = 1.2, 12.0                # each conductor, and the length of one turn of the pair
+WIRE_Y = LEAD_NOTCH[0] + TRIM + WIRE / 2 + 0.25
+WIRE_Z = [PSU_TOP + 12.0 + 2.6 * k for k in range(3)]   # in the notch: lower lamp, upper lamp, switch
+WIRE_COLORS = [("#e08a1e", BLACK), ("#3fa34d", BLACK), ("#e6e6e6", BLACK)]
+HEADER = ((143.9, 156.5), (107.2, 118.7), (185.0, 190.0))
+HEADER_PLUG = 7.2                              # how far the plug stands off the header, a guess
+# The 24-pin and CPU cables, every wire drawn. On the board both connectors are part of Framework's
+# envelope body: X and Z of each in the case, and Y of its top. On the supply the sockets are scaled from
+# Corsair's picture of the SF750's panel, 125 x 63.5: along the panel from its left end and down from its
+# top edge, as the picture has it. The lid is at the picture's top and the fan underneath, so here, with
+# the fan toward the board and the panel facing down, the picture's left is the open side and its top the
+# front. The 24-pin cable has two plugs at the supply, 18 and 10 pins; nine columns of wires are drawn
+# from the first and three from the second, which is not Corsair's pinout. The CPU cable is in the first
+# of the three 8-pin sockets.
+DC_WIRE, DC_PITCH = 2.3, 4.2
+ATX24 = ((55.22, 108.0), (40.23, 51.55))
+CPU8 = ((118.02, 137.2), (35.25, 46.57))
+DC_HEADER_Y, DC_PLUG = 102.87, 10.0            # the board connectors' tops, and how far a plug stands off one
+PSU_ATX18, PSU_ATX10, PSU_CPU = ((33.8, 73.1), (13.9, 23.8)), ((9.8, 32.5), (13.9, 23.8)), ((9.8, 28.5), (26.6, 36.9))
+PSU_PLUG = 13.0                                # how far a plug hangs under the supply, a guess
+# The wires leave the supply downward and turn toward the rear. The CPU's socket is behind the 24-pin's
+# ten, so those three columns lean toward the tray on the way down, to pass beside the CPU's wires, and
+# the eighteen's close up from 4.2 to 2.6 apart beside them: a band twelve wide and two deep, with the
+# CPU's four under its edge. All run rearward and turn into the board's plugs, the CPU's passing under
+# the band. Y of the band's first lane, the lanes' pitch, the bends' radius, and how far along X the
+# closing up takes.
+DC_LANE, DC_LANE_PITCH, DC_TURN, DC_CLOSE = 28.6, 2.6, 8.0, 38.0
+CPU_UNDER = 2.39                               # the CPU's upper row runs this far over its lower one, under the 24-pin's
+WIRE_PAST_WALL = 181.5                         # X where the wires' two pieces meet, just behind the shelf's wall
 
 # Rear I/O aperture, ATX specification 2.03 figure 4: 6.25 x 1.75 in, its long side running from 2.44
 # past the board's edge on the port side, its lower side 0.088 in below the underside of the board.
@@ -473,8 +530,7 @@ def shelf():
     y0 = EDGE
     s += cut("shelf-reliefs", plane([xr - 2, 0, 0], [0, 1, 0], [0, 0, 1]),
              [(a, zb - 3, a + 2, zb + 1), (b - 2, zb - 3, b, zb + 1), (ya - 1, zb - 3, y0, zb + 1),
-              ("round", LEAD_NOTCH[0] - LEAD_NOTCH[2] / 2, LEAD_NOTCH[1], LEAD_NOTCH[0] + LEAD_NOTCH[2] / 2,
-               zb + LEAD_NOTCH[2], LEAD_NOTCH[2] / 2 - 0.1)], 4, ["shelf"])
+              ("round", LEAD_NOTCH[0], LEAD_NOTCH[1], yb + 2 * LEAD_NOTCH[3], LEAD_NOTCH[2], LEAD_NOTCH[3])], 4, ["shelf"])
     s += [("sheet.flange", {"body": "shelf", "height": str(f), "flip": TAB_FLIP, "position": TAB_POSITION, "edges": [
         [xr, (y0 + a) / 2, zb], [xr, (b + yb) / 2, zb]]})]
     web = [("round", PSU_X + 8, PSU_Y + 12, PSU_X + 55.5, PSU_Y + 113, 3)]
@@ -568,18 +624,345 @@ def bought_in():
     s += box("ref-heatsink", "#b8bcc2", hx, hx + 126.2, hy, BOARD_Y - 4, hz, hz + 126.2)
     s += fan("ref-cpu-fan", [cx, hy - FAN_T, cz], [0, 1, 0])
     s += psu()
-    # mains inlet: a body through the panel with a flange outside, held by two countersunk M3 screws
-    iy, iz = INLET
-    (bw, bh), (fw, ft) = INLET_BODY, INLET_FLANGE
-    s += box("ref-mains-inlet", "#2b2e33", -T - ft, INLET_DEPTH - T - ft, iy - bw / 2, iy + bw / 2, iz - bh / 2, iz + bh / 2)
-    s += [("solid.box", {"length": ft, "width": fw, "height": bh, "corner": [-T - ft, iy - fw / 2, round(iz - bh / 2, 3)],
-                         "operation": "join", "targets": ["ref-mains-inlet"]}),
-          ("solid.box", {"length": 14, "width": 23, "height": 15, "corner": [-T - ft, iy - 11.5, iz - 7.5],
-                         "operation": "cut", "targets": ["ref-mains-inlet"]})]
+    s += mains_lead() + edge_trim()
     for i, (fx, fy) in enumerate(BOTTOM_FANS):
         s += fan("ref-fan-bottom-%d" % (i + 1), [fx, fy, 0], [0, 0, 1])
     s += fan("ref-fan-top", [TOP_FAN[0], TOP_FAN[1], LZ], [0, 0, -1])
     return s
+
+
+def lead_path():
+    """The lead's centre line as four flat pieces, each (origin, x_dir, y_dir, pieces) with its pieces as
+    lines and arcs in that plane, and its length."""
+    r1, r2, r3, r4 = LEAD_BENDS
+    sx, sy, sz = PSU_X + PSU_INLET[0], PSU_Y + PSU_INLET[1] + PLUG[0], PSU_TOP + PLUG_CABLE
+    ny = LEAD_Y
+    ax, az = LEAD_GAP_X + r2, LEAD_ARCH + r2          # top of the arch
+    # across the supply: a plane that climbs toward the notch, a veer to the front and a turn to the rear
+    tilt = math.atan2(az - sz, ny - sy)
+    run = math.hypot(az - sz, ny - sy)
+    th = math.acos(((sx - ax) / r1 + 1) / 2)
+    p0 = run - r1 * (1 + 2 * math.sin(th))
+    e1 = (p0 + r1 * math.sin(th), -r1 * (1 - math.cos(th)))
+    c1 = (p0 + 2 * r1 * math.sin(th), r1 * (2 * math.cos(th) - 1))
+    a = ([sx, sy, sz], [0, math.cos(tilt), math.sin(tilt)], [-1, 0, 0],
+         [("line", (-1, 0), (p0, 0)), ("arc", (p0, -r1), (p0, 0), -math.degrees(th)),
+          ("arc", c1, e1, 90 + math.degrees(th))])
+    length = p0 + r1 * (math.pi / 2 + 2 * th)
+    # through the notch and down the tray
+    zr = INLET[1]
+    down = az - zr - r3
+    b = ([ax, ny, az], [-1, 0, 0], [0, 0, 1], [("arc", (0, -r2), (0, 0), -90), ("line", (r2, -r2), (r2, -down))])
+    length += r2 * math.pi / 2 + down - r2
+    # round to the bottom
+    c = ([LEAD_GAP_X, ny, zr + r3], [0, 0, -1], [0, 1, 0], [("arc", (0, -r3), (0, 0), -90)])
+    length += r3 * math.pi / 2
+    y0 = ny - r3
+    # along the bottom: across toward the open side, one turn, and back to the inlet
+    m1 = y0 - INLET[0] - r4
+    n_end = LEAD_GAP_X - (INLET_BLOCK - T) + 1
+    d = ([LEAD_GAP_X, y0, zr], [0, -1, 0], [-1, 0, 0],
+         [("line", (0, 0), (m1, 0)), ("arc", (m1, r4), (m1, 0), 90), ("line", (m1 + r4, r4), (m1 + r4, n_end))])
+    length += m1 + r4 * math.pi / 2 + n_end - 1 - r4
+    return [a, b, c, d], length
+
+
+def mains_lead():
+    """The mains lead: its C14 through the rear panel with a flange outside, held by two countersunk M3
+    screws, the cable, and its C13 in the supply."""
+    iy, iz = INLET
+    (bw, bh), (fw, fh, ft) = INLET_BODY, INLET_FLANGE
+    n = "ref-mains-inlet"
+    s = box(n, "#2b2e33", -T - ft, INLET_BLOCK - T, iy - bw / 2, iy + bw / 2, iz - bh / 2, iz + bh / 2)
+    s += [("solid.box", {"length": ft, "width": fw, "height": fh, "corner": [-T - ft, iy - fw / 2, round(iz - fh / 2, 3)],
+                         "operation": "join", "targets": [n]}),
+          ("solid.box", {"length": 14, "width": 23, "height": 15, "corner": [-T - ft, iy - 11.5, iz - 7.5],
+                         "operation": "cut", "targets": [n]})]
+    px, py = PSU_X + PSU_INLET[0], PSU_Y + PSU_INLET[1]
+    s += box("ref-mains-plug", "#2b2e33", px - PLUG[1] / 2, px + PLUG[1] / 2, py - 13.75, py + PLUG[0], PSU_TOP, PSU_TOP + PLUG[2])
+    for i, (origin, xd, yd, pieces) in enumerate(lead_path()[0]):
+        s += pipe("ref-mains-lead-%d" % (i + 1), origin, xd, yd, pieces, LEAD, BLACK)
+    return s
+
+
+def pipe(n, origin, xd, yd, pieces, diameter, color, into=None):
+    """A round cable along lines and arcs drawn in one plane, each ending exactly where the next starts.
+    With `into`, it is joined to that body."""
+    if into:
+        return pipe(n, origin, xd, yd, pieces, diameter, color)[:-3] + [
+            ("solid.pipe", {"path_sketch": "sk-" + n, "path": curve_names(pieces), "diameter": diameter,
+                            "operation": "join", "targets": [into]}),
+            ("browser.visibility", {"visible": False, "items": ["sk-" + n]})]
+    s = [("sketch.create", {"plane": plane(origin, xd, yd), "name": "sk-" + n})]
+    names, count = [], {"line": 0, "arc": 0}
+    for piece in pieces:
+        count[piece[0]] += 1
+        names.append("%s%d" % (piece[0][0], count[piece[0]]))
+        if piece[0] == "line":
+            s.append(("sketch.line", {"points": [list(piece[1]), list(piece[2])], "connect": False, "infer": False}))
+        else:
+            s.append(("sketch.arc.center_point", {"center": list(piece[1]), "start": list(piece[2]), "sweep": piece[3],
+                                                  "connect": False}))
+    return s + [("sketch.finish", {}),
+                ("solid.pipe", {"path_sketch": "sk-" + n, "path": names, "diameter": diameter, "body_name": n}),
+                ("browser.visibility", {"visible": False, "items": ["sk-" + n]})] + paint([n], color)
+
+
+def curve_names(pieces):
+    names, count = [], {"line": 0, "arc": 0}
+    for piece in pieces:
+        count[piece[0]] += 1
+        names.append("%s%d" % (piece[0][0], count[piece[0]]))
+    return names
+
+
+def psu_columns(sock):
+    """Y of a supply socket's columns of pins, from the open side, and X of the middle of its two rows."""
+    (a0, a1), (b0, b1) = sock
+    k = round((a1 - a0) / DC_PITCH)
+    return ([PSU_Y + (a0 + a1) / 2 + DC_PITCH * (j - (k - 1) / 2) for j in range(k)], PSU_X + PSU[0] - (b0 + b1) / 2)
+
+
+def dc_paths():
+    """Every wire of the 24-pin and CPU cables as (name, [flat pieces as for lead_path], length)."""
+    out = []
+    plug_y = DC_HEADER_Y - DC_PLUG
+    zs = PSU_TOP - PSU[2] - PSU_PLUG                 # where the wires leave the supply's plugs
+    rt = DC_TURN
+    ten, x10 = psu_columns(PSU_ATX10)
+    eighteen, x18 = psu_columns(PSU_ATX18)
+    four, x4 = psu_columns(PSU_CPU)
+    atx_y = ten[-3:] + eighteen
+    atx_lane = [DC_LANE + DC_LANE_PITCH * c for c in range(12)]
+    atx_pass = atx_lane[:3] + eighteen               # Y of each as it turns rearward: the ten's are in their lanes by then
+    for cable, (bx, bz), psu_x, ys, passes, lanes in (("atx", ATX24, x18, atx_y, atx_pass, atx_lane),
+                                                      ("cpu", CPU8, x4, four, four, four)):
+        cols = len(ys)
+        zc = (bz[0] + bz[1]) / 2
+        for row in range(2):                             # 0 the lower row on the board, from the supply's front row
+            z_plug = zc + (row - 0.5) * DC_PITCH
+            z = z_plug if cable == "atx" or row == 0 else zc - 0.5 * DC_PITCH + CPU_UNDER
+            xp = psu_x + (0.5 - row) * DC_PITCH
+            x_s = xp - max(math.hypot(passes[c] - ys[c], zs + 1 - z) for c in range(cols))
+            for c in range(cols):
+                n = "wire-%s-%d-%02d" % (cable, row + 1, c + 1)
+                yp, yq, lane = ys[c], passes[c], lanes[c]
+                xb = (bx[0] + bx[1]) / 2 + DC_PITCH * (c - (cols - 1) / 2)
+                fall = math.hypot(yq - yp, zs + 1 - z)
+                r = fall - 1
+                down = ([xp, yp, zs + 1], [0, (yq - yp) / fall, -(zs + 1 - z) / fall], [-1, 0, 0],
+                        [("line", (0, 0), (1, 0)), ("arc", (1, r), (1, 0), 90), ("line", (1 + r, r), (1 + r, xp - x_s))])
+                length = fall - 1 + r * math.pi / 2 + xp - x_s - r
+                d, adv = yq - lane, DC_CLOSE
+                at = x_s - xb - rt
+                if abs(d) < 0.05:
+                    flat = [("line", (0, 0), (at, 0))]
+                    length += at
+                else:
+                    rs = (adv * adv + d * d) / (4 * d)
+                    if rs > 30.0:    # a small step: SolidCraft refuses to join a pipe bent to a very large radius
+                        rs = 30.0
+                        adv = 2 * rs * math.sin(math.acos(1 - d / (2 * rs)))
+                    th = math.atan2(adv / (2 * rs), 1 - d / (2 * rs))
+                    flat = [("arc", (0, rs), (0, 0), math.degrees(th)),
+                            ("arc", (adv, d - rs), (rs * math.sin(th), rs * (1 - math.cos(th))), -math.degrees(th)),
+                            ("line", (adv, d), (at, d))]
+                    length += 2 * rs * th + at - adv
+                flat.append(("arc", (at, d - rt), (at, d), -90))
+                length += rt * math.pi / 2
+                leg = plug_y - lane - rt
+                pieces = [down, ([x_s, yq, z], [-1, 0, 0], [0, -1, 0], flat)]
+                if z == z_plug:
+                    flat.append(("line", (at + rt, d - rt), (at + rt, d - rt - leg - 1)))
+                else:                                    # up into the plug, once past the 24-pin's band
+                    h = z_plug - z
+                    t2 = math.acos(1 - h / (2 * rt))
+                    s0 = leg - 2 * rt * math.sin(t2)
+                    pieces.append(([xb, lane + rt, z], [0, 1, 0], [0, 0, 1],
+                                   [("line", (0, 0), (s0, 0)), ("arc", (s0, rt), (s0, 0), math.degrees(t2)),
+                                    ("arc", (leg, h - rt), (s0 + rt * math.sin(t2), rt * (1 - math.cos(t2))), -math.degrees(t2)),
+                                    ("line", (leg, h), (leg + 1, h))]))
+                    length += 2 * rt * t2 - 2 * rt * math.sin(t2)
+                out.append((n, pieces, length + leg))
+    return out
+
+
+def dc_cables():
+    """The 24-pin and CPU cables: a plug at each end and every wire between."""
+    plug_y = DC_HEADER_Y - DC_PLUG
+    z0, z1 = PSU_TOP - PSU[2] - PSU_PLUG, PSU_TOP - PSU[2] - 0.05
+    s = []
+    for n, (bx, bz) in (("ref-plug-atx24", ATX24), ("ref-plug-cpu8", CPU8)):
+        s += box(n, "#2b2e33", bx[0], bx[1], plug_y, DC_HEADER_Y - 0.05, bz[0], bz[1])
+    for n, ((a0, a1), (b0, b1)) in (("ref-plug-psu-atx18", PSU_ATX18), ("ref-plug-psu-atx10", PSU_ATX10),
+                                    ("ref-plug-psu-cpu", PSU_CPU)):
+        s += box(n, "#2b2e33", PSU_X + PSU[0] - b1, PSU_X + PSU[0] - b0, PSU_Y + a0, PSU_Y + a1, z0, z1)
+    for n, pieces, length in dc_paths():
+        for i, (origin, xd, yd, pcs) in enumerate(pieces):
+            s += pipe("%s-%d" % (n, i + 1) if i else n, origin, xd, yd, pcs, DC_WIRE, BLACK, into=n if i else None)
+    return s
+
+
+def wire_paths():
+    """The three wires, each as (name, [flat pieces as for lead_path], length): from its part above the
+    supply to just behind the shelf's wall, and from there to the plug on the board's header."""
+    unit = lambda v: [c / math.sqrt(sum(d * d for d in v)) for c in v]
+    back = [-1, 0, 0]
+    out = []
+    plug_y = HEADER[1][0] - HEADER_PLUG
+    zp = (HEADER[2][0] + HEADER[2][1]) / 2
+    starts = [("wire-led-2", [BULKHEAD_X[1] - LED_BEHIND, LEDS[1][0], LEDS[1][1]]),
+              ("wire-led-1", [BULKHEAD_X[1] - LED_BEHIND, LEDS[0][0], LEDS[0][1]]),
+              ("wire-switch", [BULKHEAD_X[1] - 22, SWITCH[0], SWITCH[1]])]
+    for k, (n, p) in enumerate(starts):
+        zk = WIRE_Z[k]
+        o = [p[0] + 0.5, p[1], p[2]]
+        a_end = o[0] - WIRE_PAST_WALL
+        if k < 2:   # a lamp: an S to the notch's height, then straight back
+            b = math.hypot(WIRE_Y - o[1], zk - o[2])
+            r = 6.0
+            th = math.acos(1 - b / (2 * r))
+            front = (o, back, unit([0, WIRE_Y - o[1], zk - o[2]]),
+                     [("line", (0, 0), (1, 0)), ("arc", (1, r), (1, 0), math.degrees(th)),
+                      ("arc", (1 + 2 * r * math.sin(th), b - r), (1 + r * math.sin(th), r * (1 - math.cos(th))), -math.degrees(th)),
+                      ("line", (1 + 2 * r * math.sin(th), b), (a_end, b))])
+            length = 1 + 2 * r * th + a_end - 1 - 2 * r * math.sin(th)
+        else:       # the switch: back, across behind the mains plug, and back again through the notch
+            b = math.hypot(WIRE_Y - o[1], zk - o[2])
+            r = 8.0
+            a1 = a_end - 4.5 - 2 * r
+            front = (o, back, unit([0, WIRE_Y - o[1], zk - o[2]]),
+                     [("line", (0, 0), (a1, 0)), ("arc", (a1, r), (a1, 0), 90), ("line", (a1 + r, r), (a1 + r, b - r)),
+                      ("arc", (a1 + 2 * r, b - r), (a1 + r, b - r), -90), ("line", (a1 + 2 * r, b), (a_end, b))])
+            length = a1 + r * math.pi + b - 2 * r + a_end - a1 - 2 * r
+        # behind the wall, level: an S toward the open side and a turn toward the board, each wire 3 outside
+        # the one below it; then, side by side, an S up or down into the plug
+        yk = plug_y - 10.0 - 3.0 * k
+        d = WIRE_Y - yk
+        xk = (HEADER[0][0] + HEADER[0][1]) / 2 + 1.3 - 3.0 * k
+        at = WIRE_PAST_WALL - xk - 6.0
+        adv = at - 0.5
+        r = (adv * adv + d * d) / (4 * d)
+        th = math.atan2(adv / (2 * r), 1 - d / (2 * r))
+        rear = ([WIRE_PAST_WALL, WIRE_Y, zk], back, [0, -1, 0],
+                [("arc", (0, r), (0, 0), math.degrees(th)),
+                 ("arc", (adv, d - r), (r * math.sin(th), r * (1 - math.cos(th))), -math.degrees(th)),
+                 ("line", (adv, d), (at, d)), ("arc", (at, d - 6.0), (at, d), -90)])
+        length += 2 * r * th + 0.5 + 6.0 * math.pi / 2
+        h, leg = abs(zp - zk), plug_y - yk - 6.0
+        t2 = math.acos(1 - h / 12.0)
+        s0 = leg - 12.0 * math.sin(t2)
+        drop = ([xk, yk + 6.0, zk], [0, 1, 0], [0, 0, 1 if zp > zk else -1],
+                [("line", (0, 0), (s0, 0)), ("arc", (s0, 6.0), (s0, 0), math.degrees(t2)),
+                 ("arc", (leg, h - 6.0), (s0 + 6.0 * math.sin(t2), 6.0 * (1 - math.cos(t2))), -math.degrees(t2)),
+                 ("line", (leg, h), (leg + 1, h))])
+        length += s0 + 12.0 * t2
+        out.append((n, [front, rear, drop], length - 0.5))
+    return out
+
+
+def wires():
+    """The switch's and lamps' wires and their plug on the board's header."""
+    (x0, x1), (y0, y1), (z0, z1) = HEADER
+    s = box("ref-front-plug", "#2b2e33", x0 + 0.3, x1 - 0.3, y0 - HEADER_PLUG, y0, z0, z1)
+    for k, (n, pieces, length) in enumerate(wire_paths()):
+        s += twisted_pair(n, pieces, WIRE_COLORS[k])
+    return s
+
+
+def twisted_pair(n, pieces, colors):
+    """Two conductors wound round each other along a wire's flat pieces: each line or arc is swept on its
+    own, with whole turns, so that the pair comes out of it lying as it went in and the next one carries on."""
+    add = lambda a, b, f=1.0: [a[i] + f * b[i] for i in range(3)]
+    cross = lambda a, b: [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+    dot = lambda a, b: sum(a[i] * b[i] for i in range(3))
+    rot = lambda v, deg: (v[0] * math.cos(math.radians(deg)) - v[1] * math.sin(math.radians(deg)),
+                          v[0] * math.sin(math.radians(deg)) + v[1] * math.cos(math.radians(deg)))
+    s, lie, made = [], None, False
+    off = (WIRE - STRAND) / 2
+    for i, (origin, xd, yd, pcs) in enumerate(pieces):
+        # long lines in shorter lengths, so that no sweep is asked for more than four turns
+        cut = []
+        for pc in pcs:
+            if pc[0] == "line":
+                (ax, ay), (bx, by) = pc[1], pc[2]
+                m = max(1, math.ceil(math.hypot(bx - ax, by - ay) / 45.0))
+                cut += [("line", (ax + (bx - ax) * j / m, ay + (by - ay) * j / m),
+                         (ax + (bx - ax) * (j + 1) / m, ay + (by - ay) * (j + 1) / m)) for j in range(m)]
+            else:
+                cut.append(pc)
+        sk = "sk-%s-%d" % (n, i + 1)
+        s += [("sketch.create", {"plane": plane(origin, xd, yd), "name": sk})]
+        names, count = [], {"line": 0, "arc": 0}
+        for pc in cut:
+            count[pc[0]] += 1
+            names.append("%s%d" % (pc[0][0], count[pc[0]]))
+            if pc[0] == "line":
+                s.append(("sketch.line", {"points": [list(pc[1]), list(pc[2])], "connect": False, "infer": False}))
+            else:
+                s.append(("sketch.arc.center_point", {"center": list(pc[1]), "start": list(pc[2]), "sweep": pc[3],
+                                                      "connect": False}))
+        s += [("sketch.finish", {}), ("browser.visibility", {"visible": False, "items": [sk]})]
+        normal = cross(xd, yd)
+        to3 = lambda v: add([0, 0, 0], add([c * v[0] for c in xd], [c * v[1] for c in yd]))
+        for j, pc in enumerate(cut):
+            if pc[0] == "line":
+                d = (pc[2][0] - pc[1][0], pc[2][1] - pc[1][1])
+                length = math.hypot(*d)
+                start, t0 = pc[1], (d[0] / length, d[1] / length)
+                t1 = t0
+            else:
+                c, start, sweep = pc[1], pc[2], pc[3]
+                r0 = (start[0] - c[0], start[1] - c[1])
+                radius = math.hypot(*r0)
+                sign = 1 if sweep > 0 else -1
+                t0 = (-sign * r0[1] / radius, sign * r0[0] / radius)
+                t1 = rot(t0, sweep)
+                length = radius * math.radians(abs(sweep))
+            b0, b1 = cross(to3(t0), normal), cross(to3(t1), normal)
+            if lie is None:
+                lie = normal
+            cn, cb = dot(lie, normal), dot(lie, b0)   # how the pair lies, in this plane's terms
+            at = add(origin, to3(start))
+            turns = min(4, round(length / TWIST_PITCH))
+            for e, (side, color) in enumerate(zip((1, -1), colors)):
+                body = "%s-%s" % (n, "ab"[e])
+                pr = "pr-%s-%d-%d-%s" % (n, i + 1, j + 1, "ab"[e])
+                s += [("sketch.create", {"plane": plane(at, normal, b0), "name": pr}),
+                      ("sketch.circle.center", {"center": [side * off * cn, side * off * cb], "diameter": STRAND,
+                                                "connect": False}),
+                      ("sketch.finish", {}),
+                      ("solid.sweep", dict({"sketch": pr, "path_sketch": sk, "path": [names[j]], "twist": "%d deg" % (360 * turns)},
+                                           **({"operation": "join", "targets": [body]} if made else
+                                              {"operation": "new", "body_name": body}))),
+                      ("browser.visibility", {"visible": False, "items": [pr]})]
+            made = True
+            lie = add([c * cn for c in normal], [c * cb for c in b1])
+    return s + paint([n + "-a"], colors[0]) + paint([n + "-b"], colors[1])
+
+
+def edge_trim():
+    """U channel on the edge of the notch in the shelf's rear wall: a band round the notch through the
+    wall and both its faces, with the wall's own thickness cut out of it."""
+    xr, yb = SHELF_X[0], TRAY_Y - GAP
+    c = 0.05   # clear of the sheet, so that the clash check has no touching faces to give up on
+    ye, z0, z1, r = LEAD_NOTCH
+    n = "trim-lead"
+    ring = lambda d, out: ("sketch.rectangle.rounded", {
+        "p0": [round(ye - d, 3), round(z0 - d, 3)], "p1": [round(yb + out, 3), round(z1 + d, 3)],
+        "radius": str(round(r + d, 3)), "connect": False})
+    at = lambda x: plane([round(x, 3), 0, 0], [0, 1, 0], [0, 0, 1])
+    s = [("sketch.create", {"plane": at(xr - TRIM), "name": "sk-" + n}),
+         ring(TRIM_LEG, 20), ring(-TRIM, 14), ("sketch.finish", {}),
+         ("solid.extrude", {"sketch": "sk-" + n, "distance": str(T + 2 * TRIM), "operation": "new", "body_name": n}),
+         ("sketch.create", {"plane": at(xr - c), "name": "sk-" + n + "-groove"}),
+         ring(TRIM_LEG + 1, 24), ring(-c, 17), ("sketch.finish", {}),
+         ("solid.extrude", {"sketch": "sk-" + n + "-groove", "distance": str(T + 2 * c), "operation": "cut",
+                            "targets": [n]}),
+         ("solid.box", {"length": T + 2 * TRIM + 2, "width": 30, "height": z1 - z0 + 2 * TRIM_LEG + 4,
+                        "corner": [round(xr - TRIM - 1, 3), round(yb, 3), round(z0 - TRIM_LEG - 2, 3)],
+                        "operation": "cut", "targets": [n]})]
+    return s + paint([n], BLACK)
 
 
 def framework_board():
@@ -635,7 +1018,7 @@ def psu():
                               "operation": "cut", "targets": [n]})]
     s += [cutbox(PSU_X + 12 + 5 * i, PSU_X + 15 + 5 * i, PSU_Y + 50, PSU_Y + 112, PSU_TOP - 2, PSU_TOP) for i in range(9)]
     # C14 inlet: its pins in a row along the supply's width, the earth pin nearest the fan, switch beside it
-    ix, iy = PSU_X + 25, PSU_Y + 29
+    ix, iy = PSU_X + PSU_INLET[0], PSU_Y + PSU_INLET[1]
     s += [cutbox(ix - 10, ix + 10, iy - 14, iy + 14, PSU_TOP - 16, PSU_TOP)]
     s += box("ref-psu-pins", ZINC, ix - 4, ix, iy - 1, iy + 1, PSU_TOP - 16, PSU_TOP - 3)
     s += [("solid.box", {"length": 4, "width": 2, "height": 13, "corner": [round(ix, 3), round(iy + d - 1, 3), PSU_TOP - 16],
@@ -741,8 +1124,8 @@ def hardware():
         s += pc_screw("screw-board-%d" % (i + 1), [x, BOARD_Y, z], left)
     for i, d in enumerate((-20, 20)):
         n = "screw-inlet-%d" % (i + 1)   # countersunk M3, flush in the inlet's flange
-        s += cyl(n, [-T - INLET_FLANGE[1] - 0.1, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
-        s += cyl(n, [-T - INLET_FLANGE[1] + 0.3, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
+        s += cyl(n, [-T - INLET_FLANGE[2] - 0.1, INLET[0] + d, INLET[1]], fore, 5.6, 0.4, "new")
+        s += cyl(n, [-T - INLET_FLANGE[2] + 0.3, INLET[0] + d, INLET[1]], fore, 3.0, 8.0) + paint([n], BLACK)
         s += hexagon("nut-inlet-%d" % (i + 1), [0, INLET[0] + d, INLET[1]], fore, 5.5, 2.4)
         s += paint(["nut-inlet-%d" % (i + 1)], ZINC)
     # shell: a screw through each side into a nut in the rear panel's lip
@@ -817,7 +1200,7 @@ def hardware():
                                     "corner": [round(x - a / 2, 3), round(y - b / 2, 3), -T - 19],
                                     "operation": "cut", "targets": [n]}))
         s += paint([n], BLACK)
-    return s
+    return s + wires() + dc_cables()
 
 
 TAB_FLIP, TAB_POSITION = False, "outside"
@@ -862,14 +1245,20 @@ def main():
 
 def ours(n):
     """A body this script made, as against one of the board model's."""
-    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "led-", "lamp-",
+    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "led-", "lamp-", "trim-", "wire-",
                                                      "join-", "switch"))
 
 
-# a fastener shares volume with what it threads into, and the mains inlet's body with its own screws
+# a fastener shares volume with what it threads into, the mains inlet's body with its own screws, and the
+# lead's cable with the moulding at each end and each piece of it with the next
 THREADED = [("screw-fan-", "ref-fan-"), ("screw-psu-", "ref-psu-sfx"), ("screw-handle-", "ref-handle-"), ("screw-shelf-", "nut-shelf-"), ("screw-shell", "nut-shell"),
             ("screw-board-", "standoff-"), ("screw-board-", "ref-mainboard"), ("stud-foot-", "foot-"), ("screw-inlet-", "nut-inlet-"),
-            ("screw-inlet-", "ref-mains-inlet"), ("switch", "switch-nut"),
+            ("screw-inlet-", "ref-mains-inlet"), ("ref-mains-lead", "ref-mains-inlet"), ("ref-mains-lead", "ref-mains-plug"),
+            ("ref-mains-lead", "ref-mains-lead"),
+            # a wire with the part it comes from and with its plug
+            ("wire-switch-", "switch"), ("wire-led-1-", "led-1"), ("wire-led-2-", "led-2"), ("wire-", "ref-front-plug"),
+            ("wire-atx-", "ref-plug-"), ("wire-cpu-", "ref-plug-"),
+            ("switch", "switch-nut"),
             ("ref-psu-guard", "ref-psu-guard")]   # the guard's rings and spokes are drawn as overlapping pieces
 
 

@@ -80,9 +80,11 @@ three, they win.
   handles and every screw, nut and stud in place, and the mainboard drawn as
   a block, for looking at and for checking that nothing clashes. The third,
   `reactor-mk-i-with-framework.sc`, is that with Framework's own model of
-  the mainboard in the block's place. It is 46 MB with Framework's 73 MB
-  model in it, so it is not committed: mk1.py builds it beside the others
-  when Framework's model has been fetched.
+  the mainboard in the block's place. Both assemblies have the mains lead
+  and every wire of the power, switch and lamp cables drawn in them, which
+  makes them 65 to 75 MB, so neither is committed: mk1.py builds them
+  beside the sheet metal design, the third when Framework's model has
+  been fetched.
 
   ![The Mk I open, with the Framework board](docs/images/mk1-board-open.png)
 

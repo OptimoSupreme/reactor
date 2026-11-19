@@ -10,7 +10,7 @@ import os
 import sys
 
 import mk1
-from mk1 import FEET, FRONT_Z, HANDLE_X, IMAGES, LEDS, LX, LY, LZ, PSU_TOP, SHELL_SCREW, SWITCH, TIE_X
+from mk1 import FEET, FRONT_Z, HANDLE_X, IMAGES, LEAD_NOTCH, LEDS, LX, LY, LZ, PSU_TOP, SHELF_X, SHELL_SCREW, SWITCH, TIE_X
 
 MID = [LX / 2, LY / 2, LZ / 2]
 UP, DOWN = math.pi / 2 - 1e-4, -(math.pi / 2 - 1e-4)
@@ -41,6 +41,10 @@ VIEWS = {
     "mk1-open-front": (MID, -0.7, 0.3, 720, ("shell", "screw-shell")),
     "mk1-tray-side": (MID, math.pi - 0.25, 0.2, 720, ("shell", "screw-shell")),
     "mk1-psu-mount": ([LX - 35, 40, PSU_TOP + 15], -0.95, 0.45, 300, ("shell", "screw-shell")),
+    "mk1-lead-notch": ([SHELF_X[0], LEAD_NOTCH[0] - 12, PSU_TOP + 14], 2.3, 0.3, 220,
+                       ("only", "shelf", "ref-psu", "ref-mains-plug", "ref-mains-lead", "screw-psu", "nut-shelf", "trim-", "wire-", "ref-front-plug")),
+    "mk1-cables": ([150, 60, 55], 0.5, 0.45, 360, ("shell", "screw-shell")),
+    "mk1-cables-under": ([150, 60, 45], 0.35, -0.5, 330, ("shell", "screw-shell", "core", "ref-fan-bottom", "screw-fan-bottom", "foot", "stud-foot")),
     "mk1-tie-slots": ([TIE_X, LY, LZ / 2], math.pi - 0.3, 0.1, 330, ("shell", "screw-shell")),
     "mk1-shelf-alone": ([LX - 40, LY / 2, PSU_TOP + 15], 0.9, 0.5, 300, ("only", "shelf", "nut-shelf")),
     "mk1-shelf-tongues": ([LX, LY / 2, PSU_TOP], -1.25, 0.25, 260, ("only", "shelf", "bulkhead", "core")),

@@ -69,7 +69,7 @@ PART_NOTES = {
     "shelf": ["Two PEM S-632-1 nuts in the tabs, bodies under the tabs, flush on top. The tabs fold toward the rear, away from the supply.",
               "Three tongues 12.0 wide on the front edge, standing 2.4 beyond it, go through the bulkhead's slots: no burr on them.",
               "Supplied loose: its tongues sit in the bulkhead's slots and two screws through the top panel hold it.",
-              "The notch 12.0 wide in the top of the rear wall is for the mains lead: no burr, it is lined with edge trim."],
+              "The notch in the tray-side edge of the rear wall, 13.0 deep and 17.0 tall, corners R3, is for the mains lead and the switch and lamp wires: no burr, it is lined with edge trim."],
     "shell": ["Plain outside faces: no marks, grain or tooling witness on the front and sides.",
               "The four return flanges are plain. The shell slides onto the core from the front, 0.5 clear all round, and a screw through each side holds it."],
 }

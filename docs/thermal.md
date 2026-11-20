@@ -27,7 +27,7 @@ Updated 2026-11-12.
 
 ## What was run
 
-[sim/airflow.py](../sim/airflow.py) builds a simplified copy of the Mk I
+[sim/airflow.py](../sim/airflow.py) builds a simplified copy of the case
 (panels, mesh as a pressure loss, fans as pressure-flow curves, board,
 heatsink with its fins, supply) and runs it in FieldCraft's lattice Boltzmann
 solver with heat: 18.7 million cells at 1 mm, one second of flow, about an

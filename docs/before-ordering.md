@@ -1,4 +1,4 @@
-# Before ordering a Mk I
+# Before ordering
 
 What has been checked, what is still open, and what goes to a shop. Updated
 2026-11-19.
@@ -7,7 +7,7 @@ What has been checked, what is still open, and what goes to a shop. Updated
 
 Everything is in [mechanical/export/](../mechanical/export/):
 
-- `reactor-mk-i-drawings.pdf`: general arrangement, the riveted assembly with
+- `reactor-drawings.pdf`: general arrangement, the riveted assembly with
   its fourteen rivets, and a sheet for each part with its flat pattern,
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.
@@ -123,6 +123,10 @@ home. Nothing is tapped or countersunk by the shop.
     with nothing to spare. Which supply pin feeds which board pin is not
     Corsair's pinout, the plugs are blocks 13 and 10 long, and the band
     lies flat over both bottom fans, in the air the CPU cooler draws.
+  - Every cable is drawn as one smooth curve through the path laid out
+    for it, its straights wandering a millimetre or two as a real one
+    would; the lengths above are of the paths. The mains lead bows off the
+    tray between the tie slots.
   - The plug's reach toward the tray (drawn 20 from the middle of the
     inlet) and the height its cable leaves at are guesses.
   - It crosses the supply's exhaust grille on its way to the notch, and it

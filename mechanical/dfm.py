@@ -2,20 +2,50 @@
 
   python3 mechanical/dfm.py
 
-Reads the DXFs that mk1.py exports; needs matplotlib only because drawings.py does. The figures are
+Reads the DXFs that reactor.py exports. The figures are
 from fabworks.com's material, laser cutting and bending pages, read 2026-11-17.
 """
 import math
 import os
 
-import drawings
-from mk1 import EXPORT, SHEET, T
+from reactor import EXPORT, SHEET, T
 
 MIN_FEATURE = 0.51     # smallest hole or slot
 MIN_WEB = 1.22         # between cut-outs: one thickness
 DISTORTION = 5.11      # a 90 degree bend can distort a feature this close to the bend line: half the die's opening
 MIN_FLANGE = 6.81      # 8.4 advised
 FLAT_TO_OUTSIDE = 0.93  # from a bend line in the flat to the flange's outside length: T + R less half the bend, 1.27
+
+
+def entities(path):
+    """LINE, ARC, CIRCLE, LWPOLYLINE and TEXT entities of a DXF, as dicts with their layer."""
+    with open(path) as f:
+        rows = [l.rstrip("\n") for l in f]
+    pairs = [(int(rows[i].strip()), rows[i + 1].strip()) for i in range(0, len(rows) - 1, 2)]
+    out, cur, on = [], None, False
+    for code, val in pairs:
+        if code == 2 and val == "ENTITIES":
+            on = True
+        elif code == 0:
+            if cur:
+                out.append(cur)
+            cur = {"type": val, "pts": []} if on and val in ("LINE", "ARC", "CIRCLE", "LWPOLYLINE", "TEXT") else None
+            if val == "ENDSEC":
+                on = False
+        elif cur is not None:
+            if code == 8:
+                cur["layer"] = val
+            elif code == 1:
+                cur["text"] = val
+            elif code in (10, 20, 11, 21, 40, 50, 51, 70):
+                if cur["type"] == "LWPOLYLINE" and code in (10, 20):
+                    if code == 10:
+                        cur["pts"].append([float(val), 0.0])
+                    else:
+                        cur["pts"][-1][1] = float(val)
+                else:
+                    cur[code] = float(val)
+    return out
 
 
 def points(e, step=0.4):
@@ -70,7 +100,7 @@ def describe(l):
 
 def main():
     for body in SHEET:
-        ents = drawings.entities(os.path.join(EXPORT, body + ".dxf"))
+        ents = entities(os.path.join(EXPORT, body + ".dxf"))
         cuts = loops([e for e in ents if e.get("layer") == "CUT" and e["type"] in ("LINE", "ARC", "CIRCLE")])
         edge = [q for e in ents if e.get("layer") == "OUTLINE" and e["type"] in ("LINE", "ARC", "CIRCLE") for q in points(e)]
         bends = [((e[10], e[20]), (e[11], e[21])) for e in ents if e.get("layer", "").startswith("BEND") and e["type"] == "LINE"]

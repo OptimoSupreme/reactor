@@ -70,6 +70,17 @@ Noctua NF-A12x15 PWM, from
 120 x 120 x 15 (16 with the pads), holes on 105 x 105, 450 to 1850 rpm,
 94.2 m³/h and 1.53 mm H₂O at full speed, 23.9 dB(A).
 
+The high detail model has Noctua's own STEP model of the fan,
+`NF-A12x15_Public-CAD.zip` from the fan's
+[downloads page](https://www.noctua.at/en/products/nf-a12x15-pwm/downloads),
+fetched 2026-11-19. Noctua gives its outside and mounting dimensions as
+exact and its impeller as altered a little, and offers it for fitting the fan
+into other designs and for pictures only, so it is kept outside the repo.
+Measured in SolidCraft, the frame is 120.0 x 120.0 x 15.0 and the eight
+corner pads stand 0.5 proud of the face it blows out of and 0.7 of the other,
+16.2 over the pads. The model has each frame flat on its panel, where the
+block was, with the pads drawn as they are before the screws squeeze them.
+
 ## Power supplies
 
 Envelopes as width x height x depth. These agree across several secondary

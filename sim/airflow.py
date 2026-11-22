@@ -1,4 +1,4 @@
-"""Airflow through the Mk I, driven by the fans' own curves.
+"""Airflow through the Reactor, driven by the fans' own curves.
 
 Two steps, each talking to a running desktop app over its MCP bridge:
 
@@ -17,7 +17,7 @@ zone carrying its pressure-flow curve, and the solver finds where the curves
 meet the case's resistance. Open inlets and outlets would not stay stable in
 the nova-reactor study, which this set-up follows.
 
-Simplified against mechanical/mk1.py:
+Simplified against mechanical/reactor.py:
 - sheet is two cells thick so the grid cannot leak through it, with the tray
   merged into the side wall behind it and the bulkhead into the front;
 - the hex mesh is a pressure loss over each panel's meshed area;
@@ -40,7 +40,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "mechanical"))
-import mk1 as M  # noqa: E402
+import reactor as M  # noqa: E402
 
 OUT = os.path.join(M.REPO, "sim", "out")
 
@@ -95,7 +95,7 @@ PSU_FAN_T = 15.0
 
 
 def geometry_path(spacing):
-    return os.path.join(OUT, "airflow-mk1-%gmm.solidcraft" % spacing)
+    return os.path.join(OUT, "airflow-%gmm.solidcraft" % spacing)
 
 
 def frame(name, axis, c1, c2, half, w, a, b):

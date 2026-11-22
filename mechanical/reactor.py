@@ -1,14 +1,14 @@
-"""Build the Reactor Mk I in SolidCraft, as three designs.
+"""Build the Reactor in SolidCraft, as three designs.
 
-  python3 mechanical/mk1.py            reactor-mk-i.sc: the five sheet metal parts alone, which is what a
-                                       shop makes, with their flat patterns and bend tables.
-                                       reactor-mk-i-with-board.sc: the same parts with the fans, power
-                                       supply, handles, lamps and every screw, nut and stud in place, the
-                                       board drawn as a block, and a check for clashes.
-                                       reactor-mk-i-with-framework.sc: that assembly with Framework's own
-                                       model of the board in the block's place, and a report of how it
-                                       fits. Only built when Framework's model is there.
-  python3 mechanical/mk1.py --sheet    the sheet metal design and its exports only
+  python3 mechanical/reactor.py            reactor.sc: the five sheet metal parts alone, which is what a shop
+                                           makes, with their flat patterns and bend tables.
+                                           reactor-low-detail.sc: the same parts with the fans, power supply,
+                                           handles, lamps and every screw, nut and stud in place, the board
+                                           drawn as a block, and a check for clashes.
+                                           reactor-high-detail.sc: that assembly with Framework's own model of
+                                           the board in the block's place, and a report of how it fits. Only
+                                           built when Framework's model is there.
+  python3 mechanical/reactor.py --sheet    the sheet metal design and its exports only
 
 The two assemblies are too big to commit, so .gitignore leaves them out.
 
@@ -28,14 +28,14 @@ import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DESIGN = os.path.join(REPO, "mechanical", "reactor-mk-i.sc")
+DESIGN = os.path.join(REPO, "mechanical", "reactor.sc")
 EXPORT = os.path.join(REPO, "mechanical", "export")
 # Framework's own model of the board (CC BY 4.0), from github.com/FrameworkComputer/Framework-Desktop,
 # Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
 # rebuild, so the model stays outside the repo and the assembly that holds it is not committed.
 MAINBOARD_STEP = os.path.expanduser("~/.cache/reactor/framework-desktop/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp")
-ASSEMBLY = os.path.join(REPO, "mechanical", "reactor-mk-i-with-board.sc")       # the board as a block
-WITH_FRAMEWORK = os.path.join(REPO, "mechanical", "reactor-mk-i-with-framework.sc") # Framework's board
+LOW_DETAIL = os.path.join(REPO, "mechanical", "reactor-low-detail.sc")    # the board as a block
+HIGH_DETAIL = os.path.join(REPO, "mechanical", "reactor-high-detail.sc")  # Framework's board
 WITH_BOARD = os.path.exists(MAINBOARD_STEP)    # without Framework's model only the first is built
 BLOCK_BOARD = ["ref-mainboard", "ref-rear-ports"]
 IMAGES = os.path.join(REPO, "docs", "images")
@@ -288,7 +288,7 @@ class Bridge:
         self.p = subprocess.Popen(shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
         self.n = 0
         self.rpc("initialize", {"protocolVersion": "2024-11-05", "capabilities": {},
-                                "clientInfo": {"name": "mk1", "version": "0"}})
+                                "clientInfo": {"name": "reactor", "version": "0"}})
         self.send({"jsonrpc": "2.0", "method": "notifications/initialized"})
 
     def send(self, m):
@@ -1232,12 +1232,12 @@ def main():
         "bodies": ["foot-1"], "path": os.path.join(EXPORT, "foot.step")}})
     show = [("browser.visibility", {"visible": True, "items": SHEET})]   # a body hidden for a render stays hidden
     sc.batch(show, "show")
-    sc.call("save", {"path": ASSEMBLY})
+    sc.call("save", {"path": LOW_DETAIL})
     m = sc.call("measure", {"summary": True})
     clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
     if WITH_BOARD:
         sc.batch(framework_board() + show, "framework's board")
-        sc.call("save", {"path": WITH_FRAMEWORK})
+        sc.call("save", {"path": HIGH_DETAIL})
         m = sc.call("measure", {"summary": True})
         clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
         board_fit(sc, m)

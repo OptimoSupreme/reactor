@@ -1,11 +1,11 @@
-"""Draw the Reactor Mk I's manufacturing drawings as one PDF, mechanical/export/reactor-mk-i-drawings.pdf.
+"""Draw the Reactor's manufacturing drawings as one PDF, mechanical/export/reactor-drawings.pdf.
 
   python3 mechanical/drawings.py
   python3 mechanical/drawings.py --foot    the foot's sheet alone, as foot-drawing.pdf, for whoever prints it
 
-Run mk1.py first: the drawings are made from the saved sheet metal design, its flat pattern DXFs and
+Run reactor.py first: the drawings are made from the saved sheet metal design, its flat pattern DXFs and
 its bend tables. Views of the formed parts come from the running SolidCraft, so SOLIDCRAFT_MCP is
-needed as for mk1.py. Needs matplotlib.
+needed as for reactor.py. Needs matplotlib.
 """
 import csv
 import datetime
@@ -22,17 +22,17 @@ from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Arc, Circle, Polygon
 
-import mk1
-from mk1 import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_CROSS, FOOT_CROSS_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, LX, LY, LZ, SHEET, PSU_TOP, T, TONGUES,
+import reactor
+from reactor import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_CROSS, FOOT_CROSS_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, LX, LY, LZ, SHEET, PSU_TOP, T, TONGUES,
                  TRAY_JOINS)
 
 VIEWS = os.path.expanduser("~/.cache/reactor/drawings")
-PDF = os.path.join(EXPORT, "reactor-mk-i-drawings.pdf")
+PDF = os.path.join(EXPORT, "reactor-drawings.pdf")
 W, H = 420.0, 297.0   # A3 landscape
 REV = "A"
 INK, THIN, BLUE, RED = "#111111", "#555555", "#1f4e9c", "#b3261e"
 
-NUMBER = {"core": "RMK1-01", "tray": "RMK1-02", "bulkhead": "RMK1-03", "shelf": "RMK1-04", "shell": "RMK1-05"}
+NUMBER = {"core": "R-01", "tray": "R-02", "bulkhead": "R-03", "shelf": "R-04", "shell": "R-05"}
 TITLE = {"core": "Core: bottom, rear and top", "tray": "Mainboard tray", "bulkhead": "Front bulkhead",
          "shelf": "Power supply shelf", "shell": "Shell: front and sides"}
 # what each round hole is for, by part and diameter
@@ -130,7 +130,7 @@ class Sheet:
         for x in (x0 + 95, x0 + 150):
             self.line([(x, y0), (x, y0 + 30)], 0.35)
         self.line([(x0, y0 + 15), (W - 8, y0 + 15)], 0.35)
-        cells = [(x0 + 2, y0 + 26, "TITLE", "Reactor Mk I  -  " + title), (x0 + 2, y0 + 11, "MATERIAL", material),
+        cells = [(x0 + 2, y0 + 26, "TITLE", "Reactor  -  " + title), (x0 + 2, y0 + 11, "MATERIAL", material),
                  (x0 + 97, y0 + 26, "DRAWING NO.", number), (x0 + 97, y0 + 11, "SCALE (A3)", scale),
                  (x0 + 152, y0 + 26, "SHEET / REV", "%d of %d   rev %s" % (n, total, REV)),
                  (x0 + 152, y0 + 11, "DATE", datetime.date.today().isoformat())]
@@ -333,7 +333,7 @@ FOOT_THREAD = 10.0   # full thread asked for: the stud stands 9.5 at most
 def foot_sheet(pdf, n, total):
     """The foot in section as it stands under the case, with a view on each end."""
     k = 5.0
-    s = Sheet(pdf, "RMK1-06", "Foot", "316L stainless steel, SLM / DMLS", "5 : 1, views 3 : 1", n, total)
+    s = Sheet(pdf, "R-06", "Foot", "316L stainless steel, SLM / DMLS", "5 : 1, views 3 : 1", n, total)
     cx, top = 92.0, 222.0
     at = lambda r, z: (cx + r * k, top - z * k)
     r = FOOT_TAP / 2
@@ -422,7 +422,7 @@ def foot_only():
 def main():
     if "--foot" in sys.argv:
         return foot_only()
-    sc = mk1.Bridge()
+    sc = reactor.Bridge()
     os.makedirs(VIEWS, exist_ok=True)
     # a copy under a new name: opening DESIGN itself can land on a tab still showing an earlier build
     fresh = os.path.join(VIEWS, "sheet-%d.sc" % time.time())
@@ -441,7 +441,7 @@ def main():
     with PdfPages(PDF) as pdf:
         # sheet 1: general arrangement
         k = 0.4
-        s = Sheet(pdf, "RMK1-00", "General arrangement", "see parts", ratio(k), 1, total)
+        s = Sheet(pdf, "R-00", "General arrangement", "see parts", ratio(k), 1, total)
         side = view(sc, "ga-side", 0, 0, mid)
         front = view(sc, "ga-front", -math.pi / 2, 0, mid)
         top = view(sc, "ga-top", 0, math.pi / 2 - 1e-4, mid)
@@ -472,7 +472,7 @@ def main():
 
         # sheet 2: joined assembly
         k = 0.45
-        s = Sheet(pdf, "RMK1-10", "Riveted assembly: core, tray, bulkhead", "RMK1-01, -02, -03", ratio(k), 2, total)
+        s = Sheet(pdf, "R-10", "Riveted assembly: core, tray, bulkhead", "R-01, -02, -03", ratio(k), 2, total)
         show = ["core", "tray", "bulkhead"]
         tray_side = view(sc, "weld-tray", math.pi, 0, mid, show=show)
         fr = view(sc, "weld-front", -math.pi / 2, 0, mid, show=show)

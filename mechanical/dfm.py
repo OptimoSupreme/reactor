@@ -2,14 +2,14 @@
 
   python3 mechanical/dfm.py
 
-Reads the DXFs that mk1.py exports; needs matplotlib only because drawings.py does. The figures are
+Reads the DXFs that reactor.py exports; needs matplotlib only because drawings.py does. The figures are
 from fabworks.com's material, laser cutting and bending pages, read 2026-11-17.
 """
 import math
 import os
 
 import drawings
-from mk1 import EXPORT, SHEET, T
+from reactor import EXPORT, SHEET, T
 
 MIN_FEATURE = 0.51     # smallest hole or slot
 MIN_WEB = 1.22         # between cut-outs: one thickness

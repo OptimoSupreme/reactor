@@ -1,4 +1,4 @@
-# Before ordering a Mk I
+# Before ordering
 
 What has been checked, what is still open, and what goes to a shop. Updated
 2026-11-19.
@@ -7,7 +7,7 @@ What has been checked, what is still open, and what goes to a shop. Updated
 
 Everything is in [mechanical/export/](../mechanical/export/):
 
-- `reactor-mk-i-drawings.pdf`: general arrangement, the riveted assembly with
+- `reactor-drawings.pdf`: general arrangement, the riveted assembly with
   its fourteen rivets, and a sheet for each part with its flat pattern,
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.

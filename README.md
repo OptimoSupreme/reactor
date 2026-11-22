@@ -3,15 +3,11 @@
 A small, quiet mini-ITX case for boards that have all their graphics on the
 CPU.
 
-The first design, the Mk I, is drawn and checked and close to orderable:
+It is drawn and checked and close to orderable, in folded sheet metal:
 255 x 134 x 216 mm without its feet and handles, 7.4 litres, for an SFX power supply.
 None has been built yet, so everything here is a model and a simulation.
 
-![The Mk I from the front](docs/images/mk1-front.png)
-
-Each design is a mark with its own branch. The Mk I, on `mk-i`, is the first:
-folded sheet metal. A change of material or layout big enough to start over
-becomes the Mk II on a branch of its own.
+![The Reactor from the front](docs/images/front.png)
 
 ## Why
 
@@ -67,26 +63,26 @@ three, they win.
 
 ## Where things are
 
-- [mechanical/mk1.py](mechanical/mk1.py) builds the Mk I in SolidCraft, as
-  three designs. [mechanical/reactor-mk-i.sc](mechanical/reactor-mk-i.sc) is
+- [mechanical/reactor.py](mechanical/reactor.py) builds it in SolidCraft, as
+  three designs. [mechanical/reactor.sc](mechanical/reactor.sc) is
   the sheet metal alone, which is what a shop makes.
   [mechanical/export/](mechanical/export/) has what a shop quotes from: a
   STEP model, a flat pattern and a bend table for each part, and
-  [the drawings](mechanical/export/reactor-mk-i-drawings.pdf), which
+  [the drawings](mechanical/export/reactor-drawings.pdf), which
   [mechanical/drawings.py](mechanical/drawings.py) draws, with the foot on
   their last sheet.
-  [mechanical/reactor-mk-i-with-board.sc](mechanical/reactor-mk-i-with-board.sc)
+  `reactor-low-detail.sc`
   is the whole machine: the same parts with the fans, the supply, the
   handles and every screw, nut and stud in place, and the mainboard drawn as
   a block, for looking at and for checking that nothing clashes. The third,
-  `reactor-mk-i-with-framework.sc`, is that with Framework's own model of
+  `reactor-high-detail.sc`, is that with Framework's own model of
   the mainboard in the block's place. Both assemblies have the mains lead
   and every wire of the power, switch and lamp cables drawn in them, which
-  makes them 65 to 75 MB, so neither is committed: mk1.py builds them
+  makes them 65 to 75 MB, so neither is committed: reactor.py builds them
   beside the sheet metal design, the third when Framework's model has
   been fetched.
 
-  ![The Mk I open, with the Framework board](docs/images/mk1-board-open.png)
+  ![Open, with the Framework board](docs/images/board-open.png)
 
   The layout follows the KXRORS M02: the board on a tray against one side
   wall, an SFX supply standing in front of it with its fan toward the board
@@ -114,9 +110,9 @@ three, they win.
   case screw, feet and handles included, so a single Phillips driver opens
   the case and takes out the shelf and the supply.
 
-  ![The front, with the button and the lamps](docs/images/mk1-front-face.png)
+  ![The front, with the button and the lamps](docs/images/front-face.png)
 
-  ![The handles and the top](docs/images/mk1-top-detail.png)
+  ![The handles and the top](docs/images/top-detail.png)
 - [mechanical/dfm.py](mechanical/dfm.py) measures every cut-out in the flat
   patterns against the shop's rules, and
   [mechanical/renders.py](mechanical/renders.py) redraws the pictures in

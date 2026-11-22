@@ -4,4 +4,3 @@
 sim/out/
 __pycache__/
 mechanical/reactor-low-detail.sc
-mechanical/reactor-high-detail.sc

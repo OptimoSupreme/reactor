@@ -24,9 +24,7 @@ home. Nothing is tapped or countersunk by the shop.
 
 - Clashes: the whole assembly, 149 bodies with every screw, nut, stud, handle and fan
   in place and the mains lead on its route, has no two parts sharing volume apart from threads in what they
-  screw into. Framework's own board model sits on the four standoffs to
-  0.00 mm, 0.5 inside the rear panel, 3.0 under the top fan, 7.0 over the
-  bottom fans and 13.1 from the supply.
+  screw into.
 - Mini-ITX and ATX: the four holes, the 158.75 x 44.45 rear aperture and its
   position from the board, the 12.27 from the rear holes to the panel and
   the 0.94 to 1.32 panel thickness, against ATX 2.2 figures 3 and 4.

@@ -56,7 +56,7 @@ VIEWS = {
 def main():
     sc = reactor.Bridge()
     for _ in range(8):   # the assembly's tab, whichever is shown
-        if sc.call("inspect_design").get("name") == os.path.splitext(os.path.basename(reactor.HIGH_DETAIL))[0]:
+        if sc.call("inspect_design").get("name") == os.path.splitext(os.path.basename(reactor.LOW_DETAIL))[0]:
             break
         sc.call("execute", {"command": "view.next_tab", "params": {}})
     else:

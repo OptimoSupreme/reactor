@@ -1,16 +1,13 @@
-"""Build the Reactor in SolidCraft, as three designs.
+"""Build the Reactor in SolidCraft, as two designs.
 
   python3 mechanical/reactor.py            reactor.sc: the five sheet metal parts alone, which is what a shop
                                            makes, with their flat patterns and bend tables.
                                            reactor-low-detail.sc: the same parts with the fans, power supply,
                                            handles, lamps and every screw, nut and stud in place, the board
                                            drawn as a block, and a check for clashes.
-                                           reactor-high-detail.sc: that assembly with Framework's own model of
-                                           the board in the block's place, and a report of how it fits. Only
-                                           built when Framework's model is there.
   python3 mechanical/reactor.py --sheet    the sheet metal design and its exports only
 
-The two assemblies are too big to commit, so .gitignore leaves them out.
+The assembly is too big to commit, so .gitignore leaves it out.
 
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
@@ -30,13 +27,7 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DESIGN = os.path.join(REPO, "mechanical", "reactor.sc")
 EXPORT = os.path.join(REPO, "mechanical", "export")
-# Framework's own model of the board (CC BY 4.0), from github.com/FrameworkComputer/Framework-Desktop,
-# Mainboard/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp. It is 73 MB and makes the design 26 MB and slow to
-# rebuild, so the model stays outside the repo and the assembly that holds it is not committed.
-MAINBOARD_STEP = os.path.expanduser("~/.cache/reactor/framework-desktop/FRAMEWORK_DESKTOP_MAIN_PCB_V01.stp")
 LOW_DETAIL = os.path.join(REPO, "mechanical", "reactor-low-detail.sc")    # the board as a block
-HIGH_DETAIL = os.path.join(REPO, "mechanical", "reactor-high-detail.sc")  # Framework's board
-WITH_BOARD = os.path.exists(MAINBOARD_STEP)    # without Framework's model only the first is built
 BLOCK_BOARD = ["ref-mainboard", "ref-rear-ports"]
 IMAGES = os.path.join(REPO, "docs", "images")
 
@@ -965,15 +956,6 @@ def edge_trim():
     return s + paint([n], BLACK)
 
 
-def framework_board():
-    """Framework's model of the board in place of the block. The file has the board in its XZ plane,
-    parts toward +Y, ports along its low-Z edge, with the board's top face at y 10.9 and its corners at
-    x -178.6..-8.6, z 1.7..171.7."""
-    return [("solid.remove", {"bodies": BLOCK_BOARD}),
-            ("file.insert_step", {"path": MAINBOARD_STEP, "name": "framework-mainboard", "matrix": [
-                0, 0, 1, BOARD_X - 1.7, 0, -1, 0, BOARD_Y + 10.9, 1, 0, 0, BOARD_Z + 178.6]})]
-
-
 def rotor(name, at, n, hub, tip, h, color):
     """Hub and nine swept blades, as a body of its own."""
     xd, yd = frame(n)
@@ -1234,19 +1216,7 @@ def main():
     sc.batch(show, "show")
     sc.call("save", {"path": LOW_DETAIL})
     m = sc.call("measure", {"summary": True})
-    clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
-    if WITH_BOARD:
-        sc.batch(framework_board() + show, "framework's board")
-        sc.call("save", {"path": HIGH_DETAIL})
-        m = sc.call("measure", {"summary": True})
-        clashes(sc, [b["name"] for b in m["bodies"] if ours(b["name"])])
-        board_fit(sc, m)
-
-
-def ours(n):
-    """A body this script made, as against one of the board model's."""
-    return n.split(" ")[0] in SHEET or n.startswith(("ref-", "foot-", "screw-", "nut-", "standoff-", "stud-", "led-", "lamp-", "trim-", "wire-",
-                                                     "join-", "switch"))
+    clashes(sc, [b["name"] for b in m["bodies"]])
 
 
 # a fastener shares volume with what it threads into, the mains inlet's body with its own screws, and the
@@ -1300,32 +1270,6 @@ def report(sc):
             "bodies": [b], "path": os.path.join(EXPORT, b + ".step")}})
         print("%-8s flat %.1f x %.1f mm, %d bends, %d cut-outs" % (
             b, f["flat_size_mm"][0], f["flat_size_mm"][1], len(f.get("bends", [])), len(f.get("cutouts", []))))
-
-
-def board_fit(sc, m):
-    """How Framework's model of the board sits in the case, from its bodies' extents and its holes."""
-    parts = [b for b in m["bodies"] if not ours(b["name"]) and "bbox" in b]   # the outline body has no volume to measure
-    lo = [min(b["bbox"]["min"][i] for b in parts) for i in range(3)]
-    hi = [max(b["bbox"]["max"][i] for b in parts) for i in range(3)]
-    print("board and its parts: x %.2f..%.2f  y %.2f..%.2f  z %.2f..%.2f" % (lo[0], hi[0], lo[1], hi[1], lo[2], hi[2]))
-    holes = sc.call("body_topology", {"body": "LFSP0_MB_PCB", "faces": "cylinders"})
-    holes = [f for v in holes.values() if isinstance(v, list) for f in v if abs(f["radius"] - 1.98) < 0.01]
-    for u, v in BOARD_HOLES:
-        x, z = BOARD_X + u, BOARD_Z + BOARD - v
-        off = min(math.hypot(f["origin"][0] - x, f["origin"][2] - z) for f in holes)
-        print("standoff at x %.2f z %.2f: nearest board hole %.2f away" % (x, z, off))
-    print("rear panel: nearest part %.2f inside it" % lo[0])
-    for b in parts:
-        a, c = b["bbox"]["min"], b["bbox"]["max"]
-        if a[0] < 3 and "PCB" not in b["name"] and "EMN" not in b["name"]:
-            # a connector's legs go through the board, so only its body above the board is compared
-            print("  %-32s to aperture edges: %.1f above, %.1f at the board side, %.1f below, %.1f on top" % (
-                b["name"][:32], a[1] - IO_Y[0], IO_Y[1] - min(c[1], BOARD_Y), a[2] - IO_Z[0], IO_Z[1] - c[2]))
-    print("tray: nearest part %.2f from it" % (TRAY_Y - hi[1]))
-    print("open side: tallest part %.1f above the board, %.1f from the shell" % (BOARD_Y - lo[1], lo[1] + T + GAP))
-    print("bottom fans: lowest part %.1f above them" % (lo[2] - FAN_T))
-    print("top fan: highest part %.1f below it" % (LZ - FAN_T - hi[2]))
-    print("PSU fan face: %.1f from the nearest part" % (PSU_X - hi[0]))
 
 
 if __name__ == "__main__":

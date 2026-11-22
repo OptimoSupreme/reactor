@@ -64,7 +64,7 @@ three, they win.
 ## Where things are
 
 - [mechanical/reactor.py](mechanical/reactor.py) builds it in SolidCraft, as
-  three designs. [mechanical/reactor.sc](mechanical/reactor.sc) is
+  two designs. [mechanical/reactor.sc](mechanical/reactor.sc) is
   the sheet metal alone, which is what a shop makes.
   [mechanical/export/](mechanical/export/) has what a shop quotes from: a
   STEP model, a flat pattern and a bend table for each part, and
@@ -74,15 +74,12 @@ three, they win.
   `reactor-low-detail.sc`
   is the whole machine: the same parts with the fans, the supply, the
   handles and every screw, nut and stud in place, and the mainboard drawn as
-  a block, for looking at and for checking that nothing clashes. The third,
-  `reactor-high-detail.sc`, is that with Framework's own model of
-  the mainboard in the block's place. Both assemblies have the mains lead
-  and every wire of the power, switch and lamp cables drawn in them, which
-  makes them 65 to 75 MB, so neither is committed: reactor.py builds them
-  beside the sheet metal design, the third when Framework's model has
-  been fetched.
+  a block, for looking at and for checking that nothing clashes. It has the mains
+  lead and every wire of the power, switch and lamp cables drawn in it, which
+  makes it about 70 MB, so it is not committed: reactor.py builds it beside
+  the sheet metal design.
 
-  ![Open, with the Framework board](docs/images/board-open.png)
+  ![Open, from the board side](docs/images/board-open.png)
 
   The layout follows the KXRORS M02: the board on a tray against one side
   wall, an SFX supply standing in front of it with its fan toward the board

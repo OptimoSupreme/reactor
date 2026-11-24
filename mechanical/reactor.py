@@ -110,10 +110,10 @@ PSU_HOLES = [(6.0, 119.0), (57.5, 119.0), (31.7, 6.0)]
 PSU_HOLES_SPARE = [(6.0, 6.0), (57.5, 6.0), (31.7, 119.0)]
 # The PSU's weight goes to the floor through a bulkhead just inside the front, not into the top mesh.
 BULKHEAD_X = (LX - T, LX)
-# Front lips of the top and bottom panels. The bulkhead is riveted to the bottom one. The top one stands in
-# front of the bulkhead down past the switch and the lamps, which go through it.
-LIP_TOP, LIP_BOTTOM = 33.0, 28.0
-BULKHEAD_JOINS = [(30.0, 20.0), (98.0, 20.0)]   # its rivets to the bottom panel's front lip, Y and Z
+# Front lips of the top and bottom panels, which the bulkhead is riveted to: three rivets in each, Y and Z.
+# The top three are between the switch and the lamps.
+LIP_TOP, LIP_BOTTOM = 18.5, 28.0
+BULKHEAD_JOINS = [(y, z) for z in (20.0, LZ - 10.0) for y in (30.0, LY / 2, 98.0)]
 # Its rear wall stands 2.8 behind the supply's fan face, which puts the supply's two rear holes 5.7 from
 # the wall's bend line, outside the reach of OSH Cut's die.
 SHELF_X = (PSU_X - 2.8, BULKHEAD_X[0] - GAP)
@@ -203,22 +203,24 @@ HANDLE = (101.6, 6.35, 31.75, 9.525)   # between centres, rod, overall height, b
 HANDLE_X = [9.5, LX - 9.5]
 HANDLE_Y = [round(LY / 2 - HANDLE[0] / 2, 3), round(LY / 2 + HANDLE[0] / 2, 3)]
 HANDLE_HOLES = [(x, y) for x in HANDLE_X for y in HANDLE_Y]
-# 12 mm vandal switch, Y and Z: top left seen from the front, under the handle's leg. Its body goes
-# through the front panel, the top panel's front lip and the bulkhead, and its nut behind the bulkhead
-# clamps the three together, which holds the front panel when the side panels are off. The bulkhead's hole places it; the other two are larger, because each is on
-# a bent part.
+# 12 mm vandal switch, Y and Z: top left seen from the front, under the handle's leg. It is fixed in the
+# bulkhead with its nut behind, and its head comes out through a larger hole in the front panel, which
+# comes off over it.
 FRONT_Z = LZ - 18.5   # the switch, and the middle of the pair of lamps on the other side
 SWITCH = (HANDLE_Y[0], FRONT_Z)
-SWITCH_HOLE, SWITCH_LOOSE, SWITCH_HEAD, SWITCH_NUT = 12.0, 12.6, (14.0, 1.5), 16.0
+SWITCH_HOLE, SWITCH_FRONT, SWITCH_NUT = 12.0, 14.5, 16.0   # the head is 14
 # Two lamps under the other leg, one above the other: power above, in green, and drive activity below, in
 # amber. Each is a 5 mm LED in a black panel holder for an 8 mm hole, measured from the part: its bezel is
 # 10.8 across where it sits on the panel, tapering to 8.8, and 4.3 tall; 11 of it is behind the bezel. They
-# clamp the front panel as the switch does. They are 12.4 apart, which keeps the upper one's hole in the
-# bulkhead 5.8 from the bend of its top lip. Y and Z.
-LEDS = [(HANDLE_Y[1], FRONT_Z + 6.2), (HANDLE_Y[1], FRONT_Z - 6.2)]
-LED_HOLE, LED_LOOSE = 8.0, 8.6
+# are fixed in the bulkhead as the switch is, and the front panel comes off over their bezels. They are
+# 12.6 apart: the upper one's hole in the bulkhead is 5.8 from the bend of its top lip, and 1.3 is left
+# between the two holes in the front panel. Y and Z.
+LEDS = [(HANDLE_Y[1], FRONT_Z + 6.2), (HANDLE_Y[1], FRONT_Z - 6.4)]
+LED_HOLE, LED_FRONT = 8.0, 11.3
 LED_BEZEL, LED_BEHIND, LED_NUT = (10.8, 8.8, 4.3), 11.0, 9.4   # the nut across its flats
 LED_COLORS = ["#3fa34d", "#e08a1e"]
+# The top panel's front lip stands in front of the bulkhead, so it is cut back round the switch's head
+# and round the lamps' bezels, from the lip's end each time so that no sliver is left beside them.
 LIP_CLEAR = 0.3
 INLET = (28.0, FAN_T + 13.0)   # C14 inlet lying flat, low on the rear panel: Y and Z of its centre
 # The inlet is the moulded end of the mains lead, Toptekits' screw-mount C14 to right-angle C13, measured
@@ -458,8 +460,8 @@ def core():
     front = plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1])
     # SolidCraft will not cut a countersink in a sheet metal part, so these are plain holes and the
     # countersinks for the rivets' heads are made by hand: see the drawing.
-    s += cut("lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS], 5, ["core"])
-    s += cut("front-lip-joins", front, [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS], 2.5, ["core"])
+    s += cut("lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS if z < LZ - JOIN_LIP], 5, ["core"])
+    s += cut("front-lip-joins", front, [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS if z < LZ / 2], 2.5, ["core"])
     for name, y in (("lip-shell-screw", -T - 0.3), ("lip-shell-screw-tray", LY - 0.3)):
         s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(z, x, NUT_632) for x, z in SIDE_SCREWS if x < LX / 2],
                  T + 0.6, ["core"])
@@ -469,8 +471,9 @@ def core():
 
 def top():
     """The top panel, with its front and side lips. It lies on the rear panel's top lip and on the
-    bulkhead's, and the four handle screws clamp it to them: nothing else holds it. Its side lips start in
-    front of the rear panel's and stop short of the front panel's flanges."""
+    bulkhead's, and the four handle screws clamp it to them; its front lip is riveted to the bulkhead and
+    its lip on the tray's side to the tray. Its side lips start in front of the rear panel's and stop
+    short of the front panel's flanges."""
     w = LY + 2 * T
     zt, xf = LZ + T, LX + T
     xs = JOIN_LIP + GAP      # where the side lips start
@@ -485,7 +488,7 @@ def top():
              T + 1, ["top"])
     s += [("sheet.flange", {"body": "top", "height": str(FLANGE), "flip": True, "edges": [
         {"point": [xf, LY / 2, zt], "height": str(LIP_TOP)},
-        {"point": [LX / 2, -T, zt], "height": str(SIDE_LIP)}, {"point": [LX / 2, LY + T, zt], "height": str(SIDE_LIP)}]})]
+        {"point": [LX / 2, -T, zt], "height": str(SIDE_LIP)}, {"point": [LX / 2, LY + T, zt], "height": str(JOIN_LIP)}]})]
     # The side lips stop short of the front panel's flanges, and the front lip's ends stand inside them:
     # cut in the flat, as on the core.
     s += [("sheet.unfold", {"body": "top"})]
@@ -495,9 +498,16 @@ def top():
     # off those lips' tabs
     s += cut("top-mesh", TOP, top_mesh() + [(x, y, LOOSE_632) for x, y in HANDLE_HOLES], 6, ["top", "core", "bulkhead"])
     front = plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1])
-    s += cut("top-front-lip-holes", front, [SWITCH + (SWITCH_LOOSE,)] + [p + (LED_LOOSE,) for p in LEDS], 2.5, ["top"])
+    s += cut("top-lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS if z > LZ - JOIN_LIP], 5, ["top"])
+    s += cut("top-front-lip-joins", front, [(y, z, RIVET_HOLE) for y, z in BULKHEAD_JOINS if z > LZ / 2], 2.5, ["top"])
+    # The front lip steps back round the switch's head and the lamps' bezels, from the lip's end each time.
+    sy, sz = SWITCH
     foot = LZ + T - LIP_TOP                     # the lip's lower edge
-    s += rounds("top-front-lip-corners", front, [(BEND_R, foot, 1, 1), (LY - BEND_R, foot, -1, 1)], 2.5, ["top"])
+    ly, lz = LEDS[0][0], max(z for y, z in LEDS)
+    led_edge = ly - LED_BEZEL[0] / 2 - 2 * LIP_CLEAR
+    s += cut("front-lips", front, [(-T - 1, foot - 3, sy + 10, sz + 7 + LIP_CLEAR),
+                                   (led_edge, foot - 3, LY + T + 1, lz + LED_BEZEL[0] / 2 + LIP_CLEAR)], 2.5, ["top"])
+    s += rounds("top-front-lip-corners", front, [(sy + 10, foot, 1, 1), (led_edge, foot, -1, 1)], 2.5, ["top"])
     return s
 
 
@@ -506,9 +516,8 @@ def top_mesh():
 
 
 def tray():
-    """A flat plate the length of the case, riveted to the side lips of the bottom and rear panels. Its
-    top edge stands inside the top panel's side lip and its front edge against the bulkhead's.
-    No flange at the rear: the I/O aperture's keepout reaches to within 5 mm of it."""
+    """A flat plate the length of the case, riveted to the side lips of the bottom, rear and top
+    panels. No flange at the rear: the I/O aperture's keepout reaches to within 5 mm of it."""
     x0, x1 = EDGE, LX - GAP
     s = [("sketch.create", {"plane": plane([x0, 0, 0], [0, 1, 0], [0, 0, 1]), "name": "tray-profile"}),
          ("sketch.line", {"points": [[TRAY_Y, EDGE], [TRAY_Y, LZ - EDGE]]}),
@@ -535,8 +544,8 @@ def tray():
 
 
 def bulkhead():
-    """A plate across the front, riveted to the bottom panel's front lip, with a lip along its top folded
-    back under the top panel, which the front handle's two screws clamp to it. It closes the open end of
+    """A plate across the front, riveted to the front lips of the bottom and top panels, with a lip along
+    its top folded back under the top panel, which the front handle's two screws clamp to it. It closes the open end of
     the core, holds the top panel's front edge up, and carries the PSU shelf."""
     ya, yb = EDGE, TRAY_Y - GAP      # its lip clears the bend of the top panel's side lip
     x0, x1 = BULKHEAD_X
@@ -638,7 +647,7 @@ def shelf():
 
 def front():
     """The front panel: plain, with a flange down each side folded back inside the side panels, which
-    screw to it. The switch and the lamps go through its face."""
+    screw to it. The switch's head and the lamps' bezels come through larger holes in its face."""
     y0, y1, z0, z1 = -T, LY + T, FRONT_Z0, FRONT_Z1
     xf, xr = SHELL_XF, SHELL_XF - FRONT_FLANGE
     s = [("sketch.create", {"plane": plane([0, 0, z0], [1, 0, 0], [0, 1, 0]), "name": "front-profile"}),
@@ -650,7 +659,7 @@ def front():
         s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(z, x, NUT_632) for x, z in SIDE_SCREWS if x > LX / 2],
                  T + 0.6, ["front"])
     s += cut("front-holes", plane([LX + T + 0.15, 0, 0], [0, 1, 0], [0, 0, 1]),
-             [SWITCH + (SWITCH_LOOSE,)] + [p + (LED_LOOSE,) for p in LEDS], T + 0.3, ["front"])
+             [SWITCH + (SWITCH_FRONT,)] + [p + (LED_FRONT,) for p in LEDS], T + 0.3, ["front"])
     return s
 
 
@@ -676,9 +685,9 @@ def side(name, y, inward):
     return s
 
 
-# rivets, tray to the side lips of the bottom panel and of the rear panel: X and Z
-TRAY_JOINS = ([(x, JOIN_IN) for x in (40, LX / 2, LX - 40)]
-              + [(JOIN_IN, z) for z in (40, 75, 135, 170)])   # either side of the nuts for the side panel's screws
+# rivets, tray to the side lips of the bottom, top and rear panels, three in each: X and Z
+TRAY_JOINS = ([(x, z) for x in (40, LX / 2, LX - 40) for z in (JOIN_IN, LZ - JOIN_IN)]
+              + [(JOIN_IN, z) for z in (40, LZ / 2, LZ - 40)])   # between the nuts for the side panel's screws
 
 
 def bought_in():
@@ -879,8 +888,8 @@ def wire_paths():
     out = []
     plug_y = HEADER[1][0] - HEADER_PLUG
     zp = (HEADER[2][0] + HEADER[2][1]) / 2
-    starts = [("wire-led-2", [SHELL_XF - LED_BEHIND, LEDS[1][0], LEDS[1][1]]),
-              ("wire-led-1", [SHELL_XF - LED_BEHIND, LEDS[0][0], LEDS[0][1]]),
+    starts = [("wire-led-2", [BULKHEAD_X[1] - LED_BEHIND, LEDS[1][0], LEDS[1][1]]),
+              ("wire-led-1", [BULKHEAD_X[1] - LED_BEHIND, LEDS[0][0], LEDS[0][1]]),
               ("wire-switch", [BULKHEAD_X[1] - 22, SWITCH[0], SWITCH[1]])]
     for k, (n, p) in enumerate(starts):
         zk = WIRE_Z[k]
@@ -1220,18 +1229,18 @@ def hardware():
     for n, at, d in joins:
         s += cyl(n, at, d, RIVET, 2 * T, "new") + cyl(n, along(at, d, 2 * T), d, RIVET_TAIL[0], RIVET_TAIL[1])
         s += paint([n], ZINC)
-    # switch: plain 12 mm body, its head on the front panel and its nut behind the bulkhead
+    # switch: plain 12 mm body, nut behind the bulkhead, head out through the front panel
     y, z = SWITCH
-    s += cyl("switch", [BULKHEAD_X[1] - 22, y, z], fore, 11.9, 22 + SHELL_XF - BULKHEAD_X[1], "new")
-    s += cyl("switch", [SHELL_XF, y, z], fore, *SWITCH_HEAD)
+    s += cyl("switch", [BULKHEAD_X[1] - 22, y, z], fore, 11.9, 22, "new")
+    s += cyl("switch", [BULKHEAD_X[1], y, z], fore, SWITCH_FRONT - 0.5, SHELL_XF + 0.6 - BULKHEAD_X[1])
     s += hexagon("switch-nut", [BULKHEAD_X[0], y, z], back, 13.5, 3.0)
     s += [("solid.cylinder", {"diameter": 12.0, "height": 3.0, "base": [BULKHEAD_X[0], y, z], "axis": back,
                               "operation": "cut", "targets": ["switch-nut"]})]
     s += paint(["switch", "switch-nut"], BLACK)
-    # lamps: holder with its bezel on the front panel and a nut behind the bulkhead, and the LED's dome in it
+    # lamps: holder through the bulkhead with its bezel in front and a nut behind, and the LED's dome in it
     d0, d1, bh = LED_BEZEL
     for i, (y, z) in enumerate(LEDS):
-        n, at = "led-%d" % (i + 1), [SHELL_XF, y, z]
+        n, at = "led-%d" % (i + 1), [BULKHEAD_X[1], y, z]
         s += cyl(n, at, back, LED_HOLE - 0.2, LED_BEHIND, "new")
         s += [("solid.cone", {"diameter": d0, "top_diameter": d1, "height": bh, "base": at, "axis": fore,
                               "operation": "join", "targets": [n]})]

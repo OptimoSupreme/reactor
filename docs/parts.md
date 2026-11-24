@@ -178,16 +178,17 @@ a lip folded round the rear panel were looked at and dropped: the lower one
 has nowhere to go, with the rear fan 1.3 inside the panel where a nut is 1.78
 deep, the mains inlet in one corner and the I/O aperture up the other side.
 
-The front panel has no screws of its own. Its flanges stand in the same
-layer as the core's side lips, which stop 15.3 short of the front to make
-room. The switch and the two lamps go through its face and through the top
-panel's front lip into the bulkhead, and their nuts clamp the three
-together, which holds it while the side panels are off. The switch's thread
-has to span 3.9 of sheet and the lamps' the same; neither has been checked
-on the parts.
+The front panel has no screws of its own: the side panels' front screws
+are all that holds it. Its flanges stand in the same layer as the core's
+side lips, which stop 15.3 short of the front to make room. The switch and
+the two lamps are fixed in the bulkhead, and their head and bezels come
+through larger holes in the front panel, so it comes off over them. With one
+side panel off it hangs on the other's two screws, and with both off it is
+loose.
 
-The tray is riveted to the core's side lips at seven places and the bulkhead
-to its front lip at two, by hand, with 3/32 in flush solid rivets,
+The tray is riveted to the side lips of the core and the top panel at nine
+places, three along each of its bottom, top and rear edges, and the bulkhead
+to their front lips at six, by hand, with 3/32 in flush solid rivets,
 MS20426AD3-4 (2117 aluminium, 100 degree head 0.179 in across and 0.036 in
 tall, 1/4 in long, in a No. 40 hole; from Olander's and Hanson's tables, read
 2026-11-12). The holes are cut 2.5 in both parts. The head sits in a
@@ -195,7 +196,7 @@ countersink made by hand in the lip, flush outside, and the tail is bucked
 inside to a head 3.0 to 4.1 across and 0.8 to 1.5 tall. Both sides matter:
 the side panels pass 0.5 from the side lips and the front panel 0.3 from the front one, and the
 fans' frames stand 2.8 inside the tray, less than a blind rivet's tail. The
-lips are 17 tall (28 at the front) and each tray rivet is 9.5 from the
+lips are 17 tall (18.5 and 28 at the front) and each tray rivet is 9.5 from the
 panel its lip is folded from. PEM's SpotFast was drawn first, and no
 prototyping shop found lists it or joins parts. The rivet is a standard
 aircraft part, used by the thousand in kit aircraft: McMaster-Carr sells it
@@ -206,8 +207,8 @@ length, grip plus one and a half diameters.
 | Part | Fit | Notes |
 | --- | --- | --- |
 | 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
-| Lamps, two | 8.0 hole in the bulkhead for each, nut behind it; 8.6 holes in the front panel and the top panel's front lip, which they clamp to the bulkhead | 5 mm LEDs in black panel holders, both from Justin, who has the parts: 08L53GD, green, for power, above 08H53ED, amber, for drive activity, 12.4 apart. The holder's bezel is 10.8 across where it sits on the front panel, tapering to 8.8, and 4.3 tall; 11 of the holder is behind the bezel, 7.1 of it inside the case. Its nut is 9.4 across flats. Under the tray-side leg of the front handle, their middle level with the power button |
-| Power button | 12.0 hole in the bulkhead, nut behind it; 12.6 holes in the front panel, which its 14 head sits on, and in the top panel's front lip | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
+| Lamps, two | 8.0 hole in the bulkhead for each, nut behind it; 11.3 hole in the front panel for its bezel | 5 mm LEDs in black panel holders, both from Justin, who has the parts: 08L53GD, green, for power, above 08H53ED, amber, for drive activity, 12.6 apart, which leaves 1.3 between their holes in the front panel. The holder's bezel is 10.8 across where it sits on the bulkhead, tapering to 8.8, and 4.3 tall, so it stands 1.6 proud of the front panel; 11 of the holder is behind the bezel, 9.8 of it inside the case. Its nut is 9.4 across flats. Under the tray-side leg of the front handle, their middle level with the power button |
+| Power button | 12.0 hole in the bulkhead, nut behind it; 14.5 hole in the front panel for its 14 head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
 | IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | The moulded end of the mains lead, Toptekits' "C14 w/screw hole to Right C13", 0.6 m, mounted from outside with two countersunk M3 screws and nuts. Measured from the part, 2026-11-17: body 27.2 x 19.2, flange 48.9 wide, as tall as the body and 3.0 thick, 3.5 countersunk holes 40.0 apart, rigid for 50 behind the flange; cable 7 across and 20.5 in (521) between the mouldings, measured again 2026-11-19; the C13 plug passes through the cut-out and stands 17 above the supply. The cut-out is Schurter's for the 6100-3 (datasheet, read 2026-11-11), which also takes Bulgin's PX0580 and Schurter's 6061 if a separate inlet is ever wanted |
 | Handles, two | two 4.5 holes 101.6 apart, a 6-32 screw up into each leg | RAF 8120-632-A-24, also Fascomp FC8120-632-A-24: 6061 aluminium, black anodised, 1/4 in rod, 4.000 +/-0.031 in between the legs, 1 1/4 in tall, 1/4 in bend radius, each leg tapped 6-32 5/16 to 3/8 in deep. From Fascomp's drawing, read 2026-11-17; it does not say that the 4 in is between centres, which is taken from RAF's drawing of the family. The 4.5 holes allow for the +/-0.8. One across the rear of the top and one across the front, legs 9.5 from each end. 8120-632-SS is the same in plain stainless, and 8130 is 1 1/2 in tall |
 | Edge trim | pushed onto the edge of the notch in the shelf's rear wall, 1.2 sheet | Rubber U channel. No part is chosen yet, so the one drawn is a placeholder: 1.0 thick over the edge and on each face, legs 4.0 onto the wall. About 35 |

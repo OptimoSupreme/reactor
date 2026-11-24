@@ -91,9 +91,9 @@ three, they win.
   floor, a shelf that the supply hangs under, a plain front panel and two
   side panels, which are the same part. No part is a deep U, which a
   press brake cannot fold. The tray and the bulkhead are riveted to the core
-  by hand with flush rivets. The top panel lies on a lip of the rear panel
-  and one of the bulkhead, and the four handle screws clamp it there;
-  nothing else holds it. The shelf comes out with the
+  and the top panel by hand with flush rivets. The top panel lies on a lip
+  of the rear panel and one of the bulkhead, and the four handle screws
+  clamp it there. The shelf comes out with the
   supply on it: three tongues on its front edge sit in slots in the bulkhead,
   two screws through the top panel hold it, and nothing stands over the
   supply's own screws when it is out. Four pairs of slots in the tray, between the
@@ -105,9 +105,8 @@ three, they win.
   black handles of bent 1/4 in rod cross the top, one at the rear and one at
   the front, each leg held by a case screw from underneath. On the front,
   the power button sits under one leg of the front handle and two lamps
-  under the other, green for power over amber for drive activity. They go
-  through the front panel into the bulkhead, and hold the front panel while
-  the side panels are off. Four steel
+  under the other, green for power over amber for drive activity. All three
+  are fixed in the bulkhead, and the front panel comes off over them. Four steel
   feet, printed and tapped, turn onto studs under the bottom panel. Apart
   from the fan screws and the mains inlet's two, every screw is the one 6-32
   case screw, feet and handles included, so a single Phillips driver opens

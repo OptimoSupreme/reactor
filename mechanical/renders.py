@@ -34,6 +34,12 @@ VIEWS = {
                               ("only", "core", "screw-side-open", "nut-side-open")),
     "front-corner": ([LX - 4, -4, LZ - 30], -0.55, 0.3, 170, ()),
     "front-corner-open": ([LX - 6, 0, LZ - 30], -0.35, 0.25, 150, OPEN),
+    "front-under": ([LX - 10, 20, -3], -0.6, -0.75, 170, ()),
+    "shelf-screws-top": ([LX - 45, LY / 2, LZ], math.pi / 2, UP, 190, ()),
+    "mitre-rear-top": ([8, 0, LZ - 8], 0.0, 0.0, 110, OPEN),
+    "mitre-front-foot": ([LX - 8, 0, 8], 0.0, 0.0, 110, OPEN),
+    "mitre-front-top": ([LX - 8, 0, LZ - 8], 0.0, 0.0, 110, OPEN),
+    "mitre-rear-foot": ([8, 0, 8], 0.0, 0.0, 110, OPEN),
     "switch-front": ([LX, SWITCH[0] + 10, SWITCH[1] - 8], -1.05, 0.25, 170, ()),
     "lamps": ([LX, LEDS[0][0] - 10, FRONT_Z - 8], -2.1, 0.25, 170, ()),
     "front-face": ([LX, LY / 2, LZ - 40], -math.pi / 2, 0.0, 330, ()),
@@ -50,9 +56,9 @@ VIEWS = {
     "cables-under": ([150, 60, 45], 0.35, -0.5, 330, OPEN + ("core", "ref-fan-bottom", "screw-fan-bottom", "foot", "stud-foot")),
     "tie-slots": ([TIE_X, LY, LZ / 2], math.pi - 0.3, 0.1, 330, ("side-tray", "screw-side-tray")),
     "shelf-alone": ([LX - 40, LY / 2, PSU_TOP + 15], 0.9, 0.5, 300, ("only", "shelf", "nut-shelf")),
-    "shelf-tongues": ([LX, LY / 2, PSU_TOP], -1.25, 0.25, 260, ("only", "shelf", "bulkhead", "core")),
+    "shelf-hung": ([LX - 40, LY / 2, PSU_TOP + 10], -0.6, 0.15, 330, ("only", "shelf", "hood", "nut-shelf", "screw-shelf")),
     "shelf-top": ([LX - 40, LY / 2, PSU_TOP], 0.9, 1.0, 330,
-                      ("only", "shelf", "ref-psu", "screw-psu", "nut-shelf", "bulkhead")),
+                      ("only", "shelf", "ref-psu", "screw-psu", "nut-shelf")),
 }
 
 

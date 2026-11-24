@@ -86,27 +86,26 @@ three, they win.
   and its exhaust upward, two slim 120 mm fans in the bottom and one in the
   top. The supply's place follows Intel's SFX12V guide, so any SFX unit that
   keeps to it should fit; the two it was laid out around are Corsair's SF450
-  and Seasonic's Focus SGX-550 (2021). It is eight pieces of 1.2 mm steel: a core (bottom and rear), the top
-  panel, the tray, a bulkhead across the front that carries the supply's weight to the
-  floor, a shelf that the supply hangs under, a plain front panel and two
-  side panels, which are the same part. No part is a deep U, which a
-  press brake cannot fold. The tray and the bulkhead are riveted to the core
-  and the top panel by hand with flush rivets. The top panel lies on a lip
-  of the rear panel and one of the bulkhead, and the four handle screws
-  clamp it there. The shelf comes out with the
-  supply on it: three tongues on its front edge sit in slots in the bulkhead,
-  two screws through the top panel hold it, and nothing stands over the
-  supply's own screws when it is out. Four pairs of slots in the tray, between the
-  board and the supply, take cable ties. The front panel is a channel like
-  the rear one, its two flanges folded back inside the side panels. Each
-  side panel has a flange over the top panel and one under the bottom one,
+  and Seasonic's Focus SGX-550 (2021). It is six pieces of 1.2 mm steel: a core (bottom and rear), a hood (top
+  and front), the tray, a shelf that the supply hangs under, and two side
+  panels, which are the same part. No part is a deep U, which a
+  press brake cannot fold. The hood slides on from the front: its top lies
+  on a lip of the rear panel, where the rear handle's screws clamp it, and
+  a return at the foot of its front goes under the bottom panel, where the
+  front fan's two front screws hold it. The tray is riveted to the core and
+  the hood by hand with flush rivets. The shelf comes out with the
+  supply on it: four screws through the top hold it, and nothing stands
+  over the supply's own screws when it is out. Four pairs of slots in the tray, between the
+  board and the supply, take cable ties. The front has a flange down each
+  side, folded back inside the side panels, as the rear panel has. Each
+  side panel has a flange over the top and one under the bottom,
   and four ordinary case screws, one near each corner, into the rear panel's
-  lips and the front panel's flanges; with them out it lifts straight off. Two
+  lips and the front's flanges; with them out it lifts straight off. Two
   black handles of bent 1/4 in rod cross the top, one at the rear and one at
   the front, each leg held by a case screw from underneath. On the front,
   the power button sits under one leg of the front handle and two lamps
-  under the other, green for power over amber for drive activity. All three
-  are fixed in the bulkhead, and the front panel comes off over them. Four steel
+  under the other, green for power over amber for drive activity, all three
+  fixed in the front itself. Four steel
   feet, printed and tapped, turn onto studs under the bottom panel. Apart
   from the fan screws and the mains inlet's two, every screw is the one 6-32
   case screw, feet and handles included, so a single Phillips driver opens

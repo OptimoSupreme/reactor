@@ -1,35 +1,39 @@
 # Before ordering
 
 What has been checked, what is still open, and what goes to a shop. Updated
-2026-11-23.
+2026-11-24.
 
 ## What a shop gets
 
 Everything is in [mechanical/export/](../mechanical/export/):
 
 - `reactor-drawings.pdf`: general arrangement, the riveted assembly with
-  its fifteen rivets, and a sheet for each part with its flat pattern,
+  its eleven rivets, and a sheet for each part with its flat pattern,
   bends, holes and notes.
-- For each of the seven parts a STEP model, a DXF flat pattern and a bend table.
-  The side panel is wanted twice, so eight pieces.
+- For each of the five parts a STEP model, a DXF flat pattern and a bend table.
+  The side panel is wanted twice, so six pieces.
 - `foot.step` and `foot-drawing.pdf`, for whoever prints the feet: one model,
   four off. The drawing is also the last sheet of the set.
 
-The shop is OSH Cut. It cuts and bends the eight pieces in its 0.048 in
-(1.2 mm) A1008 cold rolled steel and presses in eighteen PEM studs, standoffs
+The shop is OSH Cut. It cuts and bends the six pieces in its 0.048 in
+(1.2 mm) A1008 cold rolled steel and presses in twenty PEM studs, standoffs
 and nuts, all in its hardware catalog: four BSO-632-12ZI, four FH-632-6ZI and
-ten S-632-1ZI. The pieces come loose. Riveting the tray and bulkhead to the
-core and the top panel is done at home. Nothing is tapped or countersunk by the shop; OSH Cut
-does not countersink this thickness. The colour wanted is its Camo Green FED,
-Prismatic Powders PSS-11240, a flat olive matched to FS 34094.
+twelve S-632-1ZI. The pieces come loose. Riveting the tray to the core and
+the hood is done at home. Nothing is tapped or countersunk by the shop; OSH Cut
+does not countersink this thickness. The colour wanted for the core, the
+hood and the side panels is its Camo Green FED, Prismatic Powders PSS-11240,
+a flat olive matched to FS 34094; the tray and the shelf are to be matt
+black, and which of its blacks is not chosen. The model's green is near FS
+34094 by eye, not matched to a swatch.
 
 The parts were first drawn as five for Fabworks, with the core's bottom, rear
 and top in one piece and the front and both sides in another, the shell. Both
 are U shapes with 255 legs on a 210 and a 131 base, and Fabworks' and OSH
 Cut's bend simulations both refused the last bend of each: the standing leg
 hits the punch. Both shops use the same 220 tall punches, which reach a leg
-about 145 tall on a 131 base. So the top, the front and the two sides are
-parts of their own, and no part has a leg over 33 beside a base under 127.
+about 145 tall on a 131 base. So the top and the front are now one part,
+the hood, an L like the core, and the two sides are parts of their own. No
+part has a leg over 35 beside a base under 86.
 
 Shops that might fold the two U shapes as first drawn were looked for on
 2026-11-23. None with an instant quote does. Approved Sheet Metal (Hudson,
@@ -40,7 +44,7 @@ brakes and tooling and does not make parts to order.
 
 ## Checked
 
-- Clashes: the whole assembly, 165 bodies with every screw, nut, stud, handle and fan
+- Clashes: the whole assembly, 163 bodies with every screw, nut, stud, handle and fan
   in place and the mains lead on its route, has no two parts sharing volume apart from threads in what they
   screw into.
 - Mini-ITX and ATX: the four holes, the 158.75 x 44.45 rear aperture and its
@@ -55,9 +59,6 @@ brakes and tooling and does not make parts to order.
 - Fasteners: every pressed-in part's hole size, sheet thickness and edge
   distance against PEM's bulletins. The closest is the shelf's two nuts, at
   PEM's minimum of 5.6 from the tab's edge.
-- Clear of the front panel: the shelf's three tongues stand 0.9 in front of the
-  bulkhead, in the 1.5 between it and the front panel. Nothing else stands proud
-  of the bulkhead or the lips.
 - Sheet metal rules, against OSH Cut's figures for 0.048 in A1008, read from
   its catalog 2026-11-21: the parts are drawn with its tooling's inside
   radius of 1.32 (0.052 in) and K of 0.45, and its hardware is the same PEM
@@ -66,53 +67,49 @@ brakes and tooling and does not make parts to order.
   across (0.61 recommended), the thinnest web 2.07, and none is within 5.72
   of a bend line, which is how far its die reaches. That put the side
   panels' screws 8.0 inside the rear panel and the shelf's rear wall 2.8 behind the
-  supply, with the mains lead 0.7 nearer the board to suit, and set the two
-  lamps 12.6 apart: the upper one's hole is 5.8 from the bend of the
-  bulkhead's top lip, and 1.3 is left between their holes in the front panel
-  (1.22 needed).
+  supply, with the mains lead 0.7 nearer the board to suit, and the shelf's front
+  wall is only as wide as the space between the supply's front screws, so
+  that none of its holes is near that bend.
 - Flanges: dfm.py also measures every flange all along its bend, from the
   bend line to the flange's edge, against the 5.72 of support OSH Cut asks
-  for. The shortest is the top panel's front lip where it is cut back over
-  the lamps, 6.7; the next are the shelf's, 7.8 and 7.9.
+  for. The shortest are the shelf's, 7.8 and 7.9.
 - Bend reliefs: where two bends meet there is a round relief 3.0 across,
-  from the sheet rule. The front panel and the side panels have no two bends
-  that meet.
-- The top panel's joint: the rear panel's top lip and the bulkhead's lie
-  under the top panel, each 16.5 long at the two corners and 9.5 between
-  them, short of the mesh. A handle's two screws go up through each lip and
-  the panel into the handle's legs and clamp the three together. Its front
-  lip is riveted to the bulkhead between the switch and the lamps, and its
-  17 lip on the tray's side to the tray. Its side lips start in front of the rear panel's
-  and stop behind the front panel's flanges, and its rear edge is flush with
-  the rear panel's outside face.
-- The front panel: a channel 15 deep whose flanges stand in line with the
-  core's side lips, which stop 15.3 short of the front for them. The side
-  panels screw to the flanges, two screws a side, and nothing else holds
-  it: the switch's head and the lamps' bezels, which are fixed in the
-  bulkhead, come through holes 0.5 larger. With one side panel off it hangs
-  on the other's two screws.
+  from the sheet rule.
+- The hood: the top and the front in one part. Its top lies on the rear
+  panel's top lip, 16.5 long at the two corners and 9.5 between them, short
+  of the mesh, and the rear handle's two screws go up through the lip and
+  the top into the handle's legs. Its rear edge is flush with the rear
+  panel's outside face. The 17 lip of the top is riveted to the tray. The
+  front's flanges, 18, stand in line with the core's side lips. Where a lip
+  of the hood meets one of the core, at the top of the rear and the foot of
+  the front, the two are mitred at 45 degrees and 1.2 apart, as two lips of
+  one part are. The side panels screw to both, and the one on the tray's side is
+  riveted to the tray. At the front's foot a return goes under the bottom
+  panel, against it, between the side panels' returns, with a tab at each
+  end for a fan screw, cut at a slant 0.6 clear of a foot.
+- The shelf hangs from the top on four screws: two into tabs on its rear
+  wall, as before, and two into tabs on a front wall 82 wide, between the
+  switch and the lamps. No tab shows in a cell of the mesh. The supply's weight goes into the top and from
+  there into the rear panel, the tray and the front.
 - The side panels: one part, used on both sides turned end for end. Each
-  covers the edges of the rear and front panels and is 0.5 clear of the lips
+  covers the edges of the rear panel and the front and is 0.5 clear of the lips
   and flanges behind it. Every nut is 5.76 or more from an edge (PEM asks
   5.6) and its hole 5.76 from a bend line (5.72).
-- Lamps and button: each is under a leg of the front handle. The upper
-  lamp's holder is 2.9 under a handle screw and the lower one 1.5 over the
-  head of a supply screw; the button's body is 6 over the supply's screws.
+- Lamps and button: each is under a leg of the front handle, fixed in the
+  front. The clash check has them clear of the shelf, the supply's screws
+  and the handle's screws.
 - Handles: RAF 8120-632-A-24, 4 in between centres, against Fascomp's
   drawing of the same part. Each leg has 2.2 of metal to the nearest mesh
   cell and is 3.4 inside the side panel's flange; the screw heads under the top
   panel are 5.5 from the rear panel, 11.3 from the top fan and clear of
   the switch and of every part of the board.
-- Rivets: fifteen. Nine hold the tray, three along each of its bottom, top and rear edges, and six the bulkhead, three to the bottom panel's front lip and three to the top panel's. Each is 7 or more from its lip's edge and from the bend, with a
+- Rivets: eleven, all holding the tray: three along each of its bottom, top and rear edges and two up its front edge, into the front's flange below and above the supply. Each is 7 or more from its lip's edge and from the bend, with a
   bar's width of flat behind it inside. Flush outside and 1.5 at most
   inside, which the 0.3 to 0.5 outside the lips and the 2.8 between the tray
   and the fans both need.
 - The 13.1 between the board and the supply stays. It comes from spacing
   the bottom fans so one mesh pattern suits both, and the 8.3 it leaves
   between those fans is where their cables come up.
-- The shelf's tongues have 0.5 each side and 0.5 above and below in their
-  slots, and 1.8 of each is in or through the bulkhead, which the 0.25 of
-  play at the top screws cannot undo.
 - Mains lead: Toptekits' "C14 w/screw hole to Right C13", 2 ft / 0.6 m,
   18 AWG, measured from the part by Justin on 2026-11-17. The C14 is
   27.2 x 19.2 with two 3.5 countersunk holes 40.0 apart, as its seller
@@ -172,8 +169,9 @@ brakes and tooling and does not make parts to order.
 ## Open: before the order
 
 - Upload the seven STEP models to OSH Cut and read its bend simulation for
-  each. The core and the top panel each have lips on three sides of a panel,
-  so each needs a punch that fits between two of them. The shapes are inside the published limits of its punches, but its
+  each. The core and the hood are each an L with lips down both sides of
+  both panels, so the bend between the panels needs a punch that fits
+  between the lips. The shapes are inside the published limits of its punches, but its
   simulation is the test, and nobody has run it on these files yet.
 - Powder coat. OSH Cut does not publish how thick its coat is, whether it
   masks threads, or whether hardware goes in before or after. Ask, because:
@@ -181,14 +179,14 @@ brakes and tooling and does not make parts to order.
   on both faces takes 0.1 to 0.2 of it; the I/O aperture and the
   holes for the switch and lamps are sized bare; the nuts, studs and standoffs must stay clean;
   and the board grounds to the case through the standoffs and the tray,
-  which a coat on the joint faces would insulate. Coating only the front
-  panel, the side panels and the top panel would avoid most of this, but the
-  front panel's four nuts would then want masking.
+  which a coat on the joint faces would insulate. Coating only the hood
+  and the side panels would avoid most of this, but the hood's four nuts
+  would then want masking.
 - The rivets go in after the parts arrive, so on coated parts their heads
-  and the countersinks are bare metal. All fifteen are on lips under the
-  front panel or a side panel.
+  and the countersinks are bare metal. All eleven are on lips under the
+  tray-side panel.
 - OSH Cut presses hardware in after bending. The four nuts in the rear
-  panel's side lips and the four in the front panel's flanges are 8.0 from
+  panel's side lips and the four in the front's flanges are 8.0 from
   the panel, inside the corner, and the
   four studs are in the floor of the core. Its quote checks hardware
   against bends; read what it says.
@@ -197,7 +195,9 @@ brakes and tooling and does not make parts to order.
   8120-632-SS is the same size if the black one is out of stock.
 - Rubber U channel for the notch in the shelf's rear wall, about 35 of it
   for 1.2 sheet. The one drawn is a placeholder.
-- The front panel's and side panels' outside faces want to arrive unmarked, and
+- The switch's and the lamps' holes in the front are sized bare, 12.0 and
+  8.0; a coat narrows them.
+- The hood's and side panels' outside faces want to arrive unmarked, and
   die marks show on every bend. Ask.
 - The feet are printed in 316L stainless steel and tapped 6-32 by a 3D
   printing service. Craftcloud will do both. The hole goes right through,
@@ -206,17 +206,17 @@ brakes and tooling and does not make parts to order.
 ## To do at home
 
 Tools: a 100 degree countersink, a flat punch and a hammer, a steel bar to
-hold against the rivets' tails, and fifteen MS20426AD3-4 rivets with a
+hold against the rivets' tails, and eleven MS20426AD3-4 rivets with a
 few spare. McMaster-Carr sells them as 96685A146, Aircraft Spruce and Van's
 Aircraft by weight.
 
-1. Countersink the fifteen 2.5 holes in the lips of the core and the top
-   panel from outside, to 4.6 across, until a rivet's head sits flush.
-2. Rivet the bulkhead to the bottom panel's front lip, three rivets: head
-   outside, the bar against the tail inside, until the tail is 3 to 4 across
-   and about 1 tall. Lay the top panel on the two top lips and fit both
-   handles, whose four screws hold it there. Then rivet the tray to the side
-   lips, nine, and the bulkhead to the top panel's front lip, three.
+1. Countersink the eleven 2.5 holes in the lips of the core and the hood
+   from outside, to 4.6 across, until a rivet's head sits flush.
+2. Rivet the tray to the core's side lips, six rivets: head outside, the
+   bar against the tail inside, until the tail is 3 to 4 across and about 1
+   tall. Slide the hood on from the front, its return under the bottom
+   panel, and fit the rear handle, whose two screws hold its top down. Then
+   the other five rivets, tray to hood.
 3. Paint, if wanted, with the threads, studs and standoff bores masked.
 
 ## Known limits of what has been checked
@@ -231,13 +231,16 @@ Aircraft by weight.
 
 ## Putting one together
 
-1. Feet onto their studs with the PH2 screwdriver, then a bumper into each
-   foot's recess, over the cross slot. The handles are on already. Supply onto the shelf with its 6-32
+1. The front handle onto the top, a screw up into each leg from inside,
+   while the case is empty (the rear one is on already). Feet onto their
+   studs with the PH2 screwdriver, then a bumper into each
+   foot's recess, over the cross slot. Supply onto the shelf with its 6-32
    screws, three or six as the unit has threads, exhaust face up.
-2. Fans into the core, board onto its standoffs, heatsink fan, mains inlet.
-   Cables tied to the tray's slots between the board and the supply.
-3. Shelf in through the open side, low, then up against the top panel and
-   forward until its three tongues are in the bulkhead's slots. Two screws
-   down through the top panel.
-4. Switch and lamps through the bulkhead, wiring, then the front panel over them and the
+2. Fans into the core, the front one's two front screws through the tabs of
+   the hood's return. Board onto its standoffs, heatsink fan, mains inlet.
+   Switch and lamps into the front. Cables tied to the tray's slots between
+   the board and the supply.
+3. Shelf in through the open side, low, then up against the top. Four screws
+   down through the top.
+4. Wiring, then the
    two side panels, four screws each.

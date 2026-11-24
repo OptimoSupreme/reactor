@@ -1,2 +1,0 @@
-body,rule,thickness_mm,k_factor,bend,angle_deg,direction,radius_mm,allowance_mm,length_mm,start_x_mm,start_y_mm,end_x_mm,end_y_mm,included_angle_deg
-"bulkhead","CRS 1.2",1.200000000,0.450000000,1,90.000000000,up,1.320000000,2.921681168,125.000000000,15.440840584,0.000000000,15.440840584,125.000000000,90.000000000

@@ -23,7 +23,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Arc, Circle, Polygon
 
 import reactor
-from reactor import (BULKHEAD_JOINS, DESIGN, EXPORT, FOOT_CROSS, FOOT_CROSS_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, LX, LY, LZ, PANELS, SHEET, PSU_TOP, T, TONGUES,
+from reactor import (DESIGN, EXPORT, FOOT_CROSS, FOOT_CROSS_DEPTH, FOOT_RECESS, FOOT_RECESS_DEPTH, FOOT_TAP, LX, LY, LZ, PANELS, SHEET, T,
                  TRAY_JOINS)
 
 VIEWS = os.path.expanduser("~/.cache/reactor/drawings")
@@ -32,31 +32,27 @@ W, H = 420.0, 297.0   # A3 landscape
 REV = "A"
 INK, THIN, BLUE, RED = "#111111", "#555555", "#1f4e9c", "#b3261e"
 
-NUMBER = {"core": "R-01", "top": "R-02", "tray": "R-03", "bulkhead": "R-04", "shelf": "R-05", "front": "R-06", "side": "R-07"}
-TITLE = {"core": "Core: bottom and rear", "top": "Top panel", "tray": "Mainboard tray", "bulkhead": "Front bulkhead",
-         "shelf": "Power supply shelf", "front": "Front panel", "side": "Side panel"}
+NUMBER = {"core": "R-01", "hood": "R-02", "tray": "R-03", "shelf": "R-04", "side": "R-05"}
+TITLE = {"core": "Core: bottom and rear", "hood": "Hood: top and front", "tray": "Mainboard tray",
+         "shelf": "Power supply shelf", "side": "Side panel"}
 QTY = {"side": 2}
 # what each round hole is for, by part and diameter
 HOLES = {
     ("core", 5.0): "fan screw, self-tapping, clearance",
     ("core", 4.5): "6-32, loose clearance: the rear handle's two screws, through the top lip's tabs",
-    ("top", 5.0): "fan screw, self-tapping, clearance",
-    ("top", 4.5): "6-32, loose clearance: shelf screws (2) and handle screws (4)",
-    ("top", 2.5): "rivet, 3/32 in; countersunk by the customer",
     ("core", 3.5): "+0.08/0: PEM FH-632-6 stud, bottom panel (4); mains inlet M3, rear panel (2)",
     ("core", 2.5): "rivet, 3/32 in; countersunk by the customer",
     ("core", 4.76): "PEM S-632-1 nut for a side panel screw, +0.08/0, two in each side lip of the rear panel",
-    ("front", 4.76): "PEM S-632-1 nut for a side panel screw, +0.08/0, two in each flange",
+    ("hood", 5.0): "fan screw, self-tapping, clearance: four in the top, two in the tabs of the return",
+    ("hood", 4.5): "6-32, loose clearance: shelf screws (4) and handle screws (4)",
+    ("hood", 2.5): "rivet, 3/32 in; countersunk by the customer",
+    ("hood", 4.76): "PEM S-632-1 nut for a side panel screw, +0.08/0, two in each flange of the front",
+    ("hood", 12.0): "power switch, +0.2/0",
+    ("hood", 8.0): "LED holder, +0.2/0",
     ("tray", 2.5): "rivet, 3/32 in",
     ("tray", 5.41): "PEM BSO-632-12 standoff, +0.08/0",
-    ("bulkhead", 12.0): "power switch, +0.2/0",
-    ("bulkhead", 8.0): "LED holder, +0.2/0",
-    ("bulkhead", 4.5): "6-32, loose clearance: the front handle's two screws, through the top lip's tabs",
-    ("bulkhead", 2.5): "rivet, 3/32 in",
     ("shelf", 4.0): "6-32 clearance, supply: SFX pattern both ways round",
     ("shelf", 4.76): "PEM S-632-1 nut, +0.08/0",
-    ("front", 14.5): "power switch head, 14",
-    ("front", 11.3): "LED holder's bezel, 10.8",
     ("side", 4.5): "side panel screw 6-32, loose clearance",
 }
 PART_NOTES = {
@@ -64,30 +60,26 @@ PART_NOTES = {
              "Rear panel: I/O aperture 158.75 x 44.45 +/-0.2 to ATX 2.2 fig. 4; keep paint off both faces within 2.5 of it.",
              "Mains inlet cut-out 28 x 20 +0.2/0, R1, for Schurter 6100-3 mounted from outside.",
              "Four PEM S-632-1 nuts, two in each side lip of the rear panel, flush on the outside, bodies inside.",
-             "The rear panel's top lip lies under the top panel (R-02): 16.5 at the two corners, where the rear handle's screws go through both, and 9.5 between.",
-             "The bottom panel's side lips stop 15.3 short of the front, behind the front panel's flanges (R-06).",
+             "The rear panel's top lip lies under the hood (R-02): 16.5 at the two corners, where the rear handle's screws go through both, and 9.5 between.",
+             "The side lips are mitred at 45 deg where the hood's lips (R-02) meet them, at the top of the rear panel and the front of the bottom panel, 1.2 apart, as they are where they meet each other.",
              "Four PEM FH-632-6 studs in the bottom panel for the feet, heads flush in its upper (inside) face, pointing down."],
-    "top": ["Hexagonal mesh: 9.6 across flats, webs 2.07; see DXF.",
-            "Four 4.5 holes at the corners take the screws of two handles, fitted by the customer. They also go through the core's top lip and the bulkhead's.",
-            "The front lip is cut back at both ends, round the switch and the two lamps in the bulkhead behind it, and is riveted to the bulkhead; the lip on the tray's side, 17, is riveted to the tray.",
-            "The side lips start 17.3 from the rear edge, in front of the rear panel's side lips, and stop 15.3 short of the front, behind the front panel's flanges. The front lip's ends stand 2.5 inside the panel's edges."],
+    "hood": ["Plain outside faces: no marks, grain or tooling witness on the front. Hexagonal mesh in the top: 9.6 across flats, webs 2.07; see DXF.",
+             "Four 4.5 holes at the top's corners take the screws of two handles, fitted by the customer. The rear pair also go through the core's top lip and hold the top's rear edge down on it.",
+             "The top's side lips and the front's flanges are mitred at 45 deg where the core's lips (R-01) meet them, 1.2 apart. The top's 17 lip is riveted to the tray.",
+             "The front's two flanges, 18, go inside the side panels (R-05), which screw to them: four PEM S-632-1 nuts, two in each, flush on the outside, bodies inside. The flange on the tray's side is also riveted to the tray.",
+             "The return under the bottom panel is 9.5, with a tab 17.7 long at each end for a fan screw; each tab's corner is cut at a slant to clear a foot. It stops 8.3 short of the front's edges.",
+             "The switch and the two lamps are fixed in the front: keep the three holes round and free of burr."],
     "tray": ["Flat. Four PEM BSO-632-12 standoffs pressed in from the face that goes against the core's lips, standing 9.53 off the other face.",
              "The standoffs go in before the customer rivets the tray on: two heads end up under the core's lips.",
              "Eight slots 2.0 x 5.0 in four pairs, for cable ties.",
-             "The two notches in the rear edge and the two in the front edge go round the bodies of the nuts in the core's lip and the front panel's flange."],
-    "bulkhead": ["No hardware.", "Three slots 13.0 x 2.2, corners R0.5, for the shelf's tongues: keep their lower edges clean and square.",
-                 "The top lip lies under the top panel (R-02): 16.5 at the two corners, where the front handle's screws go through both, and 9.5 between."],
-    "shelf": ["Two PEM S-632-1 nuts in the tabs, bodies under the tabs, flush on top. The tabs fold toward the rear, away from the supply.",
-              "Three tongues 12.0 wide on the front edge, standing 2.4 beyond it, go through the bulkhead's slots: no burr on them.",
-              "Supplied loose: its tongues sit in the bulkhead's slots and two screws through the top panel hold it.",
+             "The two notches in the rear edge and the two in the front edge go round the bodies of the nuts in the core's lip and the hood's flange."],
+    "shelf": ["Four PEM S-632-1 nuts in the tabs, bodies under the tabs, flush on top. All four tabs fold toward the rear, and their corners are cut to stay behind the webs of the mesh above.",
+              "The front wall stands only between the switch and the lamps, 82 wide, with two tabs; the rear wall is full width, with a tab at each end.",
+              "Supplied loose: four screws through the top of the hood hold it.",
               "The notch in the tray-side edge of the rear wall, 13.0 deep and 17.0 tall, corners R3, is for the mains lead and the switch and lamp wires: no burr, it is lined with edge trim."],
-    "front": ["Plain outside face: no marks, grain or tooling witness on the front.",
-              "The two flanges, 15, go inside the side panels (R-07), which screw to them and are all that holds this panel.",
-              "The switch's head and the lamps' bezels, fixed in the bulkhead behind, come through the three holes.",
-              "Four PEM S-632-1 nuts, two in each flange, flush on the outside, bodies inside."],
     "side": ["Plain outside face: no marks, grain or tooling witness.",
              "The two return flanges are plain.",
-             "Two off, the same part on both sides, turned end for end. Four screws hold each: two into the rear panel's lip (R-01) and two into the front panel's flange (R-06)."],
+             "Two off, the same part on both sides, turned end for end. Four screws hold each: two into the rear panel's lip (R-01) and two into the front's flange (R-02)."],
 }
 GENERAL = [
     "All dimensions in mm. The STEP model and the DXF flat patterns govern; do not scale this drawing.",
@@ -95,8 +87,8 @@ GENERAL = [
     "Inside bend radius 1.32 (0.052 in) and K = 0.45, OSH Cut's figures for this sheet. The STEP models are the formed sizes to hold.",
     "Tolerances unless stated: cut features +/-0.15, bend positions +/-0.4, angles +/-1 deg.",
     "Deburr all edges and break sharp corners. Outside corners are R1.5 where drawn.",
-    "Self-clinching hardware: PennEngineering (PEM), installed by the fabricator: eighteen pieces, listed below.",
-    "All eight pieces, of seven parts, are supplied loose. The customer rivets the tray and bulkhead to the core and the top panel (sheet 2).",
+    "Self-clinching hardware: PennEngineering (PEM), installed by the fabricator: twenty pieces, listed below.",
+    "All six pieces, of five parts, are supplied loose. The customer rivets the tray to the core and the hood (sheet 2).",
     "Finish: as ordered. If powder coated, keep threads, studs and standoff bores free of powder.",
 ]
 
@@ -478,26 +470,22 @@ def main():
         y = s.table(232, 196, "PARTS  (all 0.048 in / 1.2 mm cold rolled steel)", ["no.", "part", "qty", "mass", "files"], rows, [18, 62, 9, 16, 60])
         hw = [["PEM BSO-632-12", "blind standoff, 6-32, 9.53 long", 4, "tray"],
               ["PEM FH-632-6", "flush-head stud, 6-32, 9.53 long", 4, "core, bottom panel"],
-              ["PEM S-632-1", "self-clinching nut, 6-32", 10, "shelf 2, core 4, front panel 4"]]
+              ["PEM S-632-1", "self-clinching nut, 6-32", 12, "shelf 4, core 4, hood 4"]]
         s.table(232, y - 4, "HARDWARE BY THE FABRICATOR  (PEM, zinc plated steel)", ["item", "", "qty", "where"], hw, [30, 62, 9, 40])
-        s.notes(30, 52, "SCOPE", ["Seven sheet metal parts, cut, bent and with their PEM hardware pressed in, all supplied loose.",
-                                  "The customer rivets the core, top panel, tray and bulkhead together (sheet 2: %d rivets MS20426AD3-4)." % (len(TRAY_JOINS) + len(BULKHEAD_JOINS)),
+        s.notes(30, 52, "SCOPE", ["Five sheet metal parts, six pieces, cut, bent and with their PEM hardware pressed in, all supplied loose.",
+                                  "The customer rivets the core, hood and tray together (sheet 2: %d rivets MS20426AD3-4)." % len(TRAY_JOINS),
                                   "Fans, mainboard, power supply, mains inlet, switch, handles, screws and feet are fitted by the customer. "
                                   "The feet (sheet %d) are made separately." % total], width=135)
         s.done()
 
         # sheet 2: joined assembly
         k = 0.45
-        s = Sheet(pdf, "R-10", "Riveted assembly: core, top, tray, bulkhead", "R-01 to R-04", ratio(k), 2, total)
-        show = ["core", "top", "tray", "bulkhead"]
+        s = Sheet(pdf, "R-10", "Riveted assembly: core, hood, tray", "R-01 to R-03", ratio(k), 2, total)
+        show = ["core", "hood", "tray"]
         tray_side = view(sc, "weld-tray", math.pi, 0, mid, show=show)
-        fr = view(sc, "weld-front", -math.pi / 2, 0, mid, show=show)
         pt_ = placer((-dx / 2, -dz / 2, dx / 2, dz / 2), (28, 150, 28 + dx * k, 150 + dz * k), k)
-        pf = placer((-dy / 2, -dz / 2, dy / 2, dz / 2), (172, 150, 172 + dy * k, 150 + dz * k), k)
         s.geometry(tray_side, pt_, None, 0.2)
-        s.geometry(fr, pf, None, 0.2)
-        s.text(28, 254, "TRAY SIDE (front at left): %d rivets, tray to the side lips of the core and top panel" % len(TRAY_JOINS), 6, weight="bold")
-        s.text(172, 254, "FRONT: %d rivets, bulkhead to the front lips" % len(BULKHEAD_JOINS), 6, weight="bold")
+        s.text(28, 254, "TRAY SIDE (front at left): %d rivets, tray to the lips of the core and the hood" % len(TRAY_JOINS), 6, weight="bold")
         rows = []
         for i, (x, z) in enumerate(TRAY_JOINS):
             p = pt_(-(x - mid[0]), z - mid[2])
@@ -506,33 +494,20 @@ def main():
             s.line([(p[0], p[1] - 2.4), (p[0], p[1] + 2.4)], 0.3, RED)
             s.text(p[0] + 2.2, p[1] + 2.2, "T%d" % (i + 1), 5.2, RED, weight="bold")
             rows.append(["T%d" % (i + 1), "%.1f" % x, "tray side", "%.1f" % z])
-        for i, (y_, z) in enumerate(BULKHEAD_JOINS):
-            p = pf(y_ - mid[1], z - mid[2])
-            s.ax.add_patch(Circle(p, 2.5 * k * 1.6, fill=False, ec=RED, lw=0.6))
-            s.line([(p[0] - 2.4, p[1]), (p[0] + 2.4, p[1])], 0.3, RED)
-            s.line([(p[0], p[1] - 2.4), (p[0], p[1] + 2.4)], 0.3, RED)
-            s.text(p[0] + 2.2, p[1] + 2.2, "F%d" % (i + 1), 5.2, RED, weight="bold")
-            rows.append(["F%d" % (i + 1), "front", "%.1f" % y_, "%.1f" % z])
-        for y_ in TONGUES:
-            p = pf(y_ - mid[1], PSU_TOP - mid[2])
-            s.text(p[0] - 2.5, p[1] - 4, "slot", 4.6, BLUE)
         s.table(262, 284, "RIVETS MS20426AD3-4  (centres; origin below)", ["", "X", "Y", "Z"], rows, [12, 20, 20, 20], size=5.4)
         s.notes(262, 209, "RIVETING  (by the customer)", [
             "Datum: X from the inside face of the rear panel, Y from the inside face of the open-side lips, Z from the top face of the bottom panel.",
-            "Top panel: on the rear panel's top lip and the bulkhead's, its rear edge flush with the rear panel's outside face, held there by the handles' four screws.",
-            "Tray: its outer face against the inside of the 17 mm lips of the bottom, top and rear panels, 1.5 clear of each panel.",
-            "Bulkhead: its front face against the inside of the front lips of the bottom and top panels, 1.5 clear of the bottom panel, its edge 0.3 from the tray.",
-            "Every tray rivet is 9.5 from the panel its lip is folded from; F1 to F3 are at Z 20 and F4 to F6 at Z 200. Lip flats are 14.8 or more.",
+            "Hood: slid on from the front, its return under the bottom panel and its top on the rear panel's top lip, flush with the rear panel's outside face, held there by the rear handle's two screws.",
+            "Tray: its outer face against the inside of the 17 mm lips of the bottom, top and rear panels and of the 18 mm flange of the front, 1.5 clear of each panel.",
+            "Every rivet is 9.5 from the panel its lip is folded from. Lip flats are 14.8 or more.",
             "Rivet: MS20426AD3-4, 3/32 in flush head, 2117 aluminium, 1/4 in long, in the 2.5 (No. 40) holes cut in both parts.",
-            "Countersink each hole in the core's and the top panel's lips from outside, 100 deg to 4.6 across, until the head sits flush or 0.1 under. Do not countersink the tray or bulkhead.",
+            "Countersink each hole in the core's and the hood's lips from outside, 100 deg to 4.6 across, until the head sits flush or 0.1 under. Do not countersink the tray.",
             "Head in the lip, outside. Drive the head with a flat punch while a steel bar is held against the tail inside, until the tail is 3.0 to 4.1 across and 0.8 to 1.5 tall.",
-            "Both sides matter: the side and front panels pass 0.3 to 0.5 outside the lips, and the fans stand 2.8 inside the tray.",
-            "Rivet the bulkhead to the bottom panel's lip first. Fit the top panel and both handles, then rivet the tray, then the bulkhead to the top panel's lip, starting each row from its middle.",
+            "Both sides matter: the side panel passes 0.5 outside the lips, and the fans stand 2.8 inside the tray.",
+            "Rivet the tray to the core first, six rivets. Fit the hood and the rear handle, then the other five, starting each row from its middle.",
             "After riveting the open side must stay square: 128.0 +/-0.4 between the side lips, 210.0 +/-0.4 between top and bottom panels."],
             width=92)
-        s.notes(28, 52, "NOTES", ["Outside faces of the lips are under the side and front panels, 0.3 to 0.5 clear: nothing may stand proud of them.",
-                                  "The front panel's flanges (R-06) stand in line with the side lips, in front of them, and the side panels screw to both.",
-                                  "Slots marked in the front view take the shelf's three tongues, which stand 0.9 in front of the bulkhead, under the front panel."], width=150)
+        s.notes(28, 52, "NOTES", ["Outside faces of the lips and flanges are under the side panels, 0.5 clear: nothing may stand proud of them."], width=150)
         s.done()
 
         for i, b in enumerate(SHEET):

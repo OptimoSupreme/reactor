@@ -9,6 +9,10 @@
 
 The assembly is too big to commit, so .gitignore leaves it out.
 
+Written for SolidCraft 0.44.1, and the files in export/ come from it. 0.45.0 and later fold sheet metal
+differently (tangency-labs/solidcraft#19758): the script may run there, but the parts come out other
+sizes, so compare every flat pattern and bend table with export/ before using what it makes.
+
 Talks to the running desktop app over its MCP bridge. SOLIDCRAFT_MCP holds the
 command line that starts the bridge, for example "solidcraft-cli mcp --connect
 127.0.0.1:27901 --allow-path .".

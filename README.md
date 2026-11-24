@@ -114,6 +114,17 @@ three, they win.
   ![The front, with the button and the lamps](docs/images/front-face.png)
 
   ![The handles and the top](docs/images/top-detail.png)
+- Everything in `mechanical/` was built and exported with SolidCraft 0.44.1,
+  and that is the version to use with it. 0.45.0 replaced SolidCraft's sheet
+  metal model, and the same script then gives parts of different sizes: lips
+  that meet at a corner are closed differently, corner reliefs move, and the
+  flat patterns come out mirrored
+  ([tangency-labs/solidcraft#19758](https://github.com/tangency-labs/solidcraft/issues/19758),
+  still open at 0.47.0 on 2026-11-24). A newer version, or another program
+  altogether, may well do, but nothing here has been checked on one: rebuild,
+  then compare every part's size, flat pattern and bend table with the files
+  in [mechanical/export/](mechanical/export/), which are what was ordered,
+  and run dfm.py and the clash check again before trusting the result.
 - [mechanical/dfm.py](mechanical/dfm.py) measures every cut-out in the flat
   patterns against the shop's rules, and
   [mechanical/renders.py](mechanical/renders.py) redraws the pictures in

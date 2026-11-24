@@ -1,9 +1,9 @@
-"""Check the flat patterns in mechanical/export against Fabworks' rules for 0.048 in 1008 steel.
+"""Check the flat patterns in mechanical/export against OSH Cut's rules for 0.048 in A1008 steel.
 
   python3 mechanical/dfm.py
 
 Reads the DXFs that reactor.py exports; needs matplotlib only because drawings.py does. The figures are
-from fabworks.com's material, laser cutting and bending pages, read 2026-11-17.
+from OSH Cut's catalog page for the material, read 2026-11-21, at its 0.052 in tooling radius.
 """
 import math
 import os
@@ -11,11 +11,10 @@ import os
 import drawings
 from reactor import EXPORT, SHEET, T
 
-MIN_FEATURE = 0.51     # smallest hole or slot
-MIN_WEB = 1.22         # between cut-outs: one thickness
-DISTORTION = 5.11      # a 90 degree bend can distort a feature this close to the bend line: half the die's opening
-MIN_FLANGE = 6.81      # 8.4 advised
-FLAT_TO_OUTSIDE = 0.93  # from a bend line in the flat to the flange's outside length: T + R less half the bend, 1.27
+MIN_FEATURE = 0.61     # smallest recommended hole, 0.024 in
+MIN_WEB = 1.22         # between cut-outs: one thickness; OSH Cut recommends 0.020 in or more
+SUPPORT = 5.72         # minimum flange support at 90 degrees, 0.225 in: bend line to the flange's edge in the flat,
+                       # which is the die's reach, so no cut-out should be this close to a bend line either
 
 
 def points(e, step=0.4):
@@ -102,11 +101,11 @@ def main():
         close = []
         for l in cuts:
             d = min((seg_dist(p, a, b) for p in l["pts"] for a, b in bends), default=1e9)
-            if d < DISTORTION:
+            if d < SUPPORT:
                 close.append((d, describe(l)))
         if not bends:
             continue
-        print("  cut-outs within %.2f of a bend line: %d" % (DISTORTION, len(close)))
+        print("  cut-outs within %.2f of a bend line: %d" % (SUPPORT, len(close)))
         for d, what in sorted(close):
             print("    %.2f  %s" % (d, what))
         # Each flange, measured all along its bend: from the bend line square out to the first edge on each
@@ -134,9 +133,9 @@ def main():
                         if t > 1e-6 and -1e-9 <= v <= 1 + 1e-9:
                             best = min(best, t)
                     reach.append(best)
-                worst = min(worst, (min(reach) + FLAT_TO_OUTSIDE, i))
-            verdict = "ok" if worst[0] >= MIN_FLANGE + 1.6 else "ok, under the advised 8.4" if worst[0] >= MIN_FLANGE else "TOO SHORT"
-            print("    bend %d, %.0f long: shortest flange %.2f, %d along: %s" % (k + 1, n, worst[0], worst[1], verdict))
+                worst = min(worst, (min(reach), i))
+            verdict = "ok" if worst[0] >= SUPPORT else "TOO SHORT"
+            print("    bend %d, %.0f long: least flange support %.2f, %d along: %s" % (k + 1, n, worst[0], worst[1], verdict))
 
 
 if __name__ == "__main__":

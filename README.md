@@ -86,22 +86,28 @@ three, they win.
   and its exhaust upward, two slim 120 mm fans in the bottom and one in the
   top. The supply's place follows Intel's SFX12V guide, so any SFX unit that
   keeps to it should fit; the two it was laid out around are Corsair's SF450
-  and Seasonic's Focus SGX-550 (2021). It is five parts in 1.2 mm steel: a core (bottom, rear and top), the
-  tray, a bulkhead across the front that carries the supply's weight to the
-  floor, a shelf that the supply hangs under, and a plain shell (front and
-  sides). The tray and the bulkhead are riveted to the core by hand with
-  flush rivets. The shelf comes out with the
+  and Seasonic's Focus SGX-550 (2021). It is eight pieces of 1.2 mm steel: a core (bottom and rear), the top
+  panel, the tray, a bulkhead across the front that carries the supply's weight to the
+  floor, a shelf that the supply hangs under, a plain front panel and two
+  side panels, which are the same part. No part is a deep U, which a
+  press brake cannot fold. The tray and the bulkhead are riveted to the core
+  by hand with flush rivets. The top panel lies on a lip of the rear panel
+  and one of the bulkhead, and the four handle screws clamp it there;
+  nothing else holds it. The shelf comes out with the
   supply on it: three tongues on its front edge sit in slots in the bulkhead,
   two screws through the top panel hold it, and nothing stands over the
   supply's own screws when it is out. Four pairs of slots in the tray, between the
-  board and the supply, take cable ties. The shell slides on from the front, its
-  flanges over the top panel and under the bottom one, and an ordinary case
-  screw through each side, at the rear and halfway up, holds it there. Two
+  board and the supply, take cable ties. The front panel is a channel like
+  the rear one, its two flanges folded back inside the side panels. Each
+  side panel has a flange over the top panel and one under the bottom one,
+  and four ordinary case screws, one near each corner, into the rear panel's
+  lips and the front panel's flanges; with them out it lifts straight off. Two
   black handles of bent 1/4 in rod cross the top, one at the rear and one at
   the front, each leg held by a case screw from underneath. On the front,
   the power button sits under one leg of the front handle and two lamps
-  under the other, green for power over amber for drive activity; all three
-  are fixed in the bulkhead and the shell slides off over them. Four steel
+  under the other, green for power over amber for drive activity. They go
+  through the front panel into the bulkhead, and hold the front panel while
+  the side panels are off. Four steel
   feet, printed and tapped, turn onto studs under the bottom panel. Apart
   from the fan screws and the mains inlet's two, every screw is the one 6-32
   case screw, feet and handles included, so a single Phillips driver opens

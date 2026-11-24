@@ -126,12 +126,12 @@ every one of them, the feet too.
 | --- | --- | --- | --- |
 | Fans, twelve | ordinary self-tapping fan screw, about 5 x 10 | the fan's own frame | 5.0 clearance |
 | Board, four | 6-32 | PEM BSO-632-12 standoff, 9.53 long, in the tray | 5.41 +0.08, 6.9 or more from an edge |
-| Supply, three or six | 6-32 | the supply's own threads: three by Intel's guide, six on a unit threaded for both ways round | 4.0 clearance in the shelf, six holes, 5.2 or more from the rear wall's bend line |
+| Supply, three or six | 6-32 | the supply's own threads: three by Intel's guide, six on a unit threaded for both ways round | 4.0 clearance in the shelf, six holes, 5.7 or more from the rear wall's bend line |
 | Shelf to top panel, two | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top panel |
 | Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
-| Shell, two | 6-32 | PEM S-632-1 nut in each side lip of the rear panel | 4.76 +0.08, 7.6 from the rear panel: 5.5 from the bend line and 6.2 from the edge of the open side's 15 lip; 4.5 clearance in each side of the shell; the tray is notched 9.0 wide round the nut on its side |
-| Handles, four | 6-32, up from under the top panel | the handle's own thread, 3/8 in deep | 4.5 clearance in the top panel |
+| Side panels, four each | 6-32 | PEM S-632-1 nuts, two in each side lip of the rear panel and two in each flange of the front panel | 4.76 +0.08, 9.2 from the outside face of the rear or front panel and 17 from the top and bottom panels: 5.8 from the bend line and 5.8 from the edge of a 15 lip; 4.5 clearance in the side panel; the tray is notched 8.2 wide round the four nuts on its side |
+| Handles, four | 6-32, up from under the lip the top panel lies on, the rear panel's or the bulkhead's, which they clamp the top panel to | the handle's own thread, 3/8 in deep | 4.5 clearance in the top panel and in the lip |
 
 The PEM figures are from PennEngineering's FH, CL and SO bulletins, read
 2026-11-11; all three take sheet from 1.02 up. The standoffs are 9.53 where
@@ -142,11 +142,11 @@ measured from a screw.
 
 The shelf has to come out with the supply on it, so nothing that holds it is
 permanent, and its front has no screws. An ordinary 6-32 head is 2.0 to 2.4
-tall and there is 1.5 between the bulkhead and the shell, so no ordinary
+tall and there is 1.5 between the bulkhead and the front panel, so no ordinary
 screw goes in from the front, and one from behind cannot be reached with a
 driver. Instead three tongues on the shelf's front edge, 12 wide, go through
 three slots in the bulkhead, 13.0 x 2.2, and stand 0.9 in front of it, 0.6
-short of the shell. The bulkhead carries the supply's weight there, and the
+short of the front panel. The bulkhead carries the supply's weight there, and the
 two screws through the top panel hold the shelf up at the rear and keep it
 from sliding the 2.4 back out of the slots. Flush studs with nuts behind,
 and then low-headed screws from the front, were both tried first: the nuts
@@ -159,30 +159,43 @@ reached with the shelf out of the case.
 Cable ties: the tray has four pairs of slots, 2.0 x 5.0 and 8 apart, up the
 13 between the board's front edge and the supply. A tie goes in one slot,
 behind the tray and out of the other. There is 1.7 between the tray and the
-shell for its strap, which suits ties 2.5 or 3.6 wide (1.0 to 1.3 thick).
+side panel for its strap, which suits ties 2.5 or 3.6 wide (1.0 to 1.3 thick).
 A lanced bridge would hold a tie without going behind the tray, but it is
 a formed feature that laser-and-brake shops do not make.
 
-Two ordinary 6-32 case screws hold the shell, one through each side, 7.6
-from the rear and halfway up, into a nut in the rear panel's side lip. Each
-head stands 2.8 proud of the side, and both come out with the case standing
-where it is. They also hold the rear edges of the sides in. The shell's
-flanges over the top and under the bottom are plain. An earlier version had
-one screw and four M2 cap screws at the rear corners as nubs for slots in
-the flanges: the M2 holes were 1.9 from a bend where Fabworks asks for 5.1,
-Fabworks does not tap M2, and they were the only screws on the case that
-needed a hex key.
+Eight ordinary 6-32 case screws hold the side panels, four through each,
+9.2 in from its front and rear edges and 17 from the top and bottom panels,
+into nuts in the rear panel's side lips and the front panel's flanges. Each
+head stands 2.8 proud of the side, and all of them come out with the case
+standing where it is; the panel then lifts straight off. The front pair on
+each side also hold the front panel. The two side panels are one part: the
+holes are the same at both ends, so one turned end for end fits the other
+side. The height is the one that clears everything: the supply and shelf
+behind the front flanges, the tray's rivets, the board's nearest standoff
+(7.2 from the tray's notch, PEM asking 6.9) and the relief at the rear
+panel's top corners (the nut is 5.76 from it, PEM asking 5.6). Screws through
+a lip folded round the rear panel were looked at and dropped: the lower one
+has nowhere to go, with the rear fan 1.3 inside the panel where a nut is 1.78
+deep, the mains inlet in one corner and the I/O aperture up the other side.
 
-The tray is riveted to the core's side lips at ten places and the bulkhead
-to its front lips at four, by hand, with 3/32 in flush solid rivets,
+The front panel has no screws of its own. Its flanges stand in the same
+layer as the core's side lips, which stop 15.3 short of the front to make
+room. The switch and the two lamps go through its face and through the top
+panel's front lip into the bulkhead, and their nuts clamp the three
+together, which holds it while the side panels are off. The switch's thread
+has to span 3.9 of sheet and the lamps' the same; neither has been checked
+on the parts.
+
+The tray is riveted to the core's side lips at seven places and the bulkhead
+to its front lip at two, by hand, with 3/32 in flush solid rivets,
 MS20426AD3-4 (2117 aluminium, 100 degree head 0.179 in across and 0.036 in
 tall, 1/4 in long, in a No. 40 hole; from Olander's and Hanson's tables, read
 2026-11-12). The holes are cut 2.5 in both parts. The head sits in a
 countersink made by hand in the lip, flush outside, and the tail is bucked
 inside to a head 3.0 to 4.1 across and 0.8 to 1.5 tall. Both sides matter:
-the shell passes 0.5 from the side lips and 0.3 from the front ones, and the
+the side panels pass 0.5 from the side lips and the front panel 0.3 from the front one, and the
 fans' frames stand 2.8 inside the tray, less than a blind rivet's tail. The
-lips are 17 tall (18.5 and 28 at the front) and each rivet is 9.5 from the
+lips are 17 tall (28 at the front) and each tray rivet is 9.5 from the
 panel its lip is folded from. PEM's SpotFast was drawn first, and no
 prototyping shop found lists it or joins parts. The rivet is a standard
 aircraft part, used by the thousand in kit aircraft: McMaster-Carr sells it
@@ -193,8 +206,8 @@ length, grip plus one and a half diameters.
 | Part | Fit | Notes |
 | --- | --- | --- |
 | 120 fan | four holes on 105 x 105 | 120 x 120 x 15 slim, as the NF-A12x15 |
-| Lamps, two | 8.0 hole in the bulkhead for each, nut behind it; 11.3 hole in the shell for its bezel | 5 mm LEDs in black panel holders, both from Justin, who has the parts: 08L53GD, green, for power, above 08H53ED, amber, for drive activity, 14 apart. The holder's bezel is 10.8 across where it sits on the bulkhead, tapering to 8.8, and 4.3 tall, so it stands 1.6 proud of the shell; 11 of the holder is behind the bezel, 9.8 of it inside the case. Its nut is 9.4 across flats. Under the tray-side leg of the front handle, their middle level with the power button |
-| Power button | 12.0 hole in the bulkhead, nut behind it; 14.5 hole in the shell for its 14 head | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
+| Lamps, two | 8.0 hole in the bulkhead for each, nut behind it; 8.6 holes in the front panel and the top panel's front lip, which they clamp to the bulkhead | 5 mm LEDs in black panel holders, both from Justin, who has the parts: 08L53GD, green, for power, above 08H53ED, amber, for drive activity, 12.4 apart. The holder's bezel is 10.8 across where it sits on the front panel, tapering to 8.8, and 4.3 tall; 11 of the holder is behind the bezel, 7.1 of it inside the case. Its nut is 9.4 across flats. Under the tray-side leg of the front handle, their middle level with the power button |
+| Power button | 12.0 hole in the bulkhead, nut behind it; 12.6 holes in the front panel, which its 14 head sits on, and in the top panel's front lip | 12 mm vandal switch. Sizes from Justin, who has the part: the body is a plain 12 cylinder inside the case, and the nut needs a 16 circle to turn. Its head is 14 across |
 | IEC C14 inlet, screw mount | 28 x 20 cut-out +0.2/0, corners R1 (R3 at most), two 3.5 holes 40 apart | The moulded end of the mains lead, Toptekits' "C14 w/screw hole to Right C13", 0.6 m, mounted from outside with two countersunk M3 screws and nuts. Measured from the part, 2026-11-17: body 27.2 x 19.2, flange 48.9 wide, as tall as the body and 3.0 thick, 3.5 countersunk holes 40.0 apart, rigid for 50 behind the flange; cable 7 across and 20.5 in (521) between the mouldings, measured again 2026-11-19; the C13 plug passes through the cut-out and stands 17 above the supply. The cut-out is Schurter's for the 6100-3 (datasheet, read 2026-11-11), which also takes Bulgin's PX0580 and Schurter's 6061 if a separate inlet is ever wanted |
 | Handles, two | two 4.5 holes 101.6 apart, a 6-32 screw up into each leg | RAF 8120-632-A-24, also Fascomp FC8120-632-A-24: 6061 aluminium, black anodised, 1/4 in rod, 4.000 +/-0.031 in between the legs, 1 1/4 in tall, 1/4 in bend radius, each leg tapped 6-32 5/16 to 3/8 in deep. From Fascomp's drawing, read 2026-11-17; it does not say that the 4 in is between centres, which is taken from RAF's drawing of the family. The 4.5 holes allow for the +/-0.8. One across the rear of the top and one across the front, legs 9.5 from each end. 8120-632-SS is the same in plain stainless, and 8130 is 1 1/2 in tall |
 | Edge trim | pushed onto the edge of the notch in the shelf's rear wall, 1.2 sheet | Rubber U channel. No part is chosen yet, so the one drawn is a placeholder: 1.0 thick over the edge and on each face, legs 4.0 onto the wall. About 35 |

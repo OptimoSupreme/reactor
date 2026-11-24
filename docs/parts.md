@@ -130,7 +130,7 @@ every one of them, the feet too.
 | Shelf to the top, four | 6-32 | PEM S-632-1 nut in each shelf tab | 4.76 +0.08, 5.6 or more from an edge; 4.5 clearance in the top |
 | Feet, four | none: the foot is tapped 6-32 and turns on | PEM FH-632-6 flush-head stud, 9.53 long, in the bottom panel, pointing down | 3.5 +0.08, 6.4 or more from an edge |
 | Mains inlet, two | countersunk M3, flush in the inlet's flange | a plain M3 nut | 3.5 clearance |
-| Side panels, four each | 6-32 | PEM S-632-1 nuts, two in each side lip of the rear panel and two in each flange of the front | 4.76 +0.08, 9.2 from the outside face of the rear or front panel and 17 from the top and bottom panels: 5.8 from the bend line and 5.8 from the edge of a 15 lip; 4.5 clearance in the side panel; the tray is notched 8.2 wide round the four nuts on its side |
+| Side panels, four each | 6-32 | PEM S-632-1 nuts, two in each side lip of the rear panel and two in each flange of the front | 4.76 +0.08, 9.2 from the outside face of the rear or front panel and 17 from the top and bottom panels: 5.8 from the bend line and 5.8 from the edge of the 15 lip; 4.5 clearance in the side panel; the tray is notched 8.2 wide round the four nuts on its side |
 | Handles, four | 6-32, up from under the top; the rear pair from under the rear panel's top lip, which they clamp the top to | the handle's own thread, 3/8 in deep | 4.5 clearance in the top panel and in the lip |
 
 The PEM figures are from PennEngineering's FH, CL and SO bulletins, read
@@ -190,8 +190,8 @@ countersink made by hand in the lip, flush outside, and the tail is bucked
 inside to a head 3.0 to 4.1 across and 0.8 to 1.5 tall. Both sides matter:
 the side panels pass 0.5 from the side lips, and the
 fans' frames stand 2.8 inside the tray, less than a blind rivet's tail. The
-lips are 17 tall (18 for the front's flange) and each rivet is 9.5 from the
-panel its lip is folded from. PEM's SpotFast was drawn first, and no
+lips are 15 tall and each rivet is 8.0 from the inside face of the panel its
+lip is folded from, on the same line as the nuts and 5.8 from the lip's edge. PEM's SpotFast was drawn first, and no
 prototyping shop found lists it or joins parts. The rivet is a standard
 aircraft part, used by the thousand in kit aircraft: McMaster-Carr sells it
 as 96685A146 (250 for about $8), and Aircraft Spruce and Van's Aircraft by

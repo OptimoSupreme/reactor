@@ -67,6 +67,65 @@ def describe(l):
     return "cut-out %.1f x %.1f %s" % (max(xs) - min(xs), max(ys) - min(ys), at)
 
 
+MAX_PART = (3022.0, 1498.0)   # 119 x 59 in
+GAUGE = 6.35           # a straight edge parallel to each bend, 0.25 in or more, for the back gauge
+# pressed-in parts by hole diameter: what it is, and PEM's least distance from its centre to an edge
+HARDWARE = {4.76: ("S-632-1 nut", 5.6), 5.41: ("BSO-632-12 standoff", 6.9), 3.5: ("FH-632-6 stud", 6.4)}
+
+
+def extras(body, ents, cuts, edge, bends):
+    """Checks beyond cut-outs and flanges: overall size, a hole to hang the part by for coating, each
+    pressed-in part's distance to an edge, a gauging edge for each bend, and a relief where bends meet."""
+    xs, ys = [p[0] for p in edge], [p[1] for p in edge]
+    size = sorted((max(xs) - min(xs), max(ys) - min(ys)), reverse=True)
+    print("  flat size %.1f x %.1f: %s" % (size[0], size[1], "ok" if size[0] <= MAX_PART[0] and size[1] <= MAX_PART[1] else "TOO BIG"))
+    print("  a hole to hang it by: %s" % ("ok" if cuts else "NONE"))
+    for dia, (what, least) in sorted(HARDWARE.items()):
+        holes = [l for l in cuts if l["dia"] and abs(l["dia"] - dia) < 0.02]
+        # the mains inlet's two M3 holes are the same size as a stud's: they are the ones beside its cut-out
+        inlet = [l for l in cuts if not l["dia"] and min(l["box"][2] - l["box"][0], l["box"][3] - l["box"][1]) > 19]
+        beside = lambda h: any(l["box"][0] - 8 < (h["box"][0] + h["box"][2]) / 2 < l["box"][2] + 8
+                               and l["box"][1] - 8 < (h["box"][1] + h["box"][3]) / 2 < l["box"][3] + 8 for l in inlet)
+        if dia == 3.5:
+            m3 = [h for h in holes if beside(h)]
+            holes = [h for h in holes if not beside(h)]
+            if m3:
+                print("  %d x M3 clearance, dia 3.50, beside the mains inlet's cut-out: not pressed-in parts" % len(m3))
+        if not holes:
+            continue
+        worst = 1e9
+        for h in holes:
+            c = ((h["box"][0] + h["box"][2]) / 2, (h["box"][1] + h["box"][3]) / 2)
+            others = [p for l in cuts if l is not h for p in l["pts"]
+                      if abs(p[0] - c[0]) < 12 and abs(p[1] - c[1]) < 12]
+            near = [p for p in edge if abs(p[0] - c[0]) < 12 and abs(p[1] - c[1]) < 12] + others
+            worst = min(worst, min((math.hypot(p[0] - c[0], p[1] - c[1]) for p in near), default=1e9))
+        print("  %d x %s, dia %.2f: centre to the nearest edge %.2f (%.1f needed): %s" % (
+            len(holes), what, dia, worst, least, "ok" if worst >= least - 0.005 else "TOO CLOSE"))
+    lines = [e for e in ents if e.get("layer") == "OUTLINE" and e["type"] == "LINE"]
+    for k, (a, b) in enumerate(bends):
+        ang = math.atan2(b[1] - a[1], b[0] - a[0])
+        best = 0
+        for e in lines:
+            d = math.atan2(e[21] - e[20], e[11] - e[10]) - ang
+            if abs(math.sin(d)) < 0.01:
+                best = max(best, math.hypot(e[11] - e[10], e[21] - e[20]))
+        print("    bend %d: longest edge parallel to it %.1f: %s" % (k + 1, best, "ok" if best >= GAUGE else "NO GAUGING EDGE"))
+    arcs = [e for e in ents if e["type"] in ("ARC", "CIRCLE") and e.get("layer") in ("OUTLINE", "CUT")]
+    for i, (a, b) in enumerate(bends):
+        for j, (c, d) in enumerate(bends[i + 1:], i + 1):
+            if abs(math.sin(math.atan2(b[1] - a[1], b[0] - a[0]) - math.atan2(d[1] - c[1], d[0] - c[0]))) < 0.1:
+                continue
+            gap, p, q = min((math.hypot(p[0] - q[0], p[1] - q[1]), p, q) for p in (a, b) for q in (c, d))
+            near = min(seg_dist(a, c, d), seg_dist(b, c, d), seg_dist(c, a, b), seg_dist(d, a, b))
+            if near > 6:
+                continue
+            m = ((p[0] + q[0]) / 2, (p[1] + q[1]) / 2)
+            relief = any(math.hypot(e[10] - m[0], e[20] - m[1]) < e[40] + 3 for e in arcs)
+            print("    bends %d and %d come within %.2f of each other: %s" % (
+                i + 1, j + 1, near, "relief cut there, ok" if relief else "ok, apart" if near >= 2 * T else "NO RELIEF"))
+
+
 def main():
     for body in SHEET:
         ents = drawings.entities(os.path.join(EXPORT, body + ".dxf"))
@@ -103,6 +162,7 @@ def main():
             d = min((seg_dist(p, a, b) for p in l["pts"] for a, b in bends), default=1e9)
             if d < SUPPORT:
                 close.append((d, describe(l)))
+        extras(body, ents, cuts, edge, bends)
         if not bends:
             continue
         print("  cut-outs within %.2f of a bend line: %d" % (SUPPORT, len(close)))

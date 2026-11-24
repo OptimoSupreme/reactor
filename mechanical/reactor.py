@@ -36,9 +36,12 @@ GAP = 0.3          # between nested sheet faces
 SHELL_GAP = 0.5    # between a side panel and the lips it goes over: two bent parts, each good to about 0.4
 LX, LY, LZ = 251.3, 128.0, 210.0   # cavity: rear to front, between the side lips, bottom to top panel
 FLANGE = 10.0
-SIDE_LIP = 14.0    # side lips of the top, bottom and rear panels on the open side
-JOIN_LIP = 17.0    # and on the tray's side: 14.6 of flat lip against the tray, room for a press tool or a spot weld
-JOIN_IN = 9.5      # a joining fastener's centre from the panel its lip is folded from: 7 from the bend and from the lip's edge
+# Every side lip of the core and the hood, and the bottom panel's front lip, is 15: the least that takes a
+# pressed nut. OSH Cut's die reaches 5.72 from the bend line, which is 1.06 inside the lip's outside face,
+# so the nut's 4.76 hole is centred 8.0 from the panel's inside face; PEM asks 5.6 from there to the lip's
+# edge, which makes 14.8. A rivet would need less, about 13.
+LIP = 15.0
+JOIN_IN = 8.0      # a nut's or a rivet's centre from the inside face of the panel its lip is folded from
 EDGE = T + GAP     # a joined plate stops this far from the panel it meets, clear of the bend at that panel's edge
 ROUND = 1.5        # radius on outside corners
 GREEN = "#4a5445"   # the outside: near FS 34094, the colour of Prismatic's PSS-11240; not matched to a swatch
@@ -100,7 +103,7 @@ PSU = (63.5, 125.0, 100.0)                     # along X, Y, Z as it stands here
 # 2.6 behind the bottom panel's front lip and 1.1 behind the shelf's front wall. That leaves 13.1 to the
 # board's edge.
 PSU_X = LX - T - 1.39 - PSU[0]
-PSU_Y = 0.7
+PSU_Y = 0.7                                    # 0.7 from the front's flange on this side, 1.1 from the tray on the other
 PSU_TOP = LZ - 35.0                            # room above for an angled mains plug, which stands 17
 PSU_INLET = (25.0, 29.0)                       # middle of its mains inlet, along X and Y from the PSU's corner
 # The three mounting holes of Intel's SFX12V guide, along X, Y from the PSU's corner: a pair at the tray's
@@ -109,8 +112,6 @@ PSU_INLET = (25.0, 29.0)                       # middle of its mains inlet, alon
 # three mirrored as well, so that it takes a unit with all four corners threaded.
 PSU_HOLES = [(6.0, 119.0), (57.5, 119.0), (31.7, 6.0)]
 PSU_HOLES_SPARE = [(6.0, 6.0), (57.5, 6.0), (31.7, 119.0)]
-# The bottom panel's front lip, behind the front panel: a stiffener, nothing is fixed to it.
-LIP_BOTTOM = 14.0
 # The shelf hangs from the top panel on four screws. Its rear wall stands 2.8 behind the supply's fan
 # face, which puts the supply's two rear holes 5.7 from the wall's bend line, outside the reach of OSH
 # Cut's die. Its front wall stands just behind the front panel, 1.1 in front of the supply.
@@ -166,18 +167,17 @@ SHELL_XF = LX + 2 * T + GAP   # outside face of the front panel
 SHELL_RETURN = 9.5  # flanges over the top and under the bottom: narrow enough to pass the fan screws' heads
 # The top and the front are one part, the hood, folded where they meet. The front has a flange down each
 # side, folded back inside the side panels, in the layer of the core's lips. No part is a U with tall legs, which a press brake's punch cannot reach into.
-FRONT_FLANGE = 18.0
-LIP_END = SHELL_XF - FRONT_FLANGE - GAP   # the flanges' rear edges
+LIP_END = SHELL_XF - LIP - GAP   # the rear edges of the front's flanges
 # Where a lip of the hood meets a lip of the core, at the top of the rear and at the foot of the front,
 # the two are mitred at 45 degrees through the corner of the two panels' inside faces and stand 1.2
 # apart, as SolidCraft mitres two lips of one part. Each lip stops MITRE short of that line, measured
 # along either panel.
 MITRE = 0.85
 # The front's foot: a return under the bottom panel, against it, between the side panels' returns. It
-# is 9.5, short of the mesh, with a tab at each end that one of the front fan's two front screws goes up
+# is 8.5, short of the mesh and 1.2 short of the front feet, with a tab at each end that one of the front fan's two front screws goes up
 # through. Y of the return's ends and of the tabs' inner edges.
 HOOD_Z0 = -2 * T
-HOOD_RETURN, HOOD_TAB = 9.5, 17.7
+HOOD_RETURN, HOOD_TAB = 8.5, 17.7
 HOOD_RETURN_Y = (SHELL_Y0 + SHELL_RETURN + 0.5, SHELL_Y1 - SHELL_RETURN - 0.5)
 HOOD_TABS = (17.0, LY - 17.0)
 MOUNT_X = (SHELL_XF - T, SHELL_XF)        # the front panel, which the switch and the lamps are fixed in
@@ -190,8 +190,7 @@ MOUNT_X = (SHELL_XF - T, SHELL_XF)        # the front panel, which the switch an
 # the relief at the rear panel's top corners. The front
 # pair also hold the front panel. All eight can be reached with the case standing where it is.
 SIDE_SCREW_Z = (17.0, LZ - 17.0)
-SIDE_SCREWS = [(x, z) for x in (8.0, SHELL_XF - T - 8.0) for z in SIDE_SCREW_Z]
-REAR_LIP = 15.0
+SIDE_SCREWS = [(x, z) for x in (JOIN_IN, SHELL_XF - T - JOIN_IN) for z in SIDE_SCREW_Z]
 # The rear panel's top lip, under the top panel: 16.5 at the corners, where the rear handle's screws go
 # through it 9.5 from the panel, and 9.5 between them, short of the mesh's first cells at 10.0. Y of the
 # inner ends of the two corner tabs, each 3 past its screw's hole.
@@ -439,17 +438,16 @@ def core():
     lip lies under the top panel, which the rear handle's two screws clamp to it."""
     w = LY + 2 * T
     xf = LX + T
-    lip = lambda p: {"point": p, "height": str(SIDE_LIP)}
-    wide = lambda p: {"point": p, "height": str(JOIN_LIP)}
+    lip = wide = lambda p: {"point": p, "height": str(LIP)}
     s = [("sketch.create", {"plane": "XZ", "offset": str(-T), "name": "core-profile"}),
          ("sketch.line", {"points": [[-T, -LZ], [-T, T], [xf, T]]}),
          ("sketch.finish", {}),
          ("sheet.flange", {"sketch": "core-profile", "curves": ["l1", "l2"], "distance": str(w),
                            "body_name": "core"}),
          ("sheet.flange", {"body": "core", "height": str(FLANGE), "flip": True, "edges": [
-             {"point": [xf, LY / 2, -T], "height": str(LIP_BOTTOM)},
+             {"point": [xf, LY / 2, -T], "height": str(LIP)},
              lip([LX / 2, -T, -T]), wide([LX / 2, LY + T, -T]),
-             {"point": [-T, -T, LZ / 2], "height": str(REAR_LIP)}, wide([-T, LY + T, LZ / 2]),
+             lip([-T, -T, LZ / 2]), wide([-T, LY + T, LZ / 2]),
              {"point": [-T, LY / 2, LZ], "height": str(TOP_LIP)}]})]
     # The side lips are mitred where the hood's meet them: the rear panel's at the top and the bottom
     # panel's at the front. SolidCraft will not cut across a folded bend, so the core is unfolded for it,
@@ -459,12 +457,16 @@ def core():
     xi, far = MOUNT_X[0], 25.0
     # with it, the ends of the rear panel's top lip come off, 0.3 clear of the bend of the hood's side lip
     clear, lip0 = BEND_R + 0.3, LZ - T - BEND_R
-    rear = [(BEND_R, LZ - LIP_ROOT - MITRE), (flat(far), LZ - far - MITRE), (flat(far), LZ + 30), (clear, LZ + 30),
-            (clear, lip0), (BEND_R, lip0)]
+    zc = lip0 + 0.6      # the mitre's cut starts here, just above where the side lip ends anyway
+    rear = [(clear, lip0), (clear, LZ + 30), (flat(far), LZ + 30), (flat(far), LZ - far - MITRE),
+            (flat(LZ - zc - MITRE), zc), (BEND_R, zc), (BEND_R, lip0)]
     foot = [(BEND_R, flat(xi - LIP_ROOT - MITRE)), (flat(far), flat(xi - far - MITRE)), (flat(far), flat(xi + 45)),
             (BEND_R, flat(xi + 45))]
     s += [("sheet.unfold", {"body": "core"})]
-    s += cut("core-mitres", plane([-T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1]), both_sides(rear) + both_sides(foot), T + 1, ["core"])
+    # and a round relief where the front lip's bend meets each side lip's
+    reliefs = [(y, flat(LX - BEND_R), RELIEF) for y in (BEND_R, LY - BEND_R)]
+    s += cut("core-mitres", plane([-T - 0.5, 0, 0], [0, 1, 0], [0, 0, 1]), both_sides(rear) + both_sides(foot) + reliefs,
+             T + 1, ["core"])
     s += [("sheet.refold", {"body": "core"})]
     # rear panel: the standard I/O aperture and the mains inlet with its two screws
     iy, iz = INLET
@@ -482,11 +484,11 @@ def core():
     front = plane([LX - 0.2, 0, 0], [0, 1, 0], [0, 0, 1])
     # SolidCraft will not cut a countersink in a sheet metal part, so these are plain holes and the
     # countersinks for the rivets' heads are made by hand: see the drawing.
-    s += cut("lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS if z < LZ - JOIN_LIP and x < LIP_END], 5, ["core"])
+    s += cut("lip-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS if z < LZ - LIP and x < LIP_END], 5, ["core"])
     for name, y in (("lip-nuts", -T - 0.3), ("lip-nuts-tray", LY - 0.3)):
         s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(z, x, NUT_632) for x, z in SIDE_SCREWS if x < LX / 2],
                  T + 0.6, ["core"])
-    s += rounds("front-lip-corners", front, [(BEND_R, LIP_BOTTOM - T, 1, -1), (LY - BEND_R, LIP_BOTTOM - T, -1, -1)], 2.5, ["core"])
+    s += rounds("front-lip-corners", front, [(BEND_R, LIP - T, 1, -1), (LY - BEND_R, LIP - T, -1, -1)], 2.5, ["core"])
     return s
 
 
@@ -504,8 +506,8 @@ def hood():
          ("sheet.flange", {"sketch": "hood-profile", "curves": ["l1", "l2"], "distance": str(w), "body_name": "hood"}),
          ("sheet.flange", {"body": "hood", "height": str(FLANGE), "flip": True, "edges": [
              {"point": [xf, LY / 2, zr], "height": str(HOOD_TAB)},
-             {"point": [xf, -T, LZ / 2], "height": str(FRONT_FLANGE)}, {"point": [xf, LY + T, LZ / 2], "height": str(FRONT_FLANGE)},
-             {"point": [LX / 2, -T, zt], "height": str(SIDE_LIP)}, {"point": [LX / 2, LY + T, zt], "height": str(JOIN_LIP)}]})]
+             {"point": [xf, -T, LZ / 2], "height": str(LIP)}, {"point": [xf, LY + T, LZ / 2], "height": str(LIP)},
+             {"point": [LX / 2, -T, zt], "height": str(LIP)}, {"point": [LX / 2, LY + T, zt], "height": str(LIP)}]})]
     # The top's side lips and the front's flanges are mitred where the core's lips meet them, and the
     # return under the bottom stops short of the side panels' returns: all cut in the flat, as on the
     # core. The front stays put and the top lies out above it; `flat` is where a point x along the top
@@ -525,7 +527,7 @@ def hood():
     # the rear handle's screws go through the core's top lip as well, and the mesh's cells take the
     # corners off its tabs
     s += cut("top-mesh", TOP, top_mesh() + [(x, y, LOOSE_632) for x, y in HANDLE_HOLES], 6, ["hood", "core"])
-    s += cut("hood-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS if z > LZ - JOIN_LIP or x > LIP_END], 5, ["hood"])
+    s += cut("hood-joins", TRAY, [(x, z, RIVET_HOLE) for x, z in TRAY_JOINS if z > LZ - LIP or x > LIP_END], 5, ["hood"])
     for name, y in (("hood-nuts", -T - 0.3), ("hood-nuts-tray", LY - 0.3)):
         s += cut(name, plane([0, y, 0], [0, 0, 1], [1, 0, 0]), [(z, x, NUT_632) for x, z in SIDE_SCREWS if x > LX / 2],
                  T + 0.6, ["hood"])

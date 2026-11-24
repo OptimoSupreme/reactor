@@ -63,7 +63,7 @@ brakes and tooling and does not make parts to order.
   its catalog 2026-11-21: the parts are drawn with its tooling's inside
   radius of 1.32 (0.052 in) and K of 0.45, and its hardware is the same PEM
   parts with the same holes. [mechanical/dfm.py](../mechanical/dfm.py)
-  measures every cut-out in the seven flat patterns: the smallest is 2.0
+  measures every cut-out in the five flat patterns: the smallest is 2.0
   across (0.61 recommended), the thinnest web 2.07, and none is within 5.72
   of a bend line, which is how far its die reaches. That put the side
   panels' screws 8.0 inside the rear panel and the shelf's rear wall 2.8 behind the
@@ -79,14 +79,20 @@ brakes and tooling and does not make parts to order.
   panel's top lip, 16.5 long at the two corners and 9.5 between them, short
   of the mesh, and the rear handle's two screws go up through the lip and
   the top into the handle's legs. Its rear edge is flush with the rear
-  panel's outside face. The 17 lip of the top is riveted to the tray. The
-  front's flanges, 18, stand in line with the core's side lips. Where a lip
+  panel's outside face. The top's lip on the tray's side is riveted to the
+  tray. The front's flanges stand in line with the core's side lips. Where a lip
   of the hood meets one of the core, at the top of the rear and the foot of
   the front, the two are mitred at 45 degrees and 1.2 apart, as two lips of
   one part are. The side panels screw to both, and the one on the tray's side is
   riveted to the tray. At the front's foot a return goes under the bottom
   panel, against it, between the side panels' returns, with a tab at each
   end for a fan screw, cut at a slant 0.6 clear of a foot.
+- Lips: every side lip of the core and the hood, and the bottom panel's
+  front lip, is 15 on both sides of the case. That is the least a lip with a
+  pressed nut can be: OSH Cut's die needs the nut's hole 5.72 from the bend
+  line and PEM needs the nut's centre 5.6 from the lip's edge, 14.8 in all.
+  A lip with only rivets could be about 13. The rivets are on the nuts'
+  line, 8.0 from the panel.
 - The shelf hangs from the top on four screws: two into tabs on its rear
   wall, as before, and two into tabs on a front wall 82 wide, between the
   switch and the lamps. No tab shows in a cell of the mesh. The supply's weight goes into the top and from
@@ -103,6 +109,35 @@ brakes and tooling and does not make parts to order.
   cell and is 3.4 inside the side panel's flange; the screw heads under the top
   panel are 5.5 from the rear panel, 11.3 from the top fan and clear of
   the switch and of every part of the board.
+- OSH Cut's rules, in full: [mechanical/dfm.py](../mechanical/dfm.py) also
+  checks each flat pattern's size against the 119 x 59 in sheet, that there
+  is a hole to hang the part by for coating, each pressed-in part's hole and
+  its distance to the nearest edge against PEM's figure, a straight edge of
+  0.25 in or more parallel to every bend for the back gauge, and a relief
+  wherever two bends meet. All 81 checks pass. It found one fault, now
+  fixed: the bottom panel's front lip met each side lip with no relief.
+- The punches: OSH Cut publishes Wilson's bend limit graphs for its two,
+  61228010 (28 degree) and 61086010 (86 degree swan neck). Read from them, a
+  leg already standing d from a bend may be about d tall under the first and
+  d + 30 under the second, for d from 25 to 110. The tightest part is the
+  shelf, folded tabs first, then the front wall, then the rear wall: at the
+  last bend the front wall stands 34 tall 66 away, and its tab reaches back
+  to 47 away at that height, where 47 tall is allowed. The other way round
+  would not fold. On
+  the core and the hood the bend between the two panels is 122 long between
+  lips 128 apart, which wants a punch made up to between those, 125 say.
+  Everything else is a lip or return under 17 beside a base over 200.
+- Clearances: [mechanical/clearances.py](../mechanical/clearances.py) lists
+  every gap under 1.0 in the assembly, the wires apart. None is unintended.
+  The smallest that matter: the supply 0.7 from the front's flange and 1.1
+  from the tray, the front feet 0.8 from the tabs of the hood's return (0.2
+  before the return was shortened to 8.5), a side screw's tip 0.6 beside the
+  rear fan's frame, and the side panels 0.5 from the lips.
+- Screws, all the 1/4 in case screw: a side panel's goes right through its
+  nut; a handle's has 5.2 of thread in the leg at the front and 4.0 at the
+  rear, where the leg is tapped 7.9 or more; a shelf screw goes right
+  through its nut; a fan screw has 8.8 in the fan's frame, 7.6 for the two
+  through the hood's tabs.
 - Rivets: eleven, all holding the tray: three along each of its bottom, top and rear edges and two up its front edge, into the front's flange below and above the supply. Each is 7 or more from its lip's edge and from the bend, with a
   bar's width of flat behind it inside. Flush outside and 1.5 at most
   inside, which the 0.3 to 0.5 outside the lips and the 2.8 between the tray
@@ -168,8 +203,9 @@ brakes and tooling and does not make parts to order.
 
 ## Open: before the order
 
-- Upload the seven STEP models to OSH Cut and read its bend simulation for
-  each. The core and the hood are each an L with lips down both sides of
+- Upload the five STEP models to OSH Cut and read its bend simulation for
+  each. The check against the published graphs above is by hand and is not
+  that simulation. The core and the hood are each an L with lips down both sides of
   both panels, so the bend between the panels needs a punch that fits
   between the lips. The shapes are inside the published limits of its punches, but its
   simulation is the test, and nobody has run it on these files yet.

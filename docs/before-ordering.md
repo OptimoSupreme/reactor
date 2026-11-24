@@ -1,7 +1,8 @@
 # Before ordering
 
 What has been checked, what is still open, and what goes to a shop. Updated
-2026-11-24.
+2026-11-24. The sheet metal and the feet were ordered that day; what is
+ordered, in hand and still to get is in [build-status.md](build-status.md).
 
 ## What a shop gets
 
@@ -12,6 +13,8 @@ Everything is in [mechanical/export/](../mechanical/export/):
   bends, holes and notes.
 - For each of the five parts a STEP model, a DXF flat pattern and a bend table.
   The side panel is wanted twice, so six pieces.
+- [hardware.md](hardware.md): which pressed-in part goes in which hole of
+  which part, and which way round.
 - `foot.step` and `foot-drawing.pdf`, for whoever prints the feet: one model,
   four off. The drawing is also the last sheet of the set.
 
